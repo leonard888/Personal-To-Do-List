@@ -515,6 +515,10 @@
                 db = getFirestore(app);
                 auth = getAuth(app);
 
+                // PERBAIKAN DI SINI:
+                // Pasang listener tombol login SEKARANG, jangan menunggu login.
+                loginBtn.addEventListener('click', handleGoogleLogin);
+
                 // Listener utama status otentikasi
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
@@ -675,7 +679,7 @@
             });
 
             // Listener untuk tombol Login/Logout
-            loginBtn.addEventListener('click', handleGoogleLogin);
+            // PERBAIKAN: Listener 'loginBtn' dipindahkan ke 'initializeFirebase'
             logoutBtn.addEventListener('click', handleLogout);
         }
 
