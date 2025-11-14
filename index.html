@@ -120,6 +120,33 @@
         }
         .event-dot-task { background-color: #eab308; } /* yellow-500 */
         .event-dot-event { background-color: #8b5cf6; } /* violet-500 */
+        
+        /* --- GEMINI CHAT (KEMBALI) --- */
+        .chat-bubble {
+            max-width: 75%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            word-wrap: break-word;
+        }
+        .chat-bubble.user {
+            background-color: #2563eb; /* bg-blue-600 */
+            color: white;
+            align-self: flex-end;
+        }
+        .chat-bubble.model {
+            background-color: #4b5563; /* bg-gray-600 */
+            color: white;
+            align-self: flex-start;
+        }
+        .chat-bubble.error {
+            background-color: #dc2626; /* bg-red-600 */
+            color: white;
+            align-self: flex-start;
+        }
+         /* Simple markdown formatting */
+        .chat-bubble.model strong { font-weight: 700; }
+        .chat-bubble.model ul { list-style-type: disc; padding-left: 1.5rem; }
+        .chat-bubble.model ol { list-style-type: decimal; padding-left: 1.5rem; }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 h-full overflow-hidden">
@@ -172,13 +199,21 @@
                             <span class="hidden md:block ml-4">Wishlist</span>
                         </button>
                     </li>
-                    <!-- Tombol Tab Gemini (Dihapus) -->
+                    <!-- GEMINI TAB (KEMBALI) -->
+                    <li>
+                        <button data-tab="gemini" class="nav-tab w-full flex items-center p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.457-2.457L14.25 6l1.036-.259a3.375 3.375 0 002.457-2.457L18 2.25l.259 1.035a3.375 3.375 0 002.457 2.457L21.75 6l-1.036.259a3.375 3.375 0 00-2.457 2.457z" />
+                            </svg>
+                            <span class="hidden md:block ml-4">Gemini</span>
+                        </button>
+                    </li>
                 </ul>
                 <div class="p-4 mt-auto">
                     <!-- Tombol Open Gemini (Browser) -->
                     <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="w-full text-sm flex items-center justify-center md:justify-start p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 mb-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.457-2.457L14.25 6l1.036-.259a3.375 3.375 0 002.457-2.457L18 2.25l.259 1.035a3.375 3.375 0 002.457 2.457L21.75 6l-1.036.259a3.375 3.375 0 00-2.457 2.457z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.14 8.272l.46-.46a3.75 3.75 0 015.304 5.304l-.46.46M8.272 13.14l-.46.46a3.75 3.75 0 01-5.304-5.304l.46-.46M12 12l.46.46m-1.378-1.378a3.75 3.75 0 015.304 0l.46.46" />
                         </svg>
                         <span class="hidden md:block ml-2">Buka Gemini</span>
                     </a>
@@ -311,6 +346,11 @@
                             <div class="flex justify-between items-center mb-4">
                                 <h2 class="text-2xl font-bold">Kalender</h2>
                                 <div class="flex items-center gap-4">
+                                    <!-- TOMBOL TAMBAH EVENT BARU -->
+                                    <button id="showEventModalBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-3 rounded-lg flex items-center text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                                        Tambah Event
+                                    </button>
                                     <div class="flex items-center gap-2 text-xs">
                                         <span class="event-dot event-dot-task"></span> Task
                                         <span class="event-dot event-dot-event ml-2"></span> Event
@@ -342,7 +382,7 @@
                             </div>
                         </section>
 
-                        <!-- FITUR BARU: Detail Kalender -->
+                        <!-- Detail Kalender -->
                         <section id="calendarDetailSection" class="mt-6 hidden">
                             <div class="flex justify-between items-center mb-4">
                                 <h2 class="text-2xl font-bold">Detail untuk <span id="detailDateTitle"></span></h2>
@@ -392,6 +432,30 @@
                             <p id="noWishlistItems" class="text-center text-gray-500 dark:text-gray-400 col-span-full">Belum ada barang di wishlist.</p>
                         </div>
                     </div>
+                    
+                    <!-- GEMINI TAB KONTEN (KEMBALI) -->
+                    <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-10rem)]">
+                        <h2 class="text-2xl font-bold mb-4">Gemini Assistant</h2>
+                        <div class="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col space-y-4 overflow-y-auto" id="chatContainer">
+                            <!-- Chat messages will be appended here -->
+                            <div class="chat-bubble model">
+                                Halo! Saya Gemini. Apa yang bisa saya bantu hari ini?
+                            </div>
+                        </div>
+                        <div id="geminiLoading" class="hidden flex items-center justify-center p-4">
+                            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6 mr-2"></div>
+                            <span>Gemini sedang berpikir...</span>
+                        </div>
+                        <form id="geminiForm" class="mt-4 flex gap-2">
+                            <input type="text" id="geminiInput" placeholder="Ketik pesan Anda..." class="flex-1 rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700" autocomplete="off">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.875L5.999 12zm0 0h7.5" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+
                 </div>
             </main>
         </div>
@@ -586,7 +650,7 @@
 
         // Task Elements
         const taskModal = document.getElementById('taskModal');
-        const taskModalTitle = document.getElementById('taskModalTitle'); // Baru
+        const taskModalTitle = document.getElementById('taskModalTitle'); 
         const showTaskModalBtn = document.getElementById('showTaskModal');
         const closeTaskModalBtn = document.getElementById('closeTaskModal');
         const taskForm = document.getElementById('taskForm');
@@ -600,7 +664,7 @@
         const deadlineWarningEl = document.getElementById('deadlineWarning');
         const deadlineWarningCard = document.getElementById('filterDeadline');
         const taskTimeInput = document.getElementById('taskTime');
-        const deleteTaskBtn = document.getElementById('deleteTaskBtn'); // Baru
+        const deleteTaskBtn = document.getElementById('deleteTaskBtn'); 
 
         // Wishlist Elements
         const wishlistModal = document.getElementById('wishlistModal');
@@ -620,6 +684,7 @@
         const currentMonthYearEl = document.getElementById('currentMonthYear');
         const prevMonthBtn = document.getElementById('prevMonth');
         const nextMonthBtn = document.getElementById('nextMonth');
+        const showEventModalBtn = document.getElementById('showEventModalBtn'); // TOMBOL BARU
 
         // Calendar Detail Elements
         const calendarDetailSection = document.getElementById('calendarDetailSection');
@@ -639,6 +704,12 @@
         const eventRepeatInput = document.getElementById('eventRepeat');
         const eventErrorEl = document.getElementById('eventError');
         const deleteEventBtn = document.getElementById('deleteEventBtn');
+
+        // GEMINI DOM ELEMENTS (KEMBALI)
+        const geminiForm = document.getElementById('geminiForm');
+        const geminiInput = document.getElementById('geminiInput');
+        const chatContainer = document.getElementById('chatContainer');
+        const geminiLoading = document.getElementById('geminiLoading');
 
         // --- Initialization ---
         async function initializeFirebase() {
@@ -743,6 +814,11 @@
                 taskStatusChart.destroy();
                 taskStatusChart = null;
             }
+            // Bersihkan chat Gemini
+            chatContainer.innerHTML = `
+                <div class="chat-bubble model">
+                    Halo! Saya Gemini. Apa yang bisa saya bantu hari ini?
+                </div>`;
         }
 
         // --- Event Listeners Setup ---
@@ -768,7 +844,7 @@
 
         function setupModalListeners() {
             // Task Modal
-            showTaskModalBtn.addEventListener('click', () => openTaskModal()); // Modifikasi: panggil openTaskModal
+            showTaskModalBtn.addEventListener('click', () => openTaskModal()); 
             closeTaskModalBtn.addEventListener('click', () => {
                 taskModal.close();
                 taskErrorEl.classList.add('hidden'); 
@@ -779,7 +855,7 @@
                     taskErrorEl.classList.add('hidden');
                 }
             });
-            deleteTaskBtn.addEventListener('click', handleDeleteTask); // Baru
+            deleteTaskBtn.addEventListener('click', handleDeleteTask); 
 
             // Wishlist Modal
             showWishlistModalBtn.addEventListener('click', () => wishlistModal.showModal());
@@ -789,6 +865,10 @@
             });
 
             // Event Modal (dari kalender)
+            // LISTENER BARU UNTUK TOMBOL TAMBAH EVENT
+            showEventModalBtn.addEventListener('click', () => {
+                openEventModal(getTodayString()); // Buka modal dengan tanggal hari ini
+            });
             closeEventModalBtn.addEventListener('click', () => {
                 eventModal.close();
                 eventErrorEl.classList.add('hidden');
@@ -813,6 +893,7 @@
             taskForm.addEventListener('submit', handleTaskSubmit);
             wishlistForm.addEventListener('submit', handleWishlistSubmit);
             eventForm.addEventListener('submit', handleEventSubmit); 
+            geminiForm.addEventListener('submit', handleGeminiSubmit); // LISTENER GEMINI (KEMBALI)
         }
 
         function setupCalendarListeners() {
@@ -1733,6 +1814,134 @@
             } catch (error) {
                 console.error("Error skipping event:", error);
             }
+        }
+
+        // --- GEMINI LOGIC (KEMBALI) ---
+
+        /**
+         * Menangani submit form Gemini
+         */
+        async function handleGeminiSubmit(e) {
+            e.preventDefault();
+            const prompt = geminiInput.value.trim();
+            if (!prompt) return;
+
+            geminiInput.value = '';
+            addMessageToChat('user', prompt);
+            geminiLoading.classList.remove('hidden');
+
+            try {
+                const responseText = await callGeminiAPI(prompt);
+                addMessageToChat('model', responseText);
+            } catch (error) {
+                console.error("Gemini API error:", error);
+                addMessageToChat('model', `Maaf, terjadi kesalahan: ${error.message}`, 'error');
+            } finally {
+                geminiLoading.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Menambahkan pesan ke UI chat
+         */
+        function addMessageToChat(role, text, type = 'normal') {
+            const bubble = document.createElement('div');
+            bubble.classList.add('chat-bubble', role);
+            
+            if (type === 'error') {
+                bubble.classList.add('error');
+            }
+            
+            // Format respons model untuk tampilan
+            if (role === 'model') {
+                bubble.innerHTML = formatGeminiResponse(text);
+            } else {
+                bubble.textContent = text; // Teks pengguna tidak perlu diformat
+            }
+            
+            chatContainer.appendChild(bubble);
+            chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll ke bawah
+        }
+
+        /**
+         * Memanggil API Gemini dengan exponential backoff
+         */
+        async function callGeminiAPI(prompt) {
+            // --- PENTING UNTUK LOKAL ---
+            // GANTI "" DENGAN API KEY ANDA DARI GOOGLE AI STUDIO
+            // JIKA MENJALANKAN DI LUAR PRATINJAU INI
+            const apiKey = "AIzaSyBdvL65RALEcZ1vxHsQb8d1A3GJnJc_QlI"; // <-- GANTI DENGAN API KEY ANDA
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+            };
+
+            const response = await fetchWithBackoff(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (!text) {
+                throw new Error("Tidak ada respons teks dari API.");
+            }
+            
+            return text;
+        }
+
+        /**
+         * Helper fetch dengan retry dan exponential backoff
+         */
+        async function fetchWithBackoff(url, options, retries = 5, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok && (response.status === 429 || response.status >= 500)) {
+                        // Jika 429 (Too Many Requests) atau 5xx (Server Error), coba lagi
+                        throw new Error(`Retryable error: ${response.status}`);
+                    }
+                    return response; // Sukses
+                } catch (error) {
+                    if (i === retries - 1) throw error; // Gagal setelah semua retry
+                    await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+                }
+            }
+        }
+
+        /**
+         * Memformat respons Gemini (Markdown sederhana ke HTML)
+         */
+        function formatGeminiResponse(text) {
+            // Escape HTML dasar untuk keamanan
+            let safeText = text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            // Konversi Markdown sederhana
+            safeText = safeText
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')       // Italic
+                .replace(/`([^`]+)`/g, '<code class="bg-gray-200 dark:bg-gray-900 px-1 rounded">$1</code>') // Inline code
+                .replace(/^\* (.*?)(\n|$)/gm, '<ul><li>$1</li></ul>') // Unordered lists
+                .replace(/^\d+\. (.*?)(\n|$)/gm, '<ol><li>$1</li></ol>') // Ordered lists
+                .replace(/\n/g, '<br>'); // Newlines
+
+            // Menggabungkan list yang berdekatan
+            safeText = safeText
+                .replace(/<\/ul><br><ul>/g, '')
+                .replace(/<\/ol><br><ol>/g, '');
+
+            return safeText;
         }
         
         // --- Start App ---
