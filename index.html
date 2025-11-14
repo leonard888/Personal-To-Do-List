@@ -703,6 +703,7 @@
             
             updateClock();
             setInterval(updateClock, 1000); 
+            setInterval(renderUpcomingEvents, 60000); // Refresh upcoming events setiap menit
 
             renderCalendar();
         }
@@ -879,11 +880,6 @@
             
             clockEl.textContent = timeStr;
             dateEl.textContent = dateStr;
-
-            // Periksa event mendatang setiap menit
-            if (now.getSeconds() === 0) {
-                renderUpcomingEvents();
-            }
         }
 
         // --- Task Logic ---
@@ -1000,6 +996,7 @@
             try {
                 await deleteDoc(doc(tasksCollection, taskId));
                 taskModal.close();
+                calendarDetailSection.classList.add('hidden'); // Sembunyikan detail jika dibuka
             } catch (error) {
                 console.error("Error deleting task:", error);
                 taskErrorEl.textContent = `Gagal menghapus: ${error.message}`;
@@ -1526,8 +1523,8 @@
             eventForm.dataset.eventId = '';
             eventDateInput.value = date;
             
-            // Sembunyikan detail list, tampilkan form (jika ada)
-            // (Logika ini di-handle di event modal baru, tapi kita pastikan)
+            // Sembunyikan detail list
+            calendarDetailSection.classList.add('hidden');
 
             if (eventId) {
                 eventModalTitle.textContent = 'Edit Event';
@@ -1539,6 +1536,7 @@
                         eventNameInput.value = event.name;
                         eventTimeInput.value = event.time;
                         eventRepeatInput.value = event.repeatType;
+                        eventDateInput.value = event.date; // Pastikan tanggal terisi
                     } else {
                         throw new Error("Event tidak ditemukan.");
                     }
@@ -1596,6 +1594,7 @@
             try {
                 await deleteDoc(doc(eventsCollection, eventId));
                 eventModal.close();
+                calendarDetailSection.classList.add('hidden'); // Sembunyikan detail jika dibuka
             } catch (error) {
                 console.error("Error deleting event:", error);
                 eventErrorEl.textContent = `Gagal menghapus: ${error.message}`;
@@ -1609,12 +1608,14 @@
             const now = new Date();
             const todayDateStr = getTodayString(); // "YYYY-MM-DD"
             const todayDay = now.getDay(); // 0-6 (Minggu-Sabtu)
-            const currentTimeStr = now.toTimeString().split(' ')[0].substring(0, 5); // "HH:MM"
+            // const currentTimeStr = now.toTimeString().split(' ')[0].substring(0, 5); // "HH:MM" // DIHAPUS
 
             // 1. Dapatkan Events untuk hari ini
             const eventsDueToday = allEvents.filter(event => {
                 if (event.lastActionDate === todayDateStr) return false;
-                if (event.time > currentTimeStr) return false;
+                
+                // --- PERBAIKAN LOGIKA: Filter waktu dihapus ---
+                // if (event.time > currentTimeStr) return false; // <-- BARIS INI DIHAPUS
                 
                 if (event.repeatType === 'once' && event.date === todayDateStr) return true;
                 if (event.repeatType === 'daily') return true;
@@ -1630,13 +1631,18 @@
             const tasksDueToday = allTasks.filter(task => {
                 if (task.status === 'completed') return false; 
                 if (task.deadline !== todayDateStr) return false; 
-                if (task.time > currentTimeStr) return false; 
+                
+                // --- PERBAIKAN LOGIKA: Filter waktu dihapus ---
+                // if (task.time > currentTimeStr) return false; // <-- BARIS INI DIHAPUS
+                
                 return true;
             }).map(task => ({ ...task, type: 'task' })); // Tandai sebagai 'task'
 
             // 3. Gabungkan dan sortir
             const combinedList = [...eventsDueToday, ...tasksDueToday];
-            combinedList.sort((a, b) => a.time.localeCompare(b.time));
+            // Urutkan berdasarkan jam
+            combinedList.sort((a, b) => (a.time || '00:00').localeCompare(b.time || '00:00'));
+
 
             upcomingEventsListEl.innerHTML = '';
             if (combinedList.length === 0) {
