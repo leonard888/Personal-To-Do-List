@@ -84,7 +84,7 @@
         .chat-bubble.model ul { list-style-type: disc; padding-left: 1.5rem; }
         .chat-bubble.model ol { list-style-type: decimal; padding-left: 1.5rem; }
 
-        /* --- FITUR: Kalender --- */
+        /* --- FITUR BARU: Kalender --- */
         #calendarGrid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -147,6 +147,7 @@
         .event-dot-task { background-color: #eab308; } /* yellow-500 */
         .event-dot-event { background-color: #8b5cf6; } /* violet-500 */
         .event-dot-repeated { background-color: #ec4899; } /* pink-500 */
+
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 h-full overflow-hidden">
@@ -199,7 +200,7 @@
                             <span class="hidden md:block ml-4">Wishlist</span>
                         </button>
                     </li>
-                    <!-- Tombol Tab Gemini DIKEMBALIKAN -->
+                    <!-- PENAMBAHAN TOMBOL TAB GEMINI -->
                     <li>
                         <button data-tab="gemini" class="nav-tab w-full flex items-center p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -210,7 +211,7 @@
                     </li>
                 </ul>
                 <div class="p-4 mt-auto">
-                    <!-- Tombol Open Gemini -->
+                    <!-- FITUR BARU: Tombol Open Gemini -->
                     <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="w-full text-sm flex items-center justify-center md:justify-start p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 mb-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
@@ -235,244 +236,221 @@
 
             <!-- Main Content -->
             <main class="flex-1 overflow-y-auto p-4 md:p-8">
-                <!-- PERBAIKAN: Wrapper untuk Jam dan Konten -->
-                <div class="flex flex-col">
-                    <!-- Header Konten: Jam dan Tanggal -->
-                    <div class="w-full flex justify-end mb-4">
+                <!-- Wrapper untuk Jam dan Konten -->
+                <div>
+                    <!-- FITUR BARU: Jam dan Hari (Layout diperbaiki) -->
+                    <div class="flex justify-end mb-4">
                         <div id="clockDate" class="text-right text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
                             <div id="clockEl">00:00:00</div>
                             <div id="dateEl">Kamis, 1 Jan 1970</div>
                         </div>
                     </div>
 
-                    <!-- Konten Tab Utama -->
-                    <div class="w-full">
-                        <!-- Dashboard Tab -->
-                        <div id="dashboard" class="tab-content space-y-6">
-                            <!-- Stock Market Section -->
-                            <section>
-                                <h2 class="text-2xl font-bold mb-4">Market Overview</h2>
-                                <!-- TradingView Ticker Tape Widget -->
-                                <div class="tradingview-widget-container">
-                                    <div class="tradingview-widget-container__widget"></div>
-                                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                    <!-- Dashboard Tab -->
+                    <div id="dashboard" class="tab-content space-y-6">
+                        <!-- Stock Market Section -->
+                        <section>
+                            <h2 class="text-2xl font-bold mb-4">Market Overview</h2>
+                            <!-- TradingView Ticker Tape Widget -->
+                            <div class="tradingview-widget-container">
+                                <div class="tradingview-widget-container__widget"></div>
+                                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                                {
+                                "symbols": [
                                     {
-                                    "symbols": [
-                                        {
-                                        "proName": "IDX:COMPOSITE",
-                                        "title": "IHSG"
-                                        },
-                                        {
-                                        "proName": "IDX:BBCA",
-                                        "title": "BBCA"
-                                        },
-                                        {
-                                        "proName": "IDX:BBRI",
-                                        "title": "BBRI"
-                                        },
-                                        {
-                                        "proName": "IDX:TLKM",
-                                        "title": "TLKM"
-                                        },
-                                        {
-                                        "proName": "IDX:ASII",
-                                        "title": "ASII"
-                                        }
-                                    ],
-                                    "showSymbolLogo": true,
-                                    "colorTheme": "dark",
-                                    "isTransparent": false,
-                                    "displayMode": "adaptive",
-                                    "locale": "id"
+                                    "proName": "IDX:COMPOSITE",
+                                    "title": "IHSG"
+                                    },
+                                    {
+                                    "proName": "IDX:BBCA",
+                                    "title": "BBCA"
+                                    },
+                                    {
+                                    "proName": "IDX:BBRI",
+                                    "title": "BBRI"
+                                    },
+                                    {
+                                    "proName": "IDX:TLKM",
+                                    "title": "TLKM"
+                                    },
+                                    {
+                                    "proName": "IDX:ASII",
+                                    "title": "ASII"
                                     }
-                                    </script>
-                                </div>
-                                <!-- TradingView Chart Widget -->
-                                <div class="tradingview-widget-container mt-4 resizable-chart-container" style="height:400px; width:100%;">
-                                    <div id="tradingview_chart" style="height:100%; width:100%;"></div>
-                                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                                    <script type="text/javascript">
-                                        new TradingView.widget({
-                                            "width": "100%",
-                                            "height": "100%",
-                                            "symbol": "IDX:COMPOSITE",
-                                            "interval": "D",
-                                            "timezone": "Asia/Jakarta",
-                                            "theme": "dark",
-                                            "style": "1",
-                                            "locale": "id",
-                                            "enable_publishing": false,
-                                            "allow_symbol_change": true,
-                                            "container_id": "tradingview_chart"
-                                        });
-                                    </script>
-                                </div>
-                            </section>
+                                ],
+                                "showSymbolLogo": true,
+                                "colorTheme": "dark",
+                                "isTransparent": false,
+                                "displayMode": "adaptive",
+                                "locale": "id"
+                                }
+                                </script>
+                            </div>
+                            <!-- TradingView Chart Widget -->
+                            <div class="tradingview-widget-container mt-4 resizable-chart-container" style="height:400px; width:100%;">
+                                <div id="tradingview_chart" style="height:100%; width:100%;"></div>
+                                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                                <script type="text/javascript">
+                                    new TradingView.widget({
+                                        "width": "100%",
+                                        "height": "100%",
+                                        "symbol": "IDX:COMPOSITE",
+                                        "interval": "D",
+                                        "timezone": "Asia/Jakarta",
+                                        "theme": "dark",
+                                        "style": "1",
+                                        "locale": "id",
+                                        "enable_publishing": false,
+                                        "allow_symbol_change": true,
+                                        "container_id": "tradingview_chart"
+                                    });
+                                </script>
+                            </div>
+                        </section>
 
-                            <!-- Repeated Task Section -->
-                            <section id="repeatedTaskSection">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h2 class="text-2xl font-bold">Tugas Berulang</h2>
-                                    <button id="showRepeatedTaskModal" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                        </svg>
-                                        Tambah Tugas Berulang
-                                    </button>
-                                </div>
-                                <div id="repeatedTaskList" class="space-y-3">
-                                    <!-- Repeated task items akan ditambahkan di sini oleh JavaScript -->
-                                    <p id="noRepeatedTasks" class="text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">Tidak ada tugas berulang yang jatuh tempo saat ini.</p>
-                                </div>
-                            </section>
+                        <!-- FITUR BARU: Upcoming Events Section (Menggantikan Repeated Task) -->
+                        <section id="upcomingEventsSection">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold">Event Mendatang (Hari Ini)</h2>
+                            </div>
+                            <div id="upcomingEventsList" class="space-y-3">
+                                <!-- Upcoming event items akan ditambahkan di sini oleh JavaScript -->
+                                <p id="noUpcomingEvents" class="text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">Tidak ada event yang jatuh tempo saat ini.</p>
+                            </div>
+                        </section>
 
-                            <!-- To-Do List Section -->
-                            <section class="mt-6"> <!-- Tambahkan margin top -->
-                                <div class="flex justify-between items-center mb-4">
-                                    <h2 class="text-2xl font-bold">To-Do List</h2>
-                                    <button id="showTaskModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                                        Tambah Task
-                                    </button>
-                                </div>
-
-                                <!-- Task Status Chart & Dashboard -->
-                                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
-                                    <!-- Chart -->
-                                    <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md h-64 relative">
-                                        <h4 class="text-lg font-semibold text-center mb-2">Visualisasi Status Task</h4>
-                                        <canvas id="taskStatusChart"></canvas>
-                                    </div>
-                                    
-                                    <!-- Cards -->
-                                    <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-4">
-                                        <div id="filterAll" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                            <h4 class="text-sm font-medium text-gray-700 dark:text-white">Total Tasks</h4>
-                                            <p id="totalTasks" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
-                                        </div>
-                                        <div id="filterPending" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                            <h4 class="text-sm font-medium text-gray-700 dark:text-white">Pending</h4>
-                                            <p id="pendingTasks" class="text-3xl font-bold text-yellow-500">0</p>
-                                        </div>
-                                        <div id="filterInProgress" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                            <h4 class="text-sm font-medium text-gray-700 dark:text-white">In Progress</h4>
-                                            <p id="inProgressTasks" class="text-3xl font-bold text-blue-500">0</p>
-                                        </div>
-                                        <div id="filterCompleted" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                            <h4 class="text-sm font-medium text-gray-700 dark:text-white">Completed</h4>
-                                            <p id="completedTasks" class="text-3xl font-bold text-green-500">0</p>
-                                        </div>
-                                        <div id="filterDeadline" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md ring-2 ring-transparent cursor-pointer filter-card transition-all duration-200">
-                                            <h4 class="text-sm font-medium text-gray-700 dark:text-white">Mendekati Deadline</h4>
-                                            <p id="deadlineWarning" class="text-3xl font-bold text-red-500">0</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Task List -->
-                                <div id="taskList" class="space-y-4">
-                                    <!-- Task items akan ditambahkan di sini oleh JavaScript -->
-                                    <p id="noTasks" class="text-center text-gray-500 dark:text-gray-400">Belum ada task. Silakan tambahkan!</p>
-                                </div>
-                            </section>
-
-                            <!-- FITUR BARU: Kalender -->
-                            <section id="calendarSection" class="mt-6">
-                                <h2 class="text-2xl font-bold mb-4">Kalender Event & Task</h2>
-                                <!-- Header Kalender -->
-                                <div class="flex justify-between items-center mb-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-                                    <button id="prevMonthBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                                        </svg>
-                                    </button>
-                                    <h3 id="currentMonthYear" class="text-xl font-semibold">Januari 2024</h3>
-                                    <button id="nextMonthBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                        </svg>
-                                    </button>
-                                </div>
-                                <!-- Grid Kalender -->
-                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-                                    <div id="calendarDayHeaders" class="grid grid-cols-7">
-                                        <div class="calendar-day-header">Min</div>
-                                        <div class="calendar-day-header">Sen</div>
-                                        <div class="calendar-day-header">Sel</div>
-                                        <div class="calendar-day-header">Rab</div>
-                                        <div class="calendar-day-header">Kam</div>
-                                        <div class="calendar-day-header">Jum</div>
-                                        <div class="calendar-day-header">Sab</div>
-                                    </div>
-                                    <div id="calendarGrid">
-                                        <!-- Hari-hari kalender akan di-generate oleh JS -->
-                                    </div>
-                                    <!-- Legenda Kalender -->
-                                    <div class="p-4 flex flex-wrap justify-center gap-4 text-xs">
-                                        <div class="flex items-center gap-2">
-                                            <span class="event-dot event-dot-task"></span>
-                                            <span>Deadline Task</span>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <span class="event-dot event-dot-event"></span>
-                                            <span>Event</span>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <span class="event-dot event-dot-repeated"></span>
-                                            <span>Event Berulang</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-
-                        <!-- Wishlist Tab -->
-                        <div id="wishlist" class="tab-content hidden space-y-6">
-                            <!-- PERBAIKAN: Wrapper untuk Judul dan Tombol -->
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <h2 class="text-2xl font-bold">Wishlist Belanja</h2>
-                                    <!-- FITUR: Total Harga Wishlist -->
-                                    <div class="flex items-baseline gap-2 mt-1">
-                                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Estimasi:</h3>
-                                        <p id="wishlistTotal" class="text-xl font-bold text-blue-600 dark:text-blue-400">Rp 0</p>
-                                    </div>
-                                </div>
-                                <button id="showWishlistModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center flex-shrink-0">
+                        <!-- To-Do List Section -->
+                        <section class="mt-6"> 
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold">To-Do List</h2>
+                                <button id="showTaskModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                                    Tambah Barang
+                                    Tambah Task
                                 </button>
                             </div>
-                            <div id="wishlistGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <!-- Wishlist items akan ditambahkan di sini -->
-                                <p id="noWishlistItems" class="text-center text-gray-500 dark:text-gray-400 col-span-full">Belum ada barang di wishlist.</p>
-                            </div>
-                        </div>
 
-                        <!-- KONTEN TAB GEMINI (Dikembalikan) -->
-                        <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-10rem)]">
-                            <h2 class="text-2xl font-bold mb-4">Gemini Assistant</h2>
-                            <div class="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col space-y-4 overflow-y-auto" id="chatContainer">
-                                <!-- Chat messages will be appended here -->
-                                <div class="chat-bubble model">
-                                    Halo! Saya Gemini. Apa yang bisa saya bantu hari ini?
+                            <!-- Task Status Chart & Dashboard -->
+                            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+                                <!-- Chart -->
+                                <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md h-64 relative">
+                                    <h4 class="text-lg font-semibold text-center mb-2">Visualisasi Status Task</h4>
+                                    <canvas id="taskStatusChart"></canvas>
+                                </div>
+                                
+                                <!-- Cards -->
+                                <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    <div id="filterAll" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                        <h4 class="text-sm font-medium text-gray-700 dark:text-white">Total Tasks</h4>
+                                        <p id="totalTasks" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+                                    </div>
+                                    <div id="filterPending" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                        <h4 class="text-sm font-medium text-gray-700 dark:text-white">Pending</h4>
+                                        <p id="pendingTasks" class="text-3xl font-bold text-yellow-500">0</p>
+                                    </div>
+                                    <div id="filterInProgress" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                        <h4 class="text-sm font-medium text-gray-700 dark:text-white">In Progress</h4>
+                                        <p id="inProgressTasks" class="text-3xl font-bold text-blue-500">0</p>
+                                    </div>
+                                    <div id="filterCompleted" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                        <h4 class="text-sm font-medium text-gray-700 dark:text-white">Completed</h4>
+                                        <p id="completedTasks" class="text-3xl font-bold text-green-500">0</p>
+                                    </div>
+                                    <div id="filterDeadline" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md ring-2 ring-transparent cursor-pointer filter-card transition-all duration-200">
+                                        <h4 class="text-sm font-medium text-gray-700 dark:text-white">Mendekati Deadline</h4>
+                                        <p id="deadlineWarning" class="text-3xl font-bold text-red-500">0</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div id="geminiLoading" class="hidden flex items-center justify-center p-4">
-                                <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6 mr-2"></div>
-                                <span>Gemini sedang berpikir...</span>
-                            </div>
-                            <form id="geminiForm" class="mt-4 flex gap-2">
-                                <input type="text" id="geminiInput" placeholder="Ketik pesan Anda..." class="flex-1 rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700" autocomplete="off">
-                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.875L5.999 12zm0 0h7.5" />
-                                    </svg>
-                                </button>
-                            </form>
-                        </div>
 
+                            <!-- Task List -->
+                            <div id="taskList" class="space-y-4">
+                                <!-- Task items akan ditambahkan di sini oleh JavaScript -->
+                                <p id="noTasks" class="text-center text-gray-500 dark:text-gray-400">Belum ada task. Silakan tambahkan!</p>
+                            </div>
+                        </section>
+
+                        <!-- FITUR BARU: Kalender Section -->
+                        <section id="calendarSection" class="mt-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold">Kalender</h2>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-2 text-xs">
+                                        <span class="event-dot event-dot-task"></span> Task
+                                        <span class="event-dot event-dot-event ml-2"></span> Event
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button id="prevMonth" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                                        </button>
+                                        <h3 id="currentMonthYear" class="text-lg font-semibold w-32 text-center"></h3>
+                                        <button id="nextMonth" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                                <div id="calendarDayHeaders" class="grid grid-cols-7">
+                                    <div class="calendar-day-header">Min</div>
+                                    <div class="calendar-day-header">Sen</div>
+                                    <div class="calendar-day-header">Sel</div>
+                                    <div class="calendar-day-header">Rab</div>
+                                    <div class="calendar-day-header">Kam</div>
+                                    <div class="calendar-day-header">Jum</div>
+                                    <div class="calendar-day-header">Sab</div>
+                                </div>
+                                <div id="calendarGrid">
+                                    <!-- Sel-sel kalender akan di-generate oleh JS -->
+                                </div>
+                            </div>
+                        </section>
                     </div>
+
+                    <!-- Wishlist Tab -->
+                    <div id="wishlist" class="tab-content hidden space-y-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h2 class="text-2xl font-bold">Wishlist Belanja</h2>
+                                <!-- FITUR: Total Harga Wishlist -->
+                                <div class="flex items-baseline gap-2 mt-1">
+                                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Estimasi:</h3>
+                                    <p id="wishlistTotal" class="text-xl font-bold text-blue-600 dark:text-blue-400">Rp 0</p>
+                                </div>
+                            </div>
+                            <button id="showWishlistModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                                Tambah Barang
+                            </button>
+                        </div>
+                        <div id="wishlistGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Wishlist items akan ditambahkan di sini -->
+                            <p id="noWishlistItems" class="text-center text-gray-500 dark:text-gray-400 col-span-full">Belum ada barang di wishlist.</p>
+                        </div>
+                    </div>
+
+                    <!-- PENAMBAHAN TAB KONTEN GEMINI -->
+                    <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-10rem)]"> <!-- Tinggi disesuaikan -->
+                        <h2 class="text-2xl font-bold mb-4">Gemini Assistant</h2>
+                        <div class="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col space-y-4 overflow-y-auto" id="chatContainer">
+                            <!-- Chat messages will be appended here -->
+                            <div class="chat-bubble model">
+                                Halo! Saya Gemini. Apa yang bisa saya bantu hari ini?
+                            </div>
+                        </div>
+                        <div id="geminiLoading" class="hidden flex items-center justify-center p-4">
+                            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6 mr-2"></div>
+                            <span>Gemini sedang berpikir...</span>
+                        </div>
+                        <form id="geminiForm" class="mt-4 flex gap-2">
+                            <input type="text" id="geminiInput" placeholder="Ketik pesan Anda..." class="flex-1 rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700" autocomplete="off">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.875L5.999 12zm0 0h7.5" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+
                 </div>
             </main>
         </div>
@@ -540,125 +518,42 @@
         </form>
     </dialog>
 
-    <!-- Repeated Task Modal -->
-    <dialog id="repeatedTaskModal" class="p-0 rounded-lg shadow-xl w-full max-w-md bg-white dark:bg-gray-800">
-        <form id="repeatedTaskForm" class="p-6 space-y-4">
-            <h3 class="text-xl font-medium">Tambah Tugas Berulang</h3>
-            
-            <!-- ELEMEN PESAN ERROR BARU -->
-            <div id="repeatedTaskError" class="hidden text-sm text-red-500 bg-red-100 dark:bg-red-900 dark:text-red-200 p-3 rounded-md"></div>
-
-            <div>
-                <label for="repeatedTaskName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Task</label>
-                <!-- 'required' DIHAPUS -->
-                <input type="text" id="repeatedTaskName" name="repeatedTaskName" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
-            </div>
-            <div>
-                <label for="repeatType" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berulang Setiap</label>
-                <select id="repeatType" name="repeatType" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
-                    <option value="daily">Setiap Hari</option>
-                    <option value="specific_days">Hari Tertentu</option>
-                </select>
-            </div>
-            <div id="specificDaysWrapper" class="hidden space-y-2">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pilih Hari</label>
-                <div class="grid grid-cols-4 gap-2">
-                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
-                        <input type="checkbox" name="repeatDays" value="mon" class="rounded text-blue-500 focus:ring-blue-500">
-                        <span>Sen</span>
-                    </label>
-                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
-                        <input type="checkbox" name="repeatDays" value="tue" class="rounded text-blue-500 focus:ring-blue-500">
-                        <span>Sel</span>
-                    </label>
-                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
-                        <input type="checkbox" name="repeatDays" value="wed" class="rounded text-blue-500 focus:ring-blue-500">
-                        <span>Rab</span>
-                    </label>
-                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
-                        <input type="checkbox" name="repeatDays" value="thu" class="rounded text-blue-500 focus:ring-blue-500">
-                        <span>Kam</span>
-                    </label>
-                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
-                        <input type="checkbox" name="repeatDays" value="fri" class="rounded text-blue-500 focus:ring-blue-500">
-                        <span>Jum</span>
-                    </label>
-                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
-                        <input type="checkbox" name="repeatDays" value="sat" class="rounded text-blue-500 focus:ring-blue-500">
-                        <span>Sab</span>
-                    </label>
-                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
-                        <input type="checkbox" name="repeatDays" value="sun" class="rounded text-blue-500 focus:ring-blue-500">
-                        <span>Min</span>
-                    </label>
-                </div>
-            </div>
-            <div>
-                <label for="repeatTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pada Jam</label>
-                <!-- 'required' DIHAPUS -->
-                <input type="time" id="repeatTime" name="repeatTime" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
-            </div>
-            <div class="flex justify-end space-x-3 pt-4">
-                <button type="button" id="closeRepeatedTaskModal" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg">Batal</button>
-                <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg">Simpan</button>
-            </div>
-        </form>
-    </dialog>
-
-    <!-- FITUR BARU: Modal Event Kalender -->
+    <!-- FITUR BARU: Event Modal (Menggantikan Repeated Task Modal) -->
     <dialog id="eventModal" class="p-0 rounded-lg shadow-xl w-full max-w-md bg-white dark:bg-gray-800">
-        <form id="eventForm" class="p-6 space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="text-xl font-medium">Tambah/Edit Event</h3>
-                <button type="button" id="closeEventModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Error container -->
+        <form id="eventForm" class="p-6 space-y-4" data-event-id="">
+            <h3 id="eventModalTitle" class="text-xl font-medium">Tambah Event Baru</h3>
             <div id="eventError" class="hidden text-sm text-red-500 bg-red-100 dark:bg-red-900 dark:text-red-200 p-3 rounded-md"></div>
             
-            <input type="hidden" id="eventDate" name="eventDate">
-            <input type="hidden" id="eventId" name="eventId">
-
             <div>
                 <label for="eventName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Event</label>
                 <input type="text" id="eventName" name="eventName" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
             </div>
-            
-            <div class="flex gap-4">
-                <div class="flex-1">
-                    <label for="eventStartTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Waktu Mulai</label>
-                    <input type="time" id="eventStartTime" name="eventStartTime" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="eventDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tanggal</label>
+                    <input type="date" id="eventDate" name="eventDate" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700" readonly>
                 </div>
-                <div class="flex-1">
-                    <label for="eventEndTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Waktu Selesai</g_label>
-                    <input type="time" id="eventEndTime" name="eventEndTime" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+                <div>
+                    <label for="eventTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Jam</Tlabel>
+                    <input type="time" id="eventTime" name="eventTime" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
                 </div>
             </div>
 
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Jenis Event</label>
-                <div class="flex gap-4">
-                    <label class="flex items-center">
-                        <input type="radio" name="eventType" value="event" class="text-violet-500 focus:ring-violet-500" checked>
-                        <span class="ml-2 text-sm">Event Sekali</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="radio" name="eventType" value="repeated" class="text-pink-500 focus:ring-pink-500">
-                        <span class="ml-2 text-sm">Event Berulang</span>
-                    </label>
-                </div>
+            <div>
+                <label for="eventRepeat" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berulang</label>
+                <select id="eventRepeat" name="eventRepeat" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+                    <option value="once">Sekali Saja</option>
+                    <option value="daily">Setiap Hari</option>
+                    <option value="weekly">Setiap Minggu (di hari ini)</option>
+                </select>
             </div>
 
-            <div class="flex justify-between items-center pt-4">
-                <button type="button" id="deleteEventBtn" class="text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-medium text-sm hidden">
-                    Hapus Event
-                </button>
-                <div class="flex-1 flex justify-end">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg">Simpan Event</button>
+            <div class="flex justify-between space-x-3 pt-4">
+                <button type="button" id="deleteEventBtn" class="hidden bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg">Hapus</button>
+                <div class="flex-1 flex justify-end gap-3">
+                    <button type="button" id="closeEventModalBtn" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg">Batal</button>
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg">Simpan</button>
                 </div>
             </div>
         </form>
@@ -686,8 +581,8 @@
             collection, 
             onSnapshot,
             serverTimestamp,
-            query,
-            getDocs // Ditambahkan untuk fetch data kalender
+            getDoc, // Import getDoc untuk edit
+            query
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Firebase Configuration ---
@@ -698,30 +593,30 @@
         // ======================================================================
         // GANTI DENGAN KONFIGURASI PRIBADI ANDA UNTUK LOKAL
         const firebaseConfig = {
-			apiKey: "AIzaSyCiIZRywKs7nF92z6_FWMzhOAaRe9SOOJE",
-			authDomain: "personal-to-do-list-5d959.firebaseapp.com",
-			projectId: "personal-to-do-list-5d959",
-			storageBucket: "personal-to-do-list-5d959.firebasestorage.app",
-			messagingSenderId: "713295970134",
-			appId: "1:713295970134:web:6650db1a681742dc30a0f7",
-			measurementId: "G-QG3GEXP3HC"
-		};
+            apiKey: "AIzaSyCiIZRywKs7nF92z6_FWMzhOAaRe9SOOJE",
+            authDomain: "personal-to-do-list-5d959.firebaseapp.com",
+            projectId: "personal-to-do-list-5d959",
+            storageBucket: "personal-to-do-list-5d959.firebasestorage.app",
+            messagingSenderId: "713295970134",
+            appId: "1:713295970134:web:6650db1a681742dc30a0f7",
+            measurementId: "G-QG3GEXP3HC"
+        };
         // ======================================================================
-		
+        
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         let app, auth, db, userId;
-        let tasksCollection, wishlistCollection, repeatedTasksCollection, eventsCollection; // <-- Collection baru
+        let tasksCollection, wishlistCollection, eventsCollection; // Collection baru
         let tasksUnsubscribe = null;
         let wishlistUnsubscribe = null;
-        let repeatedTasksUnsubscribe = null;
-        let eventsUnsubscribe = null; // <-- Unsubscribe baru
+        let eventsUnsubscribe = null; // Listener baru
         let taskStatusChart = null;
         let allTasks = [];
-        let allRepeatedTasks = [];
-        let allEvents = []; // <-- Array baru
+        let allEvents = []; // Array baru
         let currentFilter = 'active'; // Filter default baru
-        let currentCalendarDate = new Date(); // <-- State baru untuk kalender
+
+        // Variabel untuk Kalender
+        let currentCalendarDate = new Date();
 
         // --- DOM Elements ---
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -734,13 +629,13 @@
         const userAvatarEl = document.getElementById('userAvatar');
         const userNameEl = document.getElementById('userName');
         
-        // Clock
-        const clockEl = document.getElementById('clockEl');
-        const dateEl = document.getElementById('dateEl');
-
         // Tabs
         const tabs = document.querySelectorAll('.nav-tab');
         const tabContents = document.querySelectorAll('.tab-content');
+
+        // Clock
+        const clockEl = document.getElementById('clockEl');
+        const dateEl = document.getElementById('dateEl');
 
         // Task Elements
         const taskModal = document.getElementById('taskModal');
@@ -764,41 +659,35 @@
         const wishlistForm = document.getElementById('wishlistForm');
         const wishlistGridEl = document.getElementById('wishlistGrid');
         const noWishlistItemsEl = document.getElementById('noWishlistItems');
-        const wishlistTotalEl = document.getElementById('wishlistTotal'); // <-- Total wishlist
+        const wishlistTotalEl = document.getElementById('wishlistTotal');
 
-        // Repeated Task Elements
-        const repeatedTaskModal = document.getElementById('repeatedTaskModal');
-        const showRepeatedTaskModalBtn = document.getElementById('showRepeatedTaskModal');
-        const closeRepeatedTaskModalBtn = document.getElementById('closeRepeatedTaskModal');
-        const repeatedTaskForm = document.getElementById('repeatedTaskForm');
-        const repeatedTaskErrorEl = document.getElementById('repeatedTaskError'); // Error modal
-        const repeatedTaskListEl = document.getElementById('repeatedTaskList');
-        const noRepeatedTasksEl = document.getElementById('noRepeatedTasks');
-        const repeatTypeSelect = document.getElementById('repeatType');
-        const specificDaysWrapper = document.getElementById('specificDaysWrapper');
+        // Upcoming Events (MENGGANTIKAN REPEATED TASK)
+        const upcomingEventsListEl = document.getElementById('upcomingEventsList');
+        const noUpcomingEventsEl = document.getElementById('noUpcomingEvents');
 
-        // Gemini Elements (dikembalikan ke tab)
+        // Calendar Elements
+        const calendarGridEl = document.getElementById('calendarGrid');
+        const currentMonthYearEl = document.getElementById('currentMonthYear');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+
+        // Event Modal Elements
+        const eventModal = document.getElementById('eventModal');
+        const closeEventModalBtn = document.getElementById('closeEventModalBtn');
+        const eventForm = document.getElementById('eventForm');
+        const eventModalTitle = document.getElementById('eventModalTitle');
+        const eventDateInput = document.getElementById('eventDate');
+        const eventNameInput = document.getElementById('eventName');
+        const eventTimeInput = document.getElementById('eventTime');
+        const eventRepeatInput = document.getElementById('eventRepeat');
+        const eventErrorEl = document.getElementById('eventError');
+        const deleteEventBtn = document.getElementById('deleteEventBtn');
+
+        // Gemini Elements
         const geminiForm = document.getElementById('geminiForm');
         const geminiInput = document.getElementById('geminiInput');
         const chatContainer = document.getElementById('chatContainer');
         const geminiLoading = document.getElementById('geminiLoading');
-
-        // Calendar Elements
-        const calendarGrid = document.getElementById('calendarGrid');
-        const currentMonthYearEl = document.getElementById('currentMonthYear');
-        const prevMonthBtn = document.getElementById('prevMonthBtn');
-        const nextMonthBtn = document.getElementById('nextMonthBtn');
-        const eventModal = document.getElementById('eventModal');
-        const eventForm = document.getElementById('eventForm');
-        const closeEventModalBtn = document.getElementById('closeEventModal');
-        const eventErrorEl = document.getElementById('eventError');
-        const eventNameInput = document.getElementById('eventName');
-        const eventDateInput = document.getElementById('eventDate');
-        const eventIdInput = document.getElementById('eventId');
-        const eventStartTimeInput = document.getElementById('eventStartTime');
-        const eventEndTimeInput = document.getElementById('eventEndTime');
-        const deleteEventBtn = document.getElementById('deleteEventBtn');
-
 
         // --- Initialization ---
         async function initializeFirebase() {
@@ -809,7 +698,6 @@
 
                 // Pasang listener tombol login SEKARANG, jangan menunggu login.
                 loginBtn.addEventListener('click', handleGoogleLogin);
-                startClock(); // <-- Mulai jam
 
                 // Listener utama status otentikasi
                 onAuthStateChanged(auth, (user) => {
@@ -858,45 +746,29 @@
             const userArtifactsPath = `/artifacts/${appId}/users/${userId}`;
             tasksCollection = collection(db, `${userArtifactsPath}/tasks`);
             wishlistCollection = collection(db, `${userArtifactsPath}/wishlist`);
-            repeatedTasksCollection = collection(db, `${userArtifactsPath}/repeatedTasks`);
-            eventsCollection = collection(db, `${userArtifactsPath}/events`); // <-- Inisialisasi collection baru
+            eventsCollection = collection(db, `${userArtifactsPath}/events`); // Collection baru
 
             // Setup Listeners
             setupTabListeners();
             setupModalListeners();
             setupFormListeners(); // Ini sekarang juga memasang listener Gemini & Event
             setupFilterListeners();
-            setupRepeatedTaskModalLogic();
-            setupCalendarListeners(); // <-- Listener baru untuk kalender
+            setupCalendarListeners(); // Listener baru untuk kalender
             
             // Atur filter default secara visual
             updateFilterButtons(); 
             
-            // Render kalender
-            renderCalendar();
-            
             // Attach real-time listeners
             attachTaskListener();
             attachWishlistListener();
-            attachRepeatedTaskListener(); 
-            attachEventListener(); // <-- Listener baru untuk event
-        }
+            attachEventsListener(); // Listener baru
+            
+            // Mulai Jam
+            updateClock();
+            setInterval(updateClock, 1000); // Update jam setiap detik
 
-        // --- Clock Logic ---
-        function startClock() {
-            const locale = 'id-ID';
-            function updateTime() {
-                const now = new Date();
-                clockEl.textContent = now.toLocaleTimeString(locale, { hour12: false });
-                dateEl.textContent = now.toLocaleDateString(locale, { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                });
-            }
-            updateTime();
-            setInterval(updateTime, 1000); // Update setiap detik
+            // Render kalender awal
+            renderCalendar();
         }
 
         // --- Authentication Logic ---
@@ -926,15 +798,12 @@
         function cleanupListeners() {
             if (tasksUnsubscribe) tasksUnsubscribe();
             if (wishlistUnsubscribe) wishlistUnsubscribe();
-            if (repeatedTasksUnsubscribe) repeatedTasksUnsubscribe();
-            if (eventsUnsubscribe) eventsUnsubscribe(); // <-- Cleanup listener baru
+            if (eventsUnsubscribe) eventsUnsubscribe(); // Cleanup listener baru
             tasksUnsubscribe = null;
             wishlistUnsubscribe = null;
-            repeatedTasksUnsubscribe = null;
-            eventsUnsubscribe = null; // <-- Cleanup listener baru
+            eventsUnsubscribe = null;
             allTasks = [];
-            allRepeatedTasks = [];
-            allEvents = []; // <-- Cleanup array baru
+            allEvents = []; // Bersihkan array baru
             if (taskStatusChart) {
                 taskStatusChart.destroy();
                 taskStatusChart = null;
@@ -970,7 +839,6 @@
         }
 
         function setupModalListeners() {
-            // Task Modal
             showTaskModalBtn.addEventListener('click', () => taskModal.showModal());
             closeTaskModalBtn.addEventListener('click', () => {
                 taskModal.close();
@@ -983,27 +851,13 @@
                 }
             });
 
-            // Wishlist Modal
             showWishlistModalBtn.addEventListener('click', () => wishlistModal.showModal());
             closeWishlistModalBtn.addEventListener('click', () => wishlistModal.close());
             wishlistModal.addEventListener('click', (e) => {
                 if (e.target === wishlistModal) wishlistModal.close();
             });
 
-            // Repeated Task Modal
-            showRepeatedTaskModalBtn.addEventListener('click', () => repeatedTaskModal.showModal());
-            closeRepeatedTaskModalBtn.addEventListener('click', () => {
-                repeatedTaskModal.close();
-                repeatedTaskErrorEl.classList.add('hidden'); // Sembunyikan error
-            });
-            repeatedTaskModal.addEventListener('click', (e) => {
-                if (e.target === repeatedTaskModal) {
-                    repeatedTaskModal.close();
-                    repeatedTaskErrorEl.classList.add('hidden');
-                }
-            });
-
-            // Event Modal
+            // Listener untuk Event Modal (dari kalender)
             closeEventModalBtn.addEventListener('click', () => {
                 eventModal.close();
                 eventErrorEl.classList.add('hidden');
@@ -1023,18 +877,20 @@
         function setupFormListeners() {
             taskForm.addEventListener('submit', handleTaskSubmit);
             wishlistForm.addEventListener('submit', handleWishlistSubmit);
-            repeatedTaskForm.addEventListener('submit', handleRepeatedTaskSubmit);
-            geminiForm.addEventListener('submit', handleGeminiSubmit); // Listener Gemini
-            eventForm.addEventListener('submit', handleEventSubmit); // Listener Event
+            eventForm.addEventListener('submit', handleEventSubmit); // Form baru
+            
+            // LISTENER FORM GEMINI
+            geminiForm.addEventListener('submit', handleGeminiSubmit);
         }
 
-        function setupRepeatedTaskModalLogic() {
-            repeatTypeSelect.addEventListener('change', (e) => {
-                if (e.target.value === 'specific_days') {
-                    specificDaysWrapper.classList.remove('hidden');
-                } else {
-                    specificDaysWrapper.classList.add('hidden');
-                }
+        function setupCalendarListeners() {
+            prevMonthBtn.addEventListener('click', () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                renderCalendar();
+            });
+            nextMonthBtn.addEventListener('click', () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                renderCalendar();
             });
         }
 
@@ -1084,6 +940,21 @@
             }
         }
 
+        // --- Clock Logic ---
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            
+            clockEl.textContent = timeStr;
+            dateEl.textContent = dateStr;
+
+            // Periksa event mendatang setiap menit
+            if (now.getSeconds() === 0) {
+                renderUpcomingEvents();
+            }
+        }
+
         // --- Task Logic ---
         function attachTaskListener() {
             if (tasksUnsubscribe) tasksUnsubscribe(); // Unsubscribe from previous listener
@@ -1096,7 +967,7 @@
                 });
                 allTasks = tasks; // Store all tasks
                 renderFilteredTasks(); // Render based on filter
-                renderCalendar(); // <-- Update kalender saat task berubah
+                renderCalendar(); // Update kalender dengan data task baru
             }, (error) => {
                 console.error("Error fetching tasks:", error);
             });
@@ -1255,10 +1126,7 @@
                 let formattedDeadline = '<i>Tidak ada deadline</i>';
                 if (task.deadline) {
                     const deadlineDate = new Date(task.deadline);
-                    // Tambahkan 1 hari ke tanggal karena input <type="date">
-                    // seringkali menyimpan waktu sebagai T00:00:00 UTC,
-                    // yang bisa jadi "kemarin" di zona waktu lokal.
-                    // Ini adalah perbaikan sederhana untuk masalah zona waktu.
+                    // Menyesuaikan timezone untuk input tanggal
                     deadlineDate.setMinutes(deadlineDate.getMinutes() + deadlineDate.getTimezoneOffset());
                     formattedDeadline = deadlineDate.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
                 }
@@ -1437,203 +1305,6 @@
             }
         }
 
-        // --- Repeated Task Logic ---
-        function attachRepeatedTaskListener() {
-            if (repeatedTasksUnsubscribe) repeatedTasksUnsubscribe();
-            
-            const q = query(repeatedTasksCollection);
-            repeatedTasksUnsubscribe = onSnapshot(q, (snapshot) => {
-                const tasks = [];
-                snapshot.forEach(doc => {
-                    tasks.push({ id: doc.id, ...doc.data() });
-                });
-                allRepeatedTasks = tasks;
-                renderRepeatedTasks();
-                renderCalendar(); // <-- Update kalender saat tugas berulang berubah
-            }, (error) => {
-                console.error("Error fetching repeated tasks:", error);
-            });
-        }
-
-        async function handleRepeatedTaskSubmit(e) {
-            e.preventDefault();
-            repeatedTaskErrorEl.classList.add('hidden'); // Sembunyikan error lama
-            const formData = new FormData(repeatedTaskForm);
-            const taskName = formData.get('repeatedTaskName');
-            const repeatTime = formData.get('repeatTime');
-
-            // VALIDASI JAVASCRIPT BARU
-            if (!taskName || taskName.trim() === '' || !repeatTime) {
-                repeatedTaskErrorEl.textContent = 'Nama Task dan Pada Jam tidak boleh kosong.';
-                repeatedTaskErrorEl.classList.remove('hidden');
-                return; // Hentikan eksekusi
-            }
-
-            const selectedDays = [];
-            if (formData.get('repeatType') === 'specific_days') {
-                document.querySelectorAll('input[name="repeatDays"]:checked').forEach(checkbox => {
-                    selectedDays.push(checkbox.value);
-                });
-                if (selectedDays.length === 0) {
-                    // PERUBAHAN: Menampilkan error di UI, bukan di console
-                    repeatedTaskErrorEl.textContent = 'Jika memilih "Hari Tertentu", Anda harus memilih setidaknya satu hari.';
-                    repeatedTaskErrorEl.classList.remove('hidden');
-                    return; // Hentikan eksekusi
-                }
-            }
-
-            const task = {
-                name: taskName, // Gunakan variabel
-                repeatType: formData.get('repeatType'),
-                repeatTime: repeatTime, // Gunakan variabel
-                repeatDays: selectedDays, // Array hari ['mon', 'tue', ...]
-                lastCompletedDate: null, // "YYYY-MM-DD"
-                lastSkippedDate: null,   // "YYYY-MM-DD"
-                createdAt: serverTimestamp()
-            };
-
-            try {
-                await addDoc(repeatedTasksCollection, task);
-                repeatedTaskForm.reset();
-                specificDaysWrapper.classList.add('hidden');
-                repeatedTaskErrorEl.classList.add('hidden'); // Sembunyikan error saat sukses
-                repeatedTaskModal.close();
-            } catch (error) {
-                console.error("Error adding repeated task:", error);
-                // Tampilkan error ke pengguna jika gagal (misal: aturan firebase salah)
-                repeatedTaskErrorEl.textContent = `Gagal menyimpan: ${error.message}`;
-                repeatedTaskErrorEl.classList.remove('hidden');
-            }
-        }
-
-        function renderRepeatedTasks() {
-            const now = new Date();
-            const y = now.getFullYear();
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const d = String(now.getDate()).padStart(2, '0');
-            const todayDateStr = `${y}-${m}-${d}`; // "YYYY-MM-DD"
-            const todayDay = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][now.getDay()]; // "fri"
-            const currentTimeStr = now.toTimeString().split(' ')[0].substring(0, 5); // "HH:MM"
-
-            const tasksDueToday = allRepeatedTasks.filter(task => {
-                // 1. Cek apakah sudah dikerjakan atau di-skip hari ini
-                if (task.lastCompletedDate === todayDateStr || task.lastSkippedDate === todayDateStr) {
-                    return false;
-                }
-
-                // 2. Cek apakah sudah waktunya
-                if (task.repeatTime > currentTimeStr) {
-                    return false;
-                }
-
-                // 3. Cek jadwal
-                if (task.repeatType === 'daily') {
-                    return true; // Tampilkan jika harian dan jam sudah lewat
-                }
-
-                if (task.repeatType === 'specific_days') {
-                    return task.repeatDays.includes(todayDay); // Tampilkan jika harinya cocok
-                }
-
-                return false;
-            });
-
-            // Sortir berdasarkan waktu
-            tasksDueToday.sort((a, b) => a.repeatTime.localeCompare(b.repeatTime));
-
-            repeatedTaskListEl.innerHTML = '';
-            if (tasksDueToday.length === 0) {
-                noRepeatedTasksEl.classList.remove('hidden');
-            } else {
-                noRepeatedTasksEl.classList.add('hidden');
-                tasksDueToday.forEach(task => {
-                    const taskEl = document.createElement('div');
-                    taskEl.className = 'bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex items-center justify-between gap-4';
-                    taskEl.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-purple-500">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <div>
-                                <h5 class="font-semibold">${task.name}</h5>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Jatuh tempo pada jam ${task.repeatTime}</p>
-                            </div>
-                        </div>
-                        <div class="flex-shrink-0 flex items-center gap-2">
-                            <button data-id="${task.id}" class="complete-repeated-task-btn text-white bg-green-500 hover:bg-green-600 rounded-full p-2" title="Selesai">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                </svg>
-                            </button>
-                            <button data-id="${task.id}" class="skip-repeated-task-btn text-white bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-500 rounded-full p-2" title="Tolak/Lewati">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                            <button data-id="${task.id}" class="delete-repeated-task-btn text-gray-400 hover:text-red-500 dark:hover:text-red-400 p-2" title="Hapus permanen">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12.56 0c-.34.053-.68.107-1.022.166m11.538 0l-1.06-1.06a1.5 1.5 0 00-2.12 0l-1.06 1.06m-2.122 0l-1.06-1.06a1.5 1.5 0 00-2.12 0l-1.06 1.06m7.424 0l-3.71-3.71a1.5 1.5 0 00-2.12 0L6.63 5.79M15 11.25l-3-3m0 0l-3 3m3-3v7.5" />
-                                </svg>
-                            </button>
-                        </div>
-                    `;
-                    repeatedTaskListEl.appendChild(taskEl);
-                });
-            }
-
-            // Tambahkan listener untuk tombol-tombol baru
-            document.querySelectorAll('.complete-repeated-task-btn').forEach(btn => {
-                btn.addEventListener('click', () => handleCompleteRepeatedTask(btn.dataset.id));
-            });
-            document.querySelectorAll('.skip-repeated-task-btn').forEach(btn => {
-                btn.addEventListener('click', () => handleSkipRepeatedTask(btn.dataset.id));
-            });
-            document.querySelectorAll('.delete-repeated-task-btn').forEach(btn => {
-                btn.addEventListener('click', () => handleDeleteRepeatedTask(btn.dataset.id));
-            });
-        }
-
-        async function handleCompleteRepeatedTask(id) {
-            const now = new Date();
-            const y = now.getFullYear();
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const d = String(now.getDate()).padStart(2, '0');
-            const todayDateStr = `${y}-${m}-${d}`;
-
-            try {
-                const taskRef = doc(repeatedTasksCollection, id);
-                await updateDoc(taskRef, { lastCompletedDate: todayDateStr, lastSkippedDate: null }); // Set completed, reset skipped
-            } catch (error) {
-                console.error("Error completing repeated task:", error);
-            }
-        }
-
-        async function handleSkipRepeatedTask(id) {
-            const now = new Date();
-            const y = now.getFullYear();
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const d = String(now.getDate()).padStart(2, '0');
-            const todayDateStr = `${y}-${m}-${d}`;
-
-            try {
-                const taskRef = doc(repeatedTasksCollection, id);
-                await updateDoc(taskRef, { lastSkippedDate: todayDateStr, lastCompletedDate: null }); // Set skipped, reset completed
-            } catch (error) {
-                console.error("Error skipping repeated task:", error);
-            }
-        }
-
-        async function handleDeleteRepeatedTask(id) {
-            if (confirm('Apakah Anda yakin ingin MENGHAPUS PERMANEN tugas berulang ini?')) {
-                try {
-                    await deleteDoc(doc(repeatedTasksCollection, id));
-                } catch (error) {
-                    console.error("Error deleting repeated task:", error);
-                }
-            }
-        }
-
-
         // --- Wishlist Logic ---
         function attachWishlistListener() {
             if (wishlistUnsubscribe) wishlistUnsubscribe();
@@ -1680,7 +1351,7 @@
 
         function renderWishlist(items) {
             wishlistGridEl.innerHTML = '';
-            let totalHarga = 0; // <-- Variabel baru untuk total
+            let totalHarga = 0; // Variabel baru untuk total
             
             if (items.length === 0) {
                 noWishlistItemsEl.classList.remove('hidden');
@@ -1691,7 +1362,7 @@
             }
 
             items.forEach(item => {
-                totalHarga += item.price; // <-- Menambahkan harga ke total
+                totalHarga += item.price; // Menambahkan harga ke total
                 const itemEl = document.createElement('div');
                 itemEl.className = 'bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-col justify-between';
                 
@@ -1736,7 +1407,292 @@
             }
         }
         
-        // --- Gemini Logic (Dikembalikan ke tab) ---
+        // --- LOGIKA BARU: Kalender & Event ---
+
+        function attachEventsListener() {
+            if (eventsUnsubscribe) eventsUnsubscribe();
+            
+            const q = query(eventsCollection);
+            eventsUnsubscribe = onSnapshot(q, (snapshot) => {
+                const events = [];
+                snapshot.forEach(doc => {
+                    events.push({ id: doc.id, ...doc.data() });
+                });
+                allEvents = events;
+                renderCalendar(); // Perbarui kalender
+                renderUpcomingEvents(); // Perbarui daftar event mendatang
+            }, (error) => {
+                console.error("Error fetching events:", error);
+            });
+        }
+
+        function getTodayString() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`; // "YYYY-MM-DD"
+        }
+
+        function renderCalendar() {
+            calendarGridEl.innerHTML = '';
+            currentMonthYearEl.textContent = currentCalendarDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0=Minggu, 1=Senin
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Sel kosong sebelum hari pertama
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                calendarGridEl.innerHTML += `<div class="calendar-day other-month"></div>`;
+            }
+
+            const todayStr = getTodayString();
+
+            // Sel untuk setiap hari di bulan ini
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                if (dateStr === todayStr) {
+                    dayEl.classList.add('today');
+                }
+                
+                dayEl.dataset.date = dateStr;
+                dayEl.innerHTML = `<span class="day-number">${day}</span><div class="event-dot-container"></div>`;
+                
+                // Tambahkan dots untuk task
+                const tasksOnThisDay = allTasks.filter(task => task.deadline === dateStr && task.status !== 'completed');
+                tasksOnThisDay.forEach(() => {
+                    dayEl.querySelector('.event-dot-container').innerHTML += `<div class="event-dot event-dot-task"></div>`;
+                });
+
+                // Tambahkan dots untuk event
+                const dayOfWeek = new Date(dateStr).getDay();
+                const eventsOnThisDay = allEvents.filter(event => {
+                    if (event.repeatType === 'once' && event.date === dateStr) return true;
+                    if (event.repeatType === 'daily') return true;
+                    if (event.repeatType === 'weekly' && new Date(event.date).getDay() === dayOfWeek) return true;
+                    return false;
+                });
+                eventsOnThisDay.forEach(event => {
+                    dayEl.querySelector('.event-dot-container').innerHTML += `<div class="event-dot event-dot-event" data-event-id="${event.id}" title="${event.name}"></div>`;
+                });
+
+                // Klik untuk menambah/edit event
+                dayEl.addEventListener('click', (e) => {
+                    const targetDot = e.target.closest('.event-dot-event');
+                    if (targetDot) {
+                        e.stopPropagation(); // Jangan trigger klik sel jika mengklik dot
+                        openEventModal(dateStr, targetDot.dataset.eventId);
+                    } else {
+                        openEventModal(dateStr);
+                    }
+                });
+
+                calendarGridEl.appendChild(dayEl);
+            }
+        }
+
+        async function openEventModal(date, eventId = null) {
+            eventForm.reset();
+            eventErrorEl.classList.add('hidden');
+            eventForm.dataset.eventId = '';
+            eventDateInput.value = date;
+
+            if (eventId) {
+                // Mode Edit
+                eventModalTitle.textContent = 'Edit Event';
+                deleteEventBtn.classList.remove('hidden');
+                eventForm.dataset.eventId = eventId;
+                
+                try {
+                    const eventRef = doc(eventsCollection, eventId);
+                    const eventSnap = await getDoc(eventRef);
+                    if (eventSnap.exists()) {
+                        const event = eventSnap.data();
+                        eventNameInput.value = event.name;
+                        eventTimeInput.value = event.time;
+                        eventRepeatInput.value = event.repeatType;
+                        // Tanggal tidak diubah, karena event diedit dari tanggal tersebut
+                    } else {
+                        throw new Error("Event tidak ditemukan.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching event:", error);
+                    eventErrorEl.textContent = error.message;
+                    eventErrorEl.classList.remove('hidden');
+                    return;
+                }
+
+            } else {
+                // Mode Tambah Baru
+                eventModalTitle.textContent = 'Tambah Event Baru';
+                deleteEventBtn.classList.add('hidden');
+            }
+            eventModal.showModal();
+        }
+
+        async function handleEventSubmit(e) {
+            e.preventDefault();
+            eventErrorEl.classList.add('hidden');
+            
+            const eventId = e.target.dataset.eventId;
+            const eventData = {
+                name: eventNameInput.value,
+                date: eventDateInput.value, // YYYY-MM-DD
+                time: eventTimeInput.value, // HH:MM
+                repeatType: eventRepeatInput.value, // 'once', 'daily', 'weekly'
+                lastActionDate: null, // Untuk melacak 'done'/'skip'
+            };
+
+            if (!eventData.name || !eventData.time) {
+                eventErrorEl.textContent = 'Nama Event dan Jam tidak boleh kosong.';
+                eventErrorEl.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                if (eventId) {
+                    // Update event yang ada
+                    const eventRef = doc(eventsCollection, eventId);
+                    await updateDoc(eventRef, eventData);
+                } else {
+                    // Tambah event baru
+                    await addDoc(eventsCollection, eventData);
+                }
+                eventForm.reset();
+                eventModal.close();
+            } catch (error) {
+                console.error("Error saving event:", error);
+                eventErrorEl.textContent = `Gagal menyimpan: ${error.message}`;
+                eventErrorEl.classList.remove('hidden');
+            }
+        }
+
+        async function handleDeleteEvent() {
+            const eventId = eventForm.dataset.eventId;
+            if (!eventId || !confirm("Apakah Anda yakin ingin menghapus event ini?")) {
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(eventsCollection, eventId));
+                eventModal.close();
+            } catch (error) {
+                console.error("Error deleting event:", error);
+                eventErrorEl.textContent = `Gagal menghapus: ${error.message}`;
+                eventErrorEl.classList.remove('hidden');
+            }
+        }
+
+        // --- LOGIKA BARU: Upcoming Events (Menggantikan Repeated Task) ---
+
+        function renderUpcomingEvents() {
+            const now = new Date();
+            const todayDateStr = getTodayString(); // "YYYY-MM-DD"
+            const todayDay = now.getDay(); // 0-6 (Minggu-Sabtu)
+            const currentTimeStr = now.toTimeString().split(' ')[0].substring(0, 5); // "HH:MM"
+
+            const eventsDueToday = allEvents.filter(event => {
+                // 1. Cek apakah sudah ditandai 'done' atau 'skip' HARI INI
+                if (event.lastActionDate === todayDateStr) {
+                    return false;
+                }
+
+                // 2. Cek apakah sudah waktunya
+                if (event.time > currentTimeStr) {
+                    return false;
+                }
+
+                // 3. Cek jadwal
+                if (event.repeatType === 'once' && event.date === todayDateStr) {
+                    return true;
+                }
+                if (event.repeatType === 'daily') {
+                    return true;
+                }
+                if (event.repeatType === 'weekly' && new Date(event.date).getDay() === todayDay) {
+                    // Pastikan event ini tidak 'once' dari minggu lalu
+                    return new Date(event.date) <= now;
+                }
+
+                return false;
+            });
+
+            // Sortir berdasarkan waktu
+            eventsDueToday.sort((a, b) => a.time.localeCompare(b.time));
+
+            upcomingEventsListEl.innerHTML = '';
+            if (eventsDueToday.length === 0) {
+                noUpcomingEventsEl.classList.remove('hidden');
+            } else {
+                noUpcomingEventsEl.classList.add('hidden');
+                eventsDueToday.forEach(event => {
+                    const eventEl = document.createElement('div');
+                    eventEl.className = 'bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex items-center justify-between gap-4';
+                    eventEl.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-purple-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                                <h5 class="font-semibold">${event.name}</h5>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Jatuh tempo pada jam ${event.time}</p>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0 flex items-center gap-2">
+                            <button data-id="${event.id}" class="complete-event-btn text-white bg-green-500 hover:bg-green-600 rounded-full p-2" title="Selesai">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </button>
+                            <button data-id="${event.id}" class="skip-event-btn text-white bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-500 rounded-full p-2" title="Tolak/Lewati">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    upcomingEventsListEl.appendChild(eventEl);
+                });
+            }
+
+            // Tambahkan listener untuk tombol-tombol baru
+            document.querySelectorAll('.complete-event-btn').forEach(btn => {
+                btn.addEventListener('click', () => handleCompleteUpcomingEvent(btn.dataset.id));
+            });
+            document.querySelectorAll('.skip-event-btn').forEach(btn => {
+                btn.addEventListener('click', () => handleSkipUpcomingEvent(btn.dataset.id));
+            });
+        }
+
+        async function handleCompleteUpcomingEvent(id) {
+            const todayDateStr = getTodayString();
+            try {
+                const eventRef = doc(eventsCollection, id);
+                await updateDoc(eventRef, { lastActionDate: todayDateStr }); // Set 'done' untuk hari ini
+            } catch (error) {
+                console.error("Error completing event:", error);
+            }
+        }
+
+        async function handleSkipUpcomingEvent(id) {
+            const todayDateStr = getTodayString();
+            try {
+                const eventRef = doc(eventsCollection, id);
+                await updateDoc(eventRef, { lastActionDate: todayDateStr }); // Set 'skipped' untuk hari ini
+            } catch (error) {
+                console.error("Error skipping event:", error);
+            }
+        }
+
+
+        // --- FUNGSI-FUNGSI GEMINI ---
 
         /**
          * Menangani submit form Gemini
@@ -1864,241 +1820,6 @@
 
             return safeText;
         }
-
-        // --- FITUR BARU: Calendar Logic ---
-
-        function setupCalendarListeners() {
-            prevMonthBtn.addEventListener('click', () => {
-                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
-                renderCalendar();
-            });
-            nextMonthBtn.addEventListener('click', () => {
-                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
-                renderCalendar();
-            });
-        }
-
-        function attachEventListener() {
-            if (eventsUnsubscribe) eventsUnsubscribe();
-            
-            const q = query(eventsCollection);
-            eventsUnsubscribe = onSnapshot(q, (snapshot) => {
-                const events = [];
-                snapshot.forEach(doc => {
-                    events.push({ id: doc.id, ...doc.data() });
-                });
-                allEvents = events;
-                renderCalendar(); // Update kalender saat event berubah
-            }, (error) => {
-                console.error("Error fetching events:", error);
-            });
-        }
-
-        function renderCalendar() {
-            calendarGrid.innerHTML = '';
-            const year = currentCalendarDate.getFullYear();
-            const month = currentCalendarDate.getMonth(); // 0-11
-            
-            currentMonthYearEl.textContent = currentCalendarDate.toLocaleDateString('id-ID', {
-                month: 'long',
-                year: 'numeric'
-            });
-
-            const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0=Minggu, 1=Senin, ...
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const daysInPrevMonth = new Date(year, month, 0).getDate();
-
-            // 1. Tambahkan hari-hari dari bulan sebelumnya
-            for (let i = 0; i < firstDayOfMonth; i++) {
-                const day = daysInPrevMonth - firstDayOfMonth + 1 + i;
-                calendarGrid.appendChild(createCalendarDay(day, month - 1, year, true));
-            }
-
-            // 2. Tambahkan hari-hari dari bulan ini
-            for (let i = 1; i <= daysInMonth; i++) {
-                calendarGrid.appendChild(createCalendarDay(i, month, year, false));
-            }
-
-            // 3. Tambahkan hari-hari dari bulan berikutnya
-            const totalDaysRendered = firstDayOfMonth + daysInMonth;
-            const nextMonthDays = (7 - (totalDaysRendered % 7)) % 7;
-            for (let i = 1; i <= nextMonthDays; i++) {
-                calendarGrid.appendChild(createCalendarDay(i, month + 1, year, true));
-            }
-        }
-        
-        function createCalendarDay(day, month, year, isOtherMonth) {
-            const date = new Date(year, month, day);
-            const dateStr = date.toISOString().split('T')[0]; // "YYYY-MM-DD"
-            const dayEl = document.createElement('div');
-            dayEl.className = 'calendar-day';
-            if (isOtherMonth) {
-                dayEl.classList.add('other-month');
-            }
-
-            // Cek apakah hari ini
-            const today = new Date();
-            if (date.toDateString() === today.toDateString()) {
-                dayEl.classList.add('today');
-            }
-
-            const dayNumber = document.createElement('span');
-            dayNumber.className = 'day-number';
-            dayNumber.textContent = day;
-            dayEl.appendChild(dayNumber);
-
-            // Tambahkan container untuk dot
-            const dotContainer = document.createElement('div');
-            dotContainer.className = 'event-dot-container';
-            dayEl.appendChild(dotContainer);
-
-            // Cek Task
-            const tasksOnThisDay = allTasks.filter(task => {
-                if (!task.deadline) return false;
-                // Perbaiki perbandingan tanggal dengan mengabaikan zona waktu
-                const taskDate = new Date(task.deadline);
-                taskDate.setMinutes(taskDate.getMinutes() + taskDate.getTimezoneOffset());
-                return taskDate.toDateString() === date.toDateString();
-            });
-            if (tasksOnThisDay.length > 0) {
-                dotContainer.appendChild(createEventDot('task'));
-            }
-
-            // Cek Event
-            const eventsOnThisDay = allEvents.filter(event => {
-                if (event.type === 'event') {
-                    return event.date === dateStr;
-                }
-                return false;
-            });
-            if (eventsOnThisDay.length > 0) {
-                dotContainer.appendChild(createEventDot('event'));
-            }
-
-            // Cek Event Berulang (misal: kuliah)
-            const dayOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][date.getDay()];
-            const repeatedEventsOnThisDay = allEvents.filter(event => {
-                return event.type === 'repeated' && event.repeatDays.includes(dayOfWeek);
-            });
-            if (repeatedEventsOnThisDay.length > 0) {
-                dotContainer.appendChild(createEventDot('repeated'));
-            }
-
-            // Tambahkan listener klik (hanya untuk hari di bulan ini)
-            if (!isOtherMonth) {
-                dayEl.addEventListener('click', () => showEventModal(dateStr, eventsOnThisDay, repeatedEventsOnThisDay));
-            }
-
-            return dayEl;
-        }
-
-        function createEventDot(type) {
-            const dot = document.createElement('span');
-            dot.className = `event-dot event-dot-${type}`;
-            dot.title = type === 'task' ? 'Deadline Task' : (type === 'event' ? 'Event' : 'Event Berulang');
-            return dot;
-        }
-
-        function showEventModal(dateStr, events, repeatedEvents) {
-            // Untuk demo ini, kita hanya fokus pada 1 event per hari
-            // ATAU membuat event baru
-            const event = events[0]; // Ambil event pertama jika ada
-
-            eventForm.reset();
-            eventErrorEl.classList.add('hidden');
-            eventDateInput.value = dateStr;
-
-            if (event) {
-                // Mode Edit
-                eventIdInput.value = event.id;
-                eventNameInput.value = event.name;
-                eventStartTimeInput.value = event.startTime || '';
-                eventEndTimeInput.value = event.endTime || '';
-                document.querySelector(`input[name="eventType"][value="${event.type}"]`).checked = true;
-                deleteEventBtn.classList.remove('hidden');
-            } else {
-                // Mode Tambah Baru
-                eventIdInput.value = '';
-                deleteEventBtn.classList.add('hidden');
-                document.querySelector(`input[name="eventType"][value="event"]`).checked = true;
-            }
-            
-            // TODO: Tampilkan juga 'repeatedEvents' dalam daftar
-            // Saat ini, modal hanya menangani 1 event sekali atau membuat baru
-
-            eventModal.showModal();
-        }
-
-        async function handleEventSubmit(e) {
-            e.preventDefault();
-            eventErrorEl.classList.add('hidden');
-
-            const eventName = eventNameInput.value.trim();
-            if (!eventName) {
-                eventErrorEl.textContent = 'Nama Event tidak boleh kosong.';
-                eventErrorEl.classList.remove('hidden');
-                return;
-            }
-
-            const eventId = eventIdInput.value;
-            const eventType = document.querySelector('input[name="eventType"]:checked').value;
-
-            const eventData = {
-                name: eventName,
-                date: eventDateInput.value,
-                startTime: eventStartTimeInput.value || null,
-                endTime: eventEndTimeInput.value || null,
-                type: eventType,
-                repeatDays: eventType === 'repeated' ? getDayOfWeekFromDate(eventDateInput.value) : []
-            };
-
-            try {
-                if (eventId) {
-                    // Update event
-                    const eventRef = doc(eventsCollection, eventId);
-                    await updateDoc(eventRef, eventData);
-                } else {
-                    // Add event baru
-                    await addDoc(eventsCollection, eventData);
-                }
-                eventForm.reset();
-                eventModal.close();
-            } catch (error) {
-                console.error("Error saving event:", error);
-                eventErrorEl.textContent = `Gagal menyimpan event: ${error.message}`;
-                eventErrorEl.classList.remove('hidden');
-            }
-        }
-
-        async function handleDeleteEvent() {
-            const eventId = eventIdInput.value;
-            if (!eventId) return;
-
-            if (confirm("Apakah Anda yakin ingin menghapus event ini?")) {
-                try {
-                    await deleteDoc(doc(eventsCollection, eventId));
-                    eventForm.reset();
-                    eventModal.close();
-                } catch (error) {
-                    console.error("Error deleting event:", error);
-                    eventErrorEl.textContent = `Gagal menghapus event: ${error.message}`;
-                    eventErrorEl.classList.remove('hidden');
-                }
-            }
-        }
-
-        function getDayOfWeekFromDate(dateStr) {
-            // dateStr format "YYYY-MM-DD"
-            const date = new Date(dateStr);
-            date.setMinutes(date.getMinutes() + date.getTimezoneOffset()); // Koreksi zona waktu
-            const day = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][date.getDay()];
-            return [day]; // Kembalikan sebagai array
-        }
-
-        // --- Custom Confirm ---
-        // Ganti window.confirm dengan fungsi kustom jika diperlukan,
-        // karena alert/confirm bawaan mungkin diblokir.
-        // Untuk saat ini, kita tetap gunakan confirm() bawaan.
 
         // --- Start App ---
         initializeFirebase();
