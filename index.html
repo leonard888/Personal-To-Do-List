@@ -60,194 +60,221 @@
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 h-full overflow-hidden">
 
-    <div class="flex h-full">
-        <!-- Sidebar Navigation -->
-        <nav class="w-20 md:w-64 bg-white dark:bg-gray-800 shadow-lg flex flex-col">
-            <div class="p-4 md:p-6 flex items-center justify-center md:justify-start">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-blue-600 dark:text-blue-500">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
+    <!-- Global Loading Overlay -->
+    <div id="loadingOverlay" class="absolute inset-0 bg-gray-100 dark:bg-gray-900 flex items-center justify-center z-50">
+        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
+        <p class="mt-4 text-lg">Memuat Dashboard...</p>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="hidden h-full flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-sm text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 text-blue-600 dark:text-blue-500 mx-auto mb-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
+            </svg>
+            <h1 class="text-2xl font-bold mb-2">Personal Dashboard</h1>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Silakan login untuk melanjutkan.</p>
+            <button id="loginWithGoogleBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.283 10.356h-8.327v3.451h4.792c-.446 2.193-2.313 3.453-4.792 3.453a5.27 5.27 0 01-5.279-5.28 5.27 5.27 0 015.279-5.279c1.259 0 2.397.447 3.29 1.178l2.6-2.599A8.98 8.98 0 0011.956 2a9 9 0 100 18c5.04 0 8.79-3.67 8.79-8.79 0-.613-.056-1.227-.163-1.831z" />
                 </svg>
-                <span class="hidden md:block ml-3 text-xl font-bold">Dashboard</span>
-            </div>
-            <ul class="flex-1 mt-6 space-y-2 px-2 md:px-4">
-                <li>
-                    <button data-tab="dashboard" class="nav-tab w-full flex items-center p-3 rounded-lg text-white bg-blue-600 dark:bg-blue-500 font-medium">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v3.75m0-3.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                        <span class="hidden md:block ml-4">Dashboard</span>
-                    </button>
-                </li>
-                <li>
-                    <button data-tab="wishlist" class="nav-tab w-full flex items-center p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.772M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
-                        <span class="hidden md:block ml-4">Wishlist</span>
-                    </button>
-                </li>
-                <!-- Google Drive Tab Dihilangkan -->
-            </ul>
-            <div class="p-4 mt-auto">
-                <div id="authStatus" class="flex items-center justify-center md:justify-start">
-                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
-                    <span class="hidden md:block ml-2 text-sm text-gray-500">Connecting...</span>
+                Login dengan Google
+            </button>
+            <p id="loginError" class="text-red-500 text-sm mt-4 hidden"></p>
+        </div>
+    </div>
+
+    <!-- Main Application (Hidden by default) -->
+    <div id="mainApp" class="hidden h-full">
+        <div class="flex h-full w-full">
+            <!-- Sidebar Navigation -->
+            <nav class="w-20 md:w-64 bg-white dark:bg-gray-800 shadow-lg flex flex-col">
+                <div class="p-4 md:p-6 flex items-center justify-center md:justify-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-blue-600 dark:text-blue-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
+                    </svg>
+                    <span class="hidden md:block ml-3 text-xl font-bold">Dashboard</span>
                 </div>
-            </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="flex-1 overflow-y-auto p-4 md:p-8">
-            <div id="loadingOverlay" class="absolute inset-0 bg-gray-100 dark:bg-gray-900 flex items-center justify-center z-50">
-                <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
-            </div>
-            
-            <!-- Dashboard Tab -->
-            <div id="dashboard" class="tab-content space-y-6">
-                <!-- Stock Market Section -->
-                <section>
-                    <h2 class="text-2xl font-bold mb-4">Market Overview</h2>
-                    <!-- TradingView Ticker Tape Widget -->
-                    <div class="tradingview-widget-container">
-                        <div class="tradingview-widget-container__widget"></div>
-                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-                        {
-                        "symbols": [
-                            {
-                            "proName": "IDX:COMPOSITE",
-                            "title": "IHSG"
-                            },
-                            {
-                            "proName": "IDX:BBCA",
-                            "title": "BBCA"
-                            },
-                            {
-                            "proName": "IDX:BBRI",
-                            "title": "BBRI"
-                            },
-                            {
-                            "proName": "IDX:TLKM",
-                            "title": "TLKM"
-                            },
-                            {
-                            "proName": "IDX:ASII",
-                            "title": "ASII"
-                            }
-                        ],
-                        "showSymbolLogo": true,
-                        "colorTheme": "dark",
-                        "isTransparent": false,
-                        "displayMode": "adaptive",
-                        "locale": "id"
-                        }
-                        </script>
-                    </div>
-                    <!-- TradingView Chart Widget -->
-                    <div class="tradingview-widget-container mt-4 resizable-chart-container" style="height:400px; width:100%;">
-                        <div id="tradingview_chart" style="height:100%; width:100%;"></div>
-                        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                        <script type="text/javascript">
-                            new TradingView.widget({
-                                "width": "100%",
-                                "height": "100%",
-                                "symbol": "IDX:COMPOSITE",
-                                "interval": "D",
-                                "timezone": "Asia/Jakarta",
-                                "theme": "dark",
-                                "style": "1",
-                                "locale": "id",
-                                "enable_publishing": false,
-                                "allow_symbol_change": true,
-                                "container_id": "tradingview_chart"
-                            });
-                        </script>
-                    </div>
-                </section>
-
-                <!-- Repeated Task Section -->
-                <section id="repeatedTaskSection">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-bold">Tugas Berulang</h2>
-                        <button id="showRepeatedTaskModal" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                <ul class="flex-1 mt-6 space-y-2 px-2 md:px-4">
+                    <li>
+                        <button data-tab="dashboard" class="nav-tab w-full flex items-center p-3 rounded-lg text-white bg-blue-600 dark:bg-blue-500 font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v3.75m0-3.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <span class="hidden md:block ml-4">Dashboard</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button data-tab="wishlist" class="nav-tab w-full flex items-center p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.772M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
+                            <span class="hidden md:block ml-4">Wishlist</span>
+                        </button>
+                    </li>
+                </ul>
+                <div class="p-4 mt-auto">
+                    <!-- User Info & Logout Button -->
+                    <div id="authStatus" class="flex flex-col items-center md:items-start">
+                        <div class="flex items-center mb-2">
+                            <img id="userAvatar" src="" alt="Avatar" class="w-8 h-8 rounded-full mr-2">
+                            <span id="userName" class="hidden md:block text-sm font-medium"></span>
+                        </div>
+                        <button id="logoutBtn" class="w-full text-sm flex items-center justify-center md:justify-start p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
                             </svg>
-                            Tambah Tugas Berulang
+                            <span class="hidden md:block ml-2">Logout</span>
                         </button>
                     </div>
-                    <div id="repeatedTaskList" class="space-y-3">
-                        <!-- Repeated task items akan ditambahkan di sini oleh JavaScript -->
-                        <p id="noRepeatedTasks" class="text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">Tidak ada tugas berulang yang jatuh tempo saat ini.</p>
-                    </div>
-                </section>
+                </div>
+            </nav>
 
-                <!-- To-Do List Section -->
-                <section class="mt-6"> <!-- Tambahkan margin top -->
+            <!-- Main Content -->
+            <main class="flex-1 overflow-y-auto p-4 md:p-8">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content space-y-6">
+                    <!-- Stock Market Section -->
+                    <section>
+                        <h2 class="text-2xl font-bold mb-4">Market Overview</h2>
+                        <!-- TradingView Ticker Tape Widget -->
+                        <div class="tradingview-widget-container">
+                            <div class="tradingview-widget-container__widget"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                            {
+                            "symbols": [
+                                {
+                                "proName": "IDX:COMPOSITE",
+                                "title": "IHSG"
+                                },
+                                {
+                                "proName": "IDX:BBCA",
+                                "title": "BBCA"
+                                },
+                                {
+                                "proName": "IDX:BBRI",
+                                "title": "BBRI"
+                                },
+                                {
+                                "proName": "IDX:TLKM",
+                                "title": "TLKM"
+                                },
+                                {
+                                "proName": "IDX:ASII",
+                                "title": "ASII"
+                                }
+                            ],
+                            "showSymbolLogo": true,
+                            "colorTheme": "dark",
+                            "isTransparent": false,
+                            "displayMode": "adaptive",
+                            "locale": "id"
+                            }
+                            </script>
+                        </div>
+                        <!-- TradingView Chart Widget -->
+                        <div class="tradingview-widget-container mt-4 resizable-chart-container" style="height:400px; width:100%;">
+                            <div id="tradingview_chart" style="height:100%; width:100%;"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                            <script type="text/javascript">
+                                new TradingView.widget({
+                                    "width": "100%",
+                                    "height": "100%",
+                                    "symbol": "IDX:COMPOSITE",
+                                    "interval": "D",
+                                    "timezone": "Asia/Jakarta",
+                                    "theme": "dark",
+                                    "style": "1",
+                                    "locale": "id",
+                                    "enable_publishing": false,
+                                    "allow_symbol_change": true,
+                                    "container_id": "tradingview_chart"
+                                });
+                            </script>
+                        </div>
+                    </section>
+
+                    <!-- Repeated Task Section -->
+                    <section id="repeatedTaskSection">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold">Tugas Berulang</h2>
+                            <button id="showRepeatedTaskModal" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
+                                Tambah Tugas Berulang
+                            </button>
+                        </div>
+                        <div id="repeatedTaskList" class="space-y-3">
+                            <!-- Repeated task items akan ditambahkan di sini oleh JavaScript -->
+                            <p id="noRepeatedTasks" class="text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">Tidak ada tugas berulang yang jatuh tempo saat ini.</p>
+                        </div>
+                    </section>
+
+                    <!-- To-Do List Section -->
+                    <section class="mt-6"> <!-- Tambahkan margin top -->
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold">To-Do List</h2>
+                            <button id="showTaskModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                                Tambah Task
+                            </button>
+                        </div>
+
+                        <!-- Task Status Chart & Dashboard -->
+                        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+                            <!-- Chart -->
+                            <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md h-64 relative">
+                                <h4 class="text-lg font-semibold text-center mb-2">Visualisasi Status Task</h4>
+                                <canvas id="taskStatusChart"></canvas>
+                            </div>
+                            
+                            <!-- Cards -->
+                            <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <div id="filterAll" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                    <h4 class="text-sm font-medium text-gray-700 dark:text-white">Total Tasks</h4>
+                                    <p id="totalTasks" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+                                </div>
+                                <div id="filterPending" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                    <h4 class="text-sm font-medium text-gray-700 dark:text-white">Pending</h4>
+                                    <p id="pendingTasks" class="text-3xl font-bold text-yellow-500">0</p>
+                                </div>
+                                <div id="filterInProgress" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                    <h4 class="text-sm font-medium text-gray-700 dark:text-white">In Progress</h4>
+                                    <p id="inProgressTasks" class="text-3xl font-bold text-blue-500">0</p>
+                                </div>
+                                <div id="filterCompleted" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                    <h4 class="text-sm font-medium text-gray-700 dark:text-white">Completed</h4>
+                                    <p id="completedTasks" class="text-3xl font-bold text-green-500">0</p>
+                                </div>
+                                <div id="filterDeadline" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md ring-2 ring-transparent cursor-pointer filter-card transition-all duration-200">
+                                    <h4 class="text-sm font-medium text-gray-700 dark:text-white">Mendekati Deadline</h4>
+                                    <p id="deadlineWarning" class="text-3xl font-bold text-red-500">0</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task List -->
+                        <div id="taskList" class="space-y-4">
+                            <!-- Task items akan ditambahkan di sini oleh JavaScript -->
+                            <p id="noTasks" class="text-center text-gray-500 dark:text-gray-400">Belum ada task. Silakan tambahkan!</p>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Wishlist Tab -->
+                <div id="wishlist" class="tab-content hidden space-y-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-bold">To-Do List</h2>
-                        <button id="showTaskModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                        <h2 class="text-2xl font-bold">Wishlist Belanja</h2>
+                        <button id="showWishlistModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                            Tambah Task
+                            Tambah Barang
                         </button>
                     </div>
-
-                    <!-- Task Status Chart & Dashboard -->
-                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
-                        <!-- Chart -->
-                        <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md h-64 relative">
-                            <h4 class="text-lg font-semibold text-center mb-2">Visualisasi Status Task</h4>
-                            <canvas id="taskStatusChart"></canvas>
-                        </div>
-                        
-                        <!-- Cards -->
-                        <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-4">
-                            <!-- PERUBAHAN DI SINI: 'ring-2 ring-blue-500' dihapus dari 'filterAll' -->
-                            <div id="filterAll" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                <h4 class="text-sm font-medium text-gray-700 dark:text-white">Total Tasks</h4>
-                                <p id="totalTasks" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
-                            </div>
-                            <div id="filterPending" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                <h4 class="text-sm font-medium text-gray-700 dark:text-white">Pending</h4>
-                                <p id="pendingTasks" class="text-3xl font-bold text-yellow-500">0</p>
-                            </div>
-                            <div id="filterInProgress" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                <h4 class="text-sm font-medium text-gray-700 dark:text-white">In Progress</h4>
-                                <p id="inProgressTasks" class="text-3xl font-bold text-blue-500">0</p>
-                            </div>
-                            <div id="filterCompleted" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                <h4 class="text-sm font-medium text-gray-700 dark:text-white">Completed</h4>
-                                <p id="completedTasks" class="text-3xl font-bold text-green-500">0</p>
-                            </div>
-                            <div id="filterDeadline" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md ring-2 ring-transparent cursor-pointer filter-card transition-all duration-200">
-                                <h4 class="text-sm font-medium text-gray-700 dark:text-white">Mendekati Deadline</h4>
-                                <p id="deadlineWarning" class="text-3xl font-bold text-red-500">0</p>
-                            </div>
-                            <!-- Card "Tampilkan Semua" telah dihapus dan fungsinya dipindahkan ke "Total Tasks" -->
-                        </div>
+                    <div id="wishlistGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Wishlist items akan ditambahkan di sini -->
+                        <p id="noWishlistItems" class="text-center text-gray-500 dark:text-gray-400 col-span-full">Belum ada barang di wishlist.</p>
                     </div>
-
-                    <!-- Task List -->
-                    <div id="taskList" class="space-y-4">
-                        <!-- Task items akan ditambahkan di sini oleh JavaScript -->
-                        <p id="noTasks" class="text-center text-gray-500 dark:text-gray-400">Belum ada task. Silakan tambahkan!</p>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Wishlist Tab -->
-            <div id="wishlist" class="tab-content hidden space-y-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold">Wishlist Belanja</h2>
-                    <button id="showWishlistModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                        Tambah Barang
-                    </button>
                 </div>
-                <div id="wishlistGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Wishlist items akan ditambahkan di sini -->
-                    <p id="noWishlistItems" class="text-center text-gray-500 dark:text-gray-400 col-span-full">Belum ada barang di wishlist.</p>
-                </div>
-            </div>
 
-            <!-- Google Drive Tab Dihilangkan -->
-
-        </main>
+            </main>
+        </div>
     </div>
 
     <!-- Task Modal -->
@@ -258,7 +285,7 @@
             <div id="taskError" class="hidden text-sm text-red-500 bg-red-100 dark:bg-red-900 dark:text-red-200 p-3 rounded-md"></div>
             <div>
                 <label for="taskName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Task</label>
-                <!-- 'required' DIHAPUS DARI SINI -->
+                <!-- 'required' DIHAPUS -->
                 <input type="text" id="taskName" name="taskName" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
             </div>
             <div>
@@ -279,7 +306,7 @@
             </div>
             <div>
                 <label for="taskDeadline" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Deadline</label>
-                <!-- ATRIBUT 'required' DIHAPUS DARI SINI -->
+                <!-- 'required' DIHAPUS -->
                 <input type="date" id="taskDeadline" name="taskDeadline" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
             </div>
             <div class="flex justify-end space-x-3 pt-4">
@@ -317,12 +344,12 @@
         <form id="repeatedTaskForm" class="p-6 space-y-4">
             <h3 class="text-xl font-medium">Tambah Tugas Berulang</h3>
             
-            <!-- ELEMEN PESAN ERROR BARU DITAMBAHKAN DI SINI -->
+            <!-- ELEMEN PESAN ERROR BARU -->
             <div id="repeatedTaskError" class="hidden text-sm text-red-500 bg-red-100 dark:bg-red-900 dark:text-red-200 p-3 rounded-md"></div>
 
             <div>
                 <label for="repeatedTaskName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Task</label>
-                <!-- 'required' DIHAPUS DARI SINI -->
+                <!-- 'required' DIHAPUS -->
                 <input type="text" id="repeatedTaskName" name="repeatedTaskName" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
             </div>
             <div>
@@ -367,7 +394,7 @@
             </div>
             <div>
                 <label for="repeatTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pada Jam</label>
-                <!-- 'required' DIHAPUS DARI SINI -->
+                <!-- 'required' DIHAPUS -->
                 <input type="time" id="repeatTime" name="repeatTime" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
             </div>
             <div class="flex justify-end space-x-3 pt-4">
@@ -384,9 +411,10 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
-            signInAnonymously, 
-            signInWithCustomToken, 
-            onAuthStateChanged 
+            onAuthStateChanged,
+            GoogleAuthProvider,
+            signInWithPopup,
+            signOut
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { 
             getFirestore, 
@@ -402,38 +430,12 @@
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Firebase Configuration ---
-        // These variables (__app_id, __firebase_config, __initial_auth_token) are provided by the environment.
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         
         // ======================================================================
         // PERHATIAN UNTUK RUNNING LOKAL / GITHUB PAGES
         // ======================================================================
-        // Kode di bawah ini MENGHARAPKAN variabel `__firebase_config` dari environment.
-        // Jika Anda menjalankan file ini secara lokal, `__firebase_config` tidak akan ada,
-        // dan `firebaseConfig` akan menjadi objek kosong (`{}`), menyebabkan "Connection Error".
-        //
-        // UNTUK MEMPERBAIKINYA:
-        // 1. Buat proyek Anda sendiri di https://firebase.google.com/
-        // 2. Di proyek Anda, aktifkan 'Firestore Database' dan 'Anonymous Authentication'.
-        // 3. Buka Project Settings -> General -> "Your apps" -> "Web".
-        // 4. Salin objek `firebaseConfig` (terlihat seperti di bawah).
-        // 5. GANTI baris `const firebaseConfig = ...` di bawah ini dengan objek config Anda.
-        //
-        //    Contoh pengganti:
-        //    const firebaseConfig = {
-        //      apiKey: "AIza....",
-        //      authDomain: "your-project-id.firebaseapp.com",
-        //      projectId: "your-project-id",
-        //      storageBucket: "your-project-id.appspot.com",
-        //      messagingSenderId: "...",
-        //      appId: "1:..."
-        //    };
-        // ======================================================================
-        
-        // --- PERUBAHAN DI SINI ---
-        // Versi ini untuk LOKAL/GITHUB PAGE.
-        // Ini akan error 'custom-token-mismatch' di pratinjau,
-        // tapi akan bekerja di file lokal Anda.
+        // GANTI DENGAN KONFIGURASI PRIBADI ANDA UNTUK LOKAL
         const firebaseConfig = {
 			apiKey: "AIzaSyCiIZRywKs7nF92z6_FWMzhOAaRe9SOOJE",
 			authDomain: "personal-to-do-list-5d959.firebaseapp.com",
@@ -443,6 +445,7 @@
 			appId: "1:713295970134:web:6650db1a681742dc30a0f7",
 			measurementId: "G-QG3GEXP3HC"
 		};
+        // ======================================================================
 		
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
@@ -454,12 +457,18 @@
         let taskStatusChart = null;
         let allTasks = [];
         let allRepeatedTasks = [];
-        // PERUBAHAN DI SINI: Mengganti filter default dari 'all' menjadi 'active'
-        let currentFilter = 'active';
+        let currentFilter = 'active'; // Filter default baru
 
         // --- DOM Elements ---
         const loadingOverlay = document.getElementById('loadingOverlay');
+        const loginScreen = document.getElementById('loginScreen');
+        const mainApp = document.getElementById('mainApp');
+        const loginBtn = document.getElementById('loginWithGoogleBtn');
+        const loginErrorEl = document.getElementById('loginError');
+        const logoutBtn = document.getElementById('logoutBtn');
         const authStatusEl = document.getElementById('authStatus');
+        const userAvatarEl = document.getElementById('userAvatar');
+        const userNameEl = document.getElementById('userName');
         
         // Tabs
         const tabs = document.querySelectorAll('.nav-tab');
@@ -470,8 +479,7 @@
         const showTaskModalBtn = document.getElementById('showTaskModal');
         const closeTaskModalBtn = document.getElementById('closeTaskModal');
         const taskForm = document.getElementById('taskForm');
-        // Elemen error baru ditambahkan
-        const taskErrorEl = document.getElementById('taskError');
+        const taskErrorEl = document.getElementById('taskError'); // Error modal
         const taskListEl = document.getElementById('taskList');
         const noTasksEl = document.getElementById('noTasks');
         const totalTasksEl = document.getElementById('totalTasks');
@@ -479,7 +487,7 @@
         const inProgressTasksEl = document.getElementById('inProgressTasks');
         const completedTasksEl = document.getElementById('completedTasks');
         const deadlineWarningEl = document.getElementById('deadlineWarning');
-        const deadlineWarningCard = document.getElementById('filterDeadline'); // Updated ID
+        const deadlineWarningCard = document.getElementById('filterDeadline');
 
         // Wishlist Elements
         const wishlistModal = document.getElementById('wishlistModal');
@@ -494,12 +502,11 @@
         const showRepeatedTaskModalBtn = document.getElementById('showRepeatedTaskModal');
         const closeRepeatedTaskModalBtn = document.getElementById('closeRepeatedTaskModal');
         const repeatedTaskForm = document.getElementById('repeatedTaskForm');
+        const repeatedTaskErrorEl = document.getElementById('repeatedTaskError'); // Error modal
         const repeatedTaskListEl = document.getElementById('repeatedTaskList');
         const noRepeatedTasksEl = document.getElementById('noRepeatedTasks');
         const repeatTypeSelect = document.getElementById('repeatType');
         const specificDaysWrapper = document.getElementById('specificDaysWrapper');
-        // Elemen error baru ditambahkan di daftar DOM
-        const repeatedTaskErrorEl = document.getElementById('repeatedTaskError');
 
         // --- Initialization ---
         async function initializeFirebase() {
@@ -508,49 +515,42 @@
                 db = getFirestore(app);
                 auth = getAuth(app);
 
-                onAuthStateChanged(auth, async (user) => {
+                // Listener utama status otentikasi
+                onAuthStateChanged(auth, (user) => {
                     if (user) {
+                        // Pengguna berhasil login
                         userId = user.uid;
-                        authStatusEl.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-500">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span class="hidden md:block ml-2 text-sm text-green-500">Connected</span>
-                        `;
-                        // User is signed in, initialize app data
+                        
+                        // Tampilkan UI utama
+                        mainApp.classList.remove('hidden');
+                        loginScreen.classList.add('hidden');
+                        loadingOverlay.style.display = 'none';
+
+                        // Perbarui UI sidebar
+                        userAvatarEl.src = user.photoURL || 'https://placehold.co/40x40/E2E8F0/64748B?text=A';
+                        userNameEl.textContent = user.displayName || 'Pengguna';
+                        authStatusEl.classList.remove('hidden');
+
+                        // Inisialisasi logika aplikasi (listener database, dll)
                         initializeAppLogic();
                     } else {
-                        // User is signed out, try to sign in
-                        await performSignIn();
+                        // Pengguna logout atau belum login
+                        userId = null;
+                        
+                        // Tampilkan layar login
+                        mainApp.classList.add('hidden');
+                        loginScreen.classList.remove('hidden');
+                        loadingOverlay.style.display = 'none';
+                        authStatusEl.classList.add('hidden');
+
+                        // Hentikan listener data
+                        cleanupListeners();
                     }
                 });
 
-                if (!auth.currentUser) {
-                    await performSignIn();
-                }
-
             } catch (error) {
                 console.error("Firebase initialization error:", error);
-                authStatusEl.innerHTML = `<span class="text-red-500 text-sm">Connection Error</span>`;
-                loadingOverlay.style.display = 'none';
-            }
-        }
-
-        async function performSignIn() {
-             authStatusEl.innerHTML = `
-                <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
-                <span class="hidden md:block ml-2 text-sm text-gray-500">Authenticating...</span>
-            `;
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Firebase sign-in error:", error);
-                authStatusEl.innerHTML = `<span class="text-red-500 text-sm">Auth Failed</span>`;
-                loadingOverlay.style.display = 'none';
+                loadingOverlay.innerHTML = '<p class="text-red-500">Gagal memuat Firebase. Cek konsol.</p>';
             }
         }
 
@@ -569,17 +569,54 @@
             setupModalListeners();
             setupFormListeners();
             setupFilterListeners();
-            setupRepeatedTaskModalLogic(); // Listener baru
-            // PERUBAHAN DI SINI: Memanggil updateFilterButtons saat inisialisasi
-            // untuk memastikan tidak ada filter yang disorot (karena default-nya 'active')
-            updateFilterButtons();
+            setupRepeatedTaskModalLogic(); 
+            
+            // Atur filter default secara visual
+            updateFilterButtons(); 
             
             // Attach real-time listeners
             attachTaskListener();
             attachWishlistListener();
-            attachRepeatedTaskListener(); // Listener baru
+            attachRepeatedTaskListener(); 
+        }
 
-            loadingOverlay.style.display = 'none';
+        // --- Authentication Logic ---
+        async function handleGoogleLogin() {
+            const provider = new GoogleAuthProvider();
+            try {
+                loginErrorEl.classList.add('hidden');
+                await signInWithPopup(auth, provider);
+                // onAuthStateChanged akan menangani sisanya
+            } catch (error) {
+                console.error("Google sign-in error:", error);
+                loginErrorEl.textContent = `Login Gagal: ${error.message}`;
+                loginErrorEl.classList.remove('hidden');
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await signOut(auth);
+                // onAuthStateChanged akan menangani sisanya
+            } catch (error) {
+                console.error("Logout error:", error);
+            }
+        }
+
+        // --- Listener Cleanup ---
+        function cleanupListeners() {
+            if (tasksUnsubscribe) tasksUnsubscribe();
+            if (wishlistUnsubscribe) wishlistUnsubscribe();
+            if (repeatedTasksUnsubscribe) repeatedTasksUnsubscribe();
+            tasksUnsubscribe = null;
+            wishlistUnsubscribe = null;
+            repeatedTasksUnsubscribe = null;
+            allTasks = [];
+            allRepeatedTasks = [];
+            if (taskStatusChart) {
+                taskStatusChart.destroy();
+                taskStatusChart = null;
+            }
         }
 
         // --- Event Listeners Setup ---
@@ -607,9 +644,15 @@
 
         function setupModalListeners() {
             showTaskModalBtn.addEventListener('click', () => taskModal.showModal());
-            closeTaskModalBtn.addEventListener('click', () => taskModal.close());
+            closeTaskModalBtn.addEventListener('click', () => {
+                taskModal.close();
+                taskErrorEl.classList.add('hidden'); // Sembunyikan error saat modal ditutup
+            });
             taskModal.addEventListener('click', (e) => {
-                if (e.target === taskModal) taskModal.close();
+                if (e.target === taskModal) {
+                    taskModal.close();
+                    taskErrorEl.classList.add('hidden');
+                }
             });
 
             showWishlistModalBtn.addEventListener('click', () => wishlistModal.showModal());
@@ -620,10 +663,20 @@
 
             // Listener untuk modal baru
             showRepeatedTaskModalBtn.addEventListener('click', () => repeatedTaskModal.showModal());
-            closeRepeatedTaskModalBtn.addEventListener('click', () => repeatedTaskModal.close());
-            repeatedTaskModal.addEventListener('click', (e) => {
-                if (e.target === repeatedTaskModal) repeatedTaskModal.close();
+            closeRepeatedTaskModalBtn.addEventListener('click', () => {
+                repeatedTaskModal.close();
+                repeatedTaskErrorEl.classList.add('hidden'); // Sembunyikan error
             });
+            repeatedTaskModal.addEventListener('click', (e) => {
+                if (e.target === repeatedTaskModal) {
+                    repeatedTaskModal.close();
+                    repeatedTaskErrorEl.classList.add('hidden');
+                }
+            });
+
+            // Listener untuk tombol Login/Logout
+            loginBtn.addEventListener('click', handleGoogleLogin);
+            logoutBtn.addEventListener('click', handleLogout);
         }
 
         function setupFormListeners() {
@@ -724,7 +777,6 @@
                 notes: formData.get('taskNotes'),
                 driveLink: formData.get('taskDriveLink'),
                 status: formData.get('taskStatus'),
-                // PERUBAHAN: Simpan null jika deadline kosong, bukan string kosong ""
                 deadline: deadline ? deadline : null,
                 createdAt: serverTimestamp()
             };
@@ -749,7 +801,6 @@
 
             if (currentFilter === 'all') {
                 tasksToRender = allTasks;
-            // PERUBAHAN DI SINI: Menambahkan logika filter 'active'
             } else if (currentFilter === 'active') {
                 tasksToRender = allTasks.filter(task => task.status === 'pending' || task.status === 'in-progress');
             } else if (currentFilter === 'deadline') {
@@ -815,11 +866,16 @@
 
             if (tasks.length === 0) {
                 noTasksEl.classList.remove('hidden');
-                noTasksEl.textContent = currentFilter === 'all' ? 'Belum ada task. Silakan tambahkan!' : 'Tidak ada task untuk filter ini.';
+                if (currentFilter === 'active') {
+                    noTasksEl.textContent = 'Tidak ada task aktif. Selamat!';
+                } else if (currentFilter === 'all') {
+                    noTasksEl.textContent = 'Belum ada task. Silakan tambahkan!';
+                } else {
+                    noTasksEl.textContent = 'Tidak ada task untuk filter ini.';
+                }
             } else {
                 noTasksEl.classList.add('hidden');
-                // PERUBAHAN: Logika sorting diupdate untuk menangani deadline null
-                // Task tanpa deadline akan diletakkan di bagian bawah
+                // Sort tasks
                 tasks.sort((a, b) => {
                     const aDate = a.deadline ? new Date(a.deadline) : null;
                     const bDate = b.deadline ? new Date(b.deadline) : null;
@@ -852,7 +908,6 @@
                     'completed': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                 };
 
-                // PERUBAHAN: Logika untuk menangani deadline yang null
                 let formattedDeadline = '<i>Tidak ada deadline</i>';
                 if (task.deadline) {
                     const deadlineDate = new Date(task.deadline);
@@ -860,7 +915,7 @@
                 }
 
                 taskEl.innerHTML = `
-                    <div class="flex-1 min-w-0"> <!-- PERUBAHAN DI SINI: min-w-0 untuk memperbaiki overflow -->
+                    <div class="flex-1 min-w-0"> 
                         <div class="flex items-center justify-between">
                             <h5 class="text-lg font-semibold">${task.name}</h5>
                             <div class="flex items-center gap-2">
@@ -897,7 +952,6 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 inline-block mr-1">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                                 </svg>
-                                <!-- PERUBAHAN: Menggunakan formattedDeadline yang sudah dicek -->
                                 Deadline: ${formattedDeadline}
                             </p>
                         </div>
@@ -1249,8 +1303,16 @@
         async function handleWishlistSubmit(e) {
             e.preventDefault();
             const formData = new FormData(wishlistForm);
+            const itemName = formData.get('productName');
+
+            // Validasi sederhana
+            if (!itemName || itemName.trim() === '') {
+                alert('Nama Produk tidak boleh kosong.'); // Ganti dengan modal kustom jika perlu
+                return;
+            }
+
             const item = {
-                name: formData.get('productName'),
+                name: itemName,
                 link: formData.get('productLink'),
                 price: Number(formData.get('productPrice')) || 0,
                 createdAt: serverTimestamp()
@@ -1262,6 +1324,7 @@
                 wishlistModal.close();
             } catch (error) {
                 console.error("Error adding wishlist item:", error);
+                alert(`Gagal menyimpan: ${error.message}`);
             }
         }
 
@@ -1317,11 +1380,6 @@
             }
         }
         
-        // --- Custom Confirm ---
-        // Ganti window.confirm dengan fungsi kustom jika diperlukan,
-        // karena alert/confirm bawaan mungkin diblokir.
-        // Untuk saat ini, kita tetap gunakan confirm() bawaan.
-
         // --- Start App ---
         initializeFirebase();
 
