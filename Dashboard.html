@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* Menggunakan dark mode dari OS */
+        @media (prefers-color-scheme: dark) {
+            html {
+                color-scheme: dark;
+            }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        /* Style untuk dialog/modal backdrop */
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+        }
+        /* Loading spinner */
+        .loader {
+            border-top-color: #3498db;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Style untuk chart yang bisa di-resize */
+        .resizable-chart-container {
+            resize: vertical;
+            overflow: auto;
+            min-height: 300px;
+            max-height: 800px;
+            border: 1px solid #4B5563; /* dark:border-gray-600 */
+            border-radius: 0.5rem; /* rounded-lg */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 h-full overflow-hidden">
+
+    <div class="flex h-full">
+        <!-- Sidebar Navigation -->
+        <nav class="w-20 md:w-64 bg-white dark:bg-gray-800 shadow-lg flex flex-col">
+            <div class="p-4 md:p-6 flex items-center justify-center md:justify-start">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-blue-600 dark:text-blue-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
+                </svg>
+                <span class="hidden md:block ml-3 text-xl font-bold">Dashboard</span>
+            </div>
+            <ul class="flex-1 mt-6 space-y-2 px-2 md:px-4">
+                <li>
+                    <button data-tab="dashboard" class="nav-tab w-full flex items-center p-3 rounded-lg text-white bg-blue-600 dark:bg-blue-500 font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v3.75m0-3.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <span class="hidden md:block ml-4">Dashboard</span>
+                    </button>
+                </li>
+                <li>
+                    <button data-tab="wishlist" class="nav-tab w-full flex items-center p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.772M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
+                        <span class="hidden md:block ml-4">Wishlist</span>
+                    </button>
+                </li>
+                <!-- Google Drive Tab Dihilangkan -->
+            </ul>
+            <div class="p-4 mt-auto">
+                <div id="authStatus" class="flex items-center justify-center md:justify-start">
+                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                    <span class="hidden md:block ml-2 text-sm text-gray-500">Connecting...</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8">
+            <div id="loadingOverlay" class="absolute inset-0 bg-gray-100 dark:bg-gray-900 flex items-center justify-center z-50">
+                <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
+            </div>
+            
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content space-y-6">
+                <!-- Stock Market Section -->
+                <section>
+                    <h2 class="text-2xl font-bold mb-4">Market Overview</h2>
+                    <!-- TradingView Ticker Tape Widget -->
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                        {
+                        "symbols": [
+                            {
+                            "proName": "IDX:COMPOSITE",
+                            "title": "IHSG"
+                            },
+                            {
+                            "proName": "IDX:BBCA",
+                            "title": "BBCA"
+                            },
+                            {
+                            "proName": "IDX:BBRI",
+                            "title": "BBRI"
+                            },
+                            {
+                            "proName": "IDX:TLKM",
+                            "title": "TLKM"
+                            },
+                            {
+                            "proName": "IDX:ASII",
+                            "title": "ASII"
+                            }
+                        ],
+                        "showSymbolLogo": true,
+                        "colorTheme": "dark",
+                        "isTransparent": false,
+                        "displayMode": "adaptive",
+                        "locale": "id"
+                        }
+                        </script>
+                    </div>
+                    <!-- TradingView Chart Widget -->
+                    <div class="tradingview-widget-container mt-4 resizable-chart-container" style="height:400px; width:100%;">
+                        <div id="tradingview_chart" style="height:100%; width:100%;"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                        <script type="text/javascript">
+                            new TradingView.widget({
+                                "width": "100%",
+                                "height": "100%",
+                                "symbol": "IDX:COMPOSITE",
+                                "interval": "D",
+                                "timezone": "Asia/Jakarta",
+                                "theme": "dark",
+                                "style": "1",
+                                "locale": "id",
+                                "enable_publishing": false,
+                                "allow_symbol_change": true,
+                                "container_id": "tradingview_chart"
+                            });
+                        </script>
+                    </div>
+                </section>
+
+                <!-- To-Do List Section -->
+                <section>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold">To-Do List</h2>
+                        <button id="showTaskModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                            Tambah Task
+                        </button>
+                    </div>
+
+                    <!-- Task Status Chart & Dashboard -->
+                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+                        <!-- Chart -->
+                        <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md h-64 relative">
+                            <h4 class="text-lg font-semibold text-center mb-2">Visualisasi Status Task</h4>
+                            <canvas id="taskStatusChart"></canvas>
+                        </div>
+                        
+                        <!-- Cards -->
+                        <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div id="filterAll" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200 ring-2 ring-blue-500">
+                                <h4 class="text-sm font-medium text-gray-700 dark:text-white">Total Tasks</h4>
+                                <p id="totalTasks" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+                            </div>
+                            <div id="filterPending" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                <h4 class="text-sm font-medium text-gray-700 dark:text-white">Pending</h4>
+                                <p id="pendingTasks" class="text-3xl font-bold text-yellow-500">0</p>
+                            </div>
+                            <div id="filterInProgress" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                <h4 class="text-sm font-medium text-gray-700 dark:text-white">In Progress</h4>
+                                <p id="inProgressTasks" class="text-3xl font-bold text-blue-500">0</p>
+                            </div>
+                            <div id="filterCompleted" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                <h4 class="text-sm font-medium text-gray-700 dark:text-white">Completed</h4>
+                                <p id="completedTasks" class="text-3xl font-bold text-green-500">0</p>
+                            </div>
+                            <div id="filterDeadline" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md ring-2 ring-transparent cursor-pointer filter-card transition-all duration-200">
+                                <h4 class="text-sm font-medium text-gray-700 dark:text-white">Mendekati Deadline</h4>
+                                <p id="deadlineWarning" class="text-3xl font-bold text-red-500">0</p>
+                            </div>
+                            <!-- Card "Tampilkan Semua" telah dihapus dan fungsinya dipindahkan ke "Total Tasks" -->
+                        </div>
+                    </div>
+
+                    <!-- Task List -->
+                    <div id="taskList" class="space-y-4">
+                        <!-- Task items akan ditambahkan di sini oleh JavaScript -->
+                        <p id="noTasks" class="text-center text-gray-500 dark:text-gray-400">Belum ada task. Silakan tambahkan!</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Wishlist Tab -->
+            <div id="wishlist" class="tab-content hidden space-y-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">Wishlist Belanja</h2>
+                    <button id="showWishlistModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                        Tambah Barang
+                    </button>
+                </div>
+                <div id="wishlistGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Wishlist items akan ditambahkan di sini -->
+                    <p id="noWishlistItems" class="text-center text-gray-500 dark:text-gray-400 col-span-full">Belum ada barang di wishlist.</p>
+                </div>
+            </div>
+
+            <!-- Google Drive Tab Dihilangkan -->
+
+        </main>
+    </div>
+
+    <!-- Task Modal -->
+    <dialog id="taskModal" class="p-0 rounded-lg shadow-xl w-full max-w-md bg-white dark:bg-gray-800">
+        <form id="taskForm" class="p-6 space-y-4">
+            <h3 class="text-xl font-medium">Tambah Task Baru</h3>
+            <div>
+                <label for="taskName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Task</label>
+                <input type="text" id="taskName" name="taskName" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+            </div>
+            <div>
+                <label for="taskNotes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes</label>
+                <textarea id="taskNotes" name="taskNotes" rows="3" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700"></textarea>
+            </div>
+            <div>
+                <label for="taskDriveLink" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link Google Drive</label>
+                <input type="url" id="taskDriveLink" name="taskDriveLink" placeholder="https://..." class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+            </div>
+            <div>
+                <label for="taskStatus" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+                <select id="taskStatus" name="taskStatus" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+                    <option value="pending">Pending</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            <div>
+                <label for="taskDeadline" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Deadline</label>
+                <input type="date" id="taskDeadline" name="taskDeadline" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+            </div>
+            <div class="flex justify-end space-x-3 pt-4">
+                <button type="button" id="closeTaskModal" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg">Batal</button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg">Simpan</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Wishlist Modal -->
+    <dialog id="wishlistModal" class="p-0 rounded-lg shadow-xl w-full max-w-md bg-white dark:bg-gray-800">
+        <form id="wishlistForm" class="p-6 space-y-4">
+            <h3 class="text-xl font-medium">Tambah Barang Wishlist</h3>
+            <div>
+                <label for="productName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Produk</label>
+                <input type="text" id="productName" name="productName" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+            </div>
+            <div>
+                <label for="productLink" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link Tokopedia/Shopee</label>
+                <input type="url" id="productLink" name="productLink" placeholder="https://" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+            </div>
+            <div>
+                <label for="productPrice" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Perkiraan Harga</label>
+                <input type="number" id="productPrice" name="productPrice" min="0" placeholder="100000" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+            </div>
+            <div class="flex justify-end space-x-3 pt-4">
+                <button type="button" id="closeWishlistModal" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg">Batal</button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg">Simpan</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithCustomToken, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            addDoc, 
+            deleteDoc, 
+            updateDoc, 
+            collection, 
+            onSnapshot,
+            serverTimestamp,
+            query
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Firebase Configuration ---
+        // These variables (__app_id, __firebase_config, __initial_auth_token) are provided by the environment.
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, auth, db, userId;
+        let tasksCollection, wishlistCollection;
+        let tasksUnsubscribe = null;
+        let wishlistUnsubscribe = null;
+        let taskStatusChart = null;
+        let allTasks = [];
+        let currentFilter = 'all';
+
+        // --- DOM Elements ---
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const authStatusEl = document.getElementById('authStatus');
+        
+        // Tabs
+        const tabs = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Task Elements
+        const taskModal = document.getElementById('taskModal');
+        const showTaskModalBtn = document.getElementById('showTaskModal');
+        const closeTaskModalBtn = document.getElementById('closeTaskModal');
+        const taskForm = document.getElementById('taskForm');
+        const taskListEl = document.getElementById('taskList');
+        const noTasksEl = document.getElementById('noTasks');
+        const totalTasksEl = document.getElementById('totalTasks');
+        const pendingTasksEl = document.getElementById('pendingTasks');
+        const inProgressTasksEl = document.getElementById('inProgressTasks');
+        const completedTasksEl = document.getElementById('completedTasks');
+        const deadlineWarningEl = document.getElementById('deadlineWarning');
+        const deadlineWarningCard = document.getElementById('filterDeadline'); // Updated ID
+
+        // Wishlist Elements
+        const wishlistModal = document.getElementById('wishlistModal');
+        const showWishlistModalBtn = document.getElementById('showWishlistModal');
+        const closeWishlistModalBtn = document.getElementById('closeWishlistModal');
+        const wishlistForm = document.getElementById('wishlistForm');
+        const wishlistGridEl = document.getElementById('wishlistGrid');
+        const noWishlistItemsEl = document.getElementById('noWishlistItems');
+
+        // --- Initialization ---
+        async function initializeFirebase() {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        authStatusEl.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="hidden md:block ml-2 text-sm text-green-500">Connected</span>
+                        `;
+                        // User is signed in, initialize app data
+                        initializeAppLogic();
+                    } else {
+                        // User is signed out, try to sign in
+                        await performSignIn();
+                    }
+                });
+
+                if (!auth.currentUser) {
+                    await performSignIn();
+                }
+
+            } catch (error) {
+                console.error("Firebase initialization error:", error);
+                authStatusEl.innerHTML = `<span class="text-red-500 text-sm">Connection Error</span>`;
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
+        async function performSignIn() {
+             authStatusEl.innerHTML = `
+                <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
+                <span class="hidden md:block ml-2 text-sm text-gray-500">Authenticating...</span>
+            `;
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Firebase sign-in error:", error);
+                authStatusEl.innerHTML = `<span class="text-red-500 text-sm">Auth Failed</span>`;
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
+        // --- Main App Logic ---
+        function initializeAppLogic() {
+            if (!userId) return;
+
+            // Define collection paths
+            const userArtifactsPath = `/artifacts/${appId}/users/${userId}`;
+            tasksCollection = collection(db, `${userArtifactsPath}/tasks`);
+            wishlistCollection = collection(db, `${userArtifactsPath}/wishlist`);
+
+            // Setup Listeners
+            setupTabListeners();
+            setupModalListeners();
+            setupFormListeners();
+            setupFilterListeners(); // Add this
+            
+            // Attach real-time listeners
+            attachTaskListener();
+            attachWishlistListener();
+
+            loadingOverlay.style.display = 'none';
+        }
+
+        // --- Event Listeners Setup ---
+        function setupTabListeners() {
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update tab styles
+                    tabs.forEach(t => t.classList.remove('bg-blue-600', 'dark:bg-blue-500', 'text-white'));
+                    tabs.forEach(t => t.classList.add('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-200', 'dark:hover:bg-gray-700'));
+                    tab.classList.add('bg-blue-600', 'dark:bg-blue-500', 'text-white');
+                    tab.classList.remove('text-gray-700', 'dark:text-gray-300', 'hover:bg-gray-200', 'dark:hover:bg-gray-700');
+
+                    // Show content
+                    const target = tab.dataset.tab;
+                    tabContents.forEach(content => {
+                        if (content.id === target) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        }
+
+        function setupModalListeners() {
+            showTaskModalBtn.addEventListener('click', () => taskModal.showModal());
+            closeTaskModalBtn.addEventListener('click', () => taskModal.close());
+            taskModal.addEventListener('click', (e) => {
+                if (e.target === taskModal) taskModal.close();
+            });
+
+            showWishlistModalBtn.addEventListener('click', () => wishlistModal.showModal());
+            closeWishlistModalBtn.addEventListener('click', () => wishlistModal.close());
+            wishlistModal.addEventListener('click', (e) => {
+                if (e.target === wishlistModal) wishlistModal.close();
+            });
+        }
+
+        function setupFormListeners() {
+            taskForm.addEventListener('submit', handleTaskSubmit);
+            wishlistForm.addEventListener('submit', handleWishlistSubmit);
+        }
+
+        function setupFilterListeners() {
+            document.getElementById('filterAll').addEventListener('click', () => setFilter('all'));
+            document.getElementById('filterPending').addEventListener('click', () => setFilter('pending'));
+            document.getElementById('filterInProgress').addEventListener('click', () => setFilter('in-progress'));
+            document.getElementById('filterCompleted').addEventListener('click', () => setFilter('completed'));
+            document.getElementById('filterDeadline').addEventListener('click', () => setFilter('deadline'));
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            renderFilteredTasks();
+            updateFilterButtons();
+        }
+
+        function updateFilterButtons() {
+            const filterCards = document.querySelectorAll('.filter-card');
+            filterCards.forEach(card => {
+                card.classList.remove('ring-2', 'ring-blue-500', 'ring-yellow-500', 'ring-green-500', 'ring-red-500'); // Clear all rings
+                
+                // Add specific hover rings
+                if (card.id === 'filterPending') card.classList.add('hover:ring-yellow-500');
+                else if (card.id === 'filterInProgress') card.classList.add('hover:ring-blue-500');
+                else if (card.id === 'filterCompleted') card.classList.add('hover:ring-green-500');
+                else if (card.id === 'filterDeadline') card.classList.add('hover:ring-red-500');
+                else if (card.id === 'filterAll') card.classList.add('hover:ring-blue-500');
+            });
+
+            // Add active ring
+            let activeCard;
+            if (currentFilter === 'all') activeCard = document.getElementById('filterAll');
+            else if (currentFilter === 'pending') activeCard = document.getElementById('filterPending');
+            else if (currentFilter === 'in-progress') activeCard = document.getElementById('filterInProgress');
+            else if (currentFilter === 'completed') activeCard = document.getElementById('filterCompleted');
+            else if (currentFilter === 'deadline') activeCard = document.getElementById('filterDeadline');
+            
+            if (activeCard) {
+                activeCard.classList.remove('hover:ring-yellow-500', 'hover:ring-blue-500', 'hover:ring-green-500', 'hover:ring-red-500');
+                
+                if (currentFilter === 'pending') activeCard.classList.add('ring-2', 'ring-yellow-500');
+                else if (currentFilter === 'in-progress') activeCard.classList.add('ring-2', 'ring-blue-500');
+                else if (currentFilter === 'completed') activeCard.classList.add('ring-2', 'ring-green-500');
+                else if (currentFilter === 'deadline') activeCard.classList.add('ring-2', 'ring-red-500');
+                else if (currentFilter === 'all') activeCard.classList.add('ring-2', 'ring-blue-500');
+            }
+        }
+
+        // --- Task Logic ---
+        function attachTaskListener() {
+            if (tasksUnsubscribe) tasksUnsubscribe(); // Unsubscribe from previous listener
+            
+            const q = query(tasksCollection);
+            tasksUnsubscribe = onSnapshot(q, (snapshot) => {
+                const tasks = [];
+                snapshot.forEach(doc => {
+                    tasks.push({ id: doc.id, ...doc.data() });
+                });
+                allTasks = tasks; // Store all tasks
+                renderFilteredTasks(); // Render based on filter
+            }, (error) => {
+                console.error("Error fetching tasks:", error);
+            });
+        }
+
+        async function handleTaskSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(taskForm);
+            const task = {
+                name: formData.get('taskName'),
+                notes: formData.get('taskNotes'),
+                driveLink: formData.get('taskDriveLink'), // Link GDrive ditambahkan
+                status: formData.get('taskStatus'),
+                deadline: formData.get('taskDeadline'),
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(tasksCollection, task);
+                taskForm.reset();
+                taskModal.close();
+            } catch (error) {
+                console.error("Error adding task:", error);
+            }
+        }
+
+        function renderFilteredTasks() {
+            let tasksToRender = [];
+            const now = new Date().getTime();
+            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+
+            if (currentFilter === 'all') {
+                tasksToRender = allTasks;
+            } else if (currentFilter === 'deadline') {
+                tasksToRender = allTasks.filter(task => {
+                    if (task.deadline && task.status !== 'completed') {
+                        const deadlineTime = new Date(task.deadline).getTime();
+                        return deadlineTime <= (now + twoDaysInMs); // Nearing or passed
+                    }
+                    return false;
+                });
+            } else {
+                tasksToRender = allTasks.filter(task => task.status === currentFilter);
+            }
+
+            updateDashboardAndChart(allTasks); // Dashboard always shows full stats
+            renderTaskList(tasksToRender); // List shows filtered tasks
+        }
+
+        function updateDashboardAndChart(tasks) {
+            let pending = 0;
+            let inProgress = 0;
+            let completed = 0;
+            let deadlineWarnings = 0;
+            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+            const now = new Date().getTime();
+
+            tasks.forEach(task => {
+                if (task.deadline && task.status !== 'completed') {
+                    const deadlineTime = new Date(task.deadline).getTime();
+                    
+                    if (deadlineTime <= (now + twoDaysInMs)) {
+                        deadlineWarnings++;
+                    }
+                }
+                if (task.status === 'pending') pending++;
+                if (task.status === 'in-progress') inProgress++;
+                if (task.status === 'completed') completed++;
+            });
+
+            // Update dashboard
+            totalTasksEl.textContent = tasks.length;
+            pendingTasksEl.textContent = pending;
+            inProgressTasksEl.textContent = inProgress;
+            completedTasksEl.textContent = completed;
+            deadlineWarningEl.textContent = deadlineWarnings;
+
+            if (deadlineWarnings > 0) {
+                deadlineWarningCard.classList.add('ring-2', 'ring-red-500');
+            } else {
+                deadlineWarningCard.classList.remove('ring-2', 'ring-red-500');
+            }
+             // Re-apply hover ring if not active
+            if (currentFilter !== 'deadline' && !deadlineWarningCard.classList.contains('hover:ring-red-500')) {
+                deadlineWarningCard.classList.add('hover:ring-red-500');
+            }
+
+            // Update Chart
+            updateTaskChart(pending, inProgress, completed);
+        }
+
+        function renderTaskList(tasks) {
+            taskListEl.innerHTML = '';
+
+            if (tasks.length === 0) {
+                noTasksEl.classList.remove('hidden');
+                noTasksEl.textContent = currentFilter === 'all' ? 'Belum ada task. Silakan tambahkan!' : 'Tidak ada task untuk filter ini.';
+            } else {
+                noTasksEl.classList.add('hidden');
+                // Sort tasks: by deadline ascending
+                tasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+            }
+
+            const now = new Date().getTime();
+            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+
+            tasks.forEach(task => {
+                let isNearingDeadline = false;
+                if (task.deadline && task.status !== 'completed') {
+                    const deadlineTime = new Date(task.deadline).getTime();
+                    if (deadlineTime <= (now + twoDaysInMs)) {
+                        isNearingDeadline = true;
+                    }
+                }
+
+                const taskEl = document.createElement('div');
+                taskEl.className = `bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 ${isNearingDeadline ? 'ring-2 ring-red-500' : ''}`;
+                
+                const statusColor = {
+                    'pending': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+                    'in-progress': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+                    'completed': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                };
+
+                const deadlineDate = new Date(task.deadline);
+                const formattedDeadline = deadlineDate.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                taskEl.innerHTML = `
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <h5 class="text-lg font-semibold">${task.name}</h5>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColor[task.status]}">${task.status}</span>
+                                <button class="task-toggle-btn text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1" title="Toggle notes">
+                                    <svg class="w-5 h-5 transition-transform transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Note Snippet (ditampilkan saat collapse) -->
+                        <p class="note-snippet text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
+                            ${task.notes || '<i>Tidak ada notes</i>'}
+                        </p>
+                        
+                        <!-- Konten detail (disembunyikan saat collapse) -->
+                        <div class="task-details-content mt-2 overflow-hidden h-0">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 whitespace-pre-wrap">${task.notes || '<i>Tidak ada notes</i>'}</p>
+                            
+                            ${task.driveLink ? `
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 inline-block mr-1 align-middle">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                                </svg>
+                                <a href="${task.driveLink}" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline align-middle">
+                                    Link Google Drive
+                                </a>
+                            </p>
+                            ` : ''}
+
+                            <p class="text-sm font-medium ${isNearingDeadline ? 'text-red-500' : 'text-gray-500'} dark:text-gray-400 mt-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 inline-block mr-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                </svg>
+                                Deadline: ${formattedDeadline}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 flex items-center gap-2">
+                        <select data-id="${task.id}" class="task-status-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option value="pending" ${task.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="in-progress" ${task.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                            <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                        <button data-id="${task.id}" class="delete-task-btn text-gray-400 hover:text-red-500 dark:hover:text-red-400 p-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12.56 0c-.34.053-.68.107-1.022.166m11.538 0l-1.06-1.06a1.5 1.5 0 00-2.12 0l-1.06 1.06m-2.122 0l-1.06-1.06a1.5 1.5 0 00-2.12 0l-1.06 1.06m7.424 0l-3.71-3.71a1.5 1.5 0 00-2.12 0L6.63 5.79M15 11.25l-3-3m0 0l-3 3m3-3v7.5" />
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                taskListEl.appendChild(taskEl);
+            });
+            
+            // Add event listeners for new elements
+            document.querySelectorAll('.delete-task-btn').forEach(btn => {
+                btn.addEventListener('click', () => deleteTask(btn.dataset.id));
+            });
+            document.querySelectorAll('.task-status-select').forEach(select => {
+                select.addEventListener('change', (e) => updateTaskStatus(select.dataset.id, e.target.value));
+            });
+            document.querySelectorAll('.task-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const button = e.currentTarget;
+                    const flex1 = button.closest('.flex-1'); // Dapatkan parent container
+                    const content = flex1.querySelector('.task-details-content');
+                    const snippet = flex1.querySelector('.note-snippet');
+                    const icon = button.querySelector('svg');
+                    
+                    if (content.classList.contains('h-0')) {
+                        // Expand
+                        content.classList.remove('h-0', 'overflow-hidden');
+                        snippet.classList.add('hidden'); // Sembunyikan snippet
+                        icon.classList.add('rotate-180');
+                    } else {
+                        // Collapse
+                        content.classList.add('h-0', 'overflow-hidden');
+                        snippet.classList.remove('hidden'); // Tampilkan snippet
+                        icon.classList.remove('rotate-180');
+                    }
+                });
+            });
+        }
+
+        async function deleteTask(id) {
+            // Menggunakan konfirmasi kustom
+            if (!confirm("Apakah Anda yakin ingin menghapus task ini?")) {
+                return;
+            }
+            try {
+                await deleteDoc(doc(tasksCollection, id));
+            } catch (error) {
+                console.error("Error deleting task:", error);
+            }
+        }
+        
+        async function updateTaskStatus(id, status) {
+            try {
+                const taskRef = doc(tasksCollection, id);
+                await updateDoc(taskRef, { status: status });
+            } catch (error) {
+                console.error("Error updating task status:", error);
+            }
+        }
+
+        // --- Task Chart Logic ---
+        function updateTaskChart(pending, inProgress, completed) {
+            const ctx = document.getElementById('taskStatusChart').getContext('2d');
+            const data = {
+                labels: ['Pending', 'In Progress', 'Completed'],
+                datasets: [{
+                    label: 'Task Status',
+                    data: [pending, inProgress, completed],
+                    backgroundColor: [
+                        'rgb(234, 179, 8)', // yellow-500
+                        'rgb(59, 130, 246)', // blue-500
+                        'rgb(34, 197, 94)'  // green-500
+                    ],
+                    hoverOffset: 4
+                }]
+            };
+
+            const options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                rotation: -90,
+                circumference: 180,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#f3f4f6', // Selalu putih (gray-100)
+                            font: {
+                                size: 10 // --- PERUBAHAN DI SINI ---
+                            },
+                            padding: 10 // Tambahkan sedikit padding
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed + ' task(s)';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            };
+
+            if (taskStatusChart) {
+                // Update existing chart
+                taskStatusChart.data.datasets[0].data = [pending, inProgress, completed];
+                taskStatusChart.update();
+            } else {
+                // Create new chart
+                taskStatusChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: data,
+                    options: options
+                });
+            }
+        }
+
+        // --- Wishlist Logic ---
+        function attachWishlistListener() {
+            if (wishlistUnsubscribe) wishlistUnsubscribe();
+            
+            const q = query(wishlistCollection);
+            wishlistUnsubscribe = onSnapshot(q, (snapshot) => {
+                const items = [];
+                snapshot.forEach(doc => {
+                    items.push({ id: doc.id, ...doc.data() });
+                });
+                renderWishlist(items);
+            }, (error) => {
+                console.error("Error fetching wishlist:", error);
+            });
+        }
+
+        async function handleWishlistSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(wishlistForm);
+            const item = {
+                name: formData.get('productName'),
+                link: formData.get('productLink'),
+                price: Number(formData.get('productPrice')) || 0,
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(wishlistCollection, item);
+                wishlistForm.reset();
+                wishlistModal.close();
+            } catch (error) {
+                console.error("Error adding wishlist item:", error);
+            }
+        }
+
+        function renderWishlist(items) {
+            wishlistGridEl.innerHTML = '';
+            
+            if (items.length === 0) {
+                noWishlistItemsEl.classList.remove('hidden');
+            } else {
+                noWishlistItemsEl.classList.add('hidden');
+                // Sort by new
+                items.sort((a, b) => (b.createdAt?.toDate() || 0) - (a.createdAt?.toDate() || 0));
+            }
+
+            items.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-col justify-between';
+                
+                const formattedPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.price);
+
+                itemEl.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h5 class="text-lg font-semibold mb-2">${item.name}</h5>
+                            <button data-id="${item.id}" class="delete-wishlist-btn text-gray-400 hover:text-red-500 dark:hover:text-red-400 p-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-xl font-bold text-blue-600 dark:text-blue-400 mb-4">${formattedPrice}</p>
+                    </div>
+                    <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="w-full text-center bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg">
+                        Beli Sekarang
+                    </a>
+                `;
+                wishlistGridEl.appendChild(itemEl);
+            });
+
+            // Add event listeners
+            document.querySelectorAll('.delete-wishlist-btn').forEach(btn => {
+                btn.addEventListener('click', () => deleteWishlistItem(btn.dataset.id));
+            });
+        }
+
+        async function deleteWishlistItem(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus barang ini dari wishlist?')) {
+                try {
+                    await deleteDoc(doc(wishlistCollection, id));
+                } catch (error) {
+                    console.error("Error deleting wishlist item:", error);
+                }
+            }
+        }
+        
+        // --- Custom Confirm ---
+        // Ganti window.confirm dengan fungsi kustom jika diperlukan,
+        // karena alert/confirm bawaan mungkin diblokir.
+        // Untuk saat ini, kita tetap gunakan confirm() bawaan.
+
+        // --- Start App ---
+        initializeFirebase();
+
+    </script>
+</body>
+</html>
