@@ -160,8 +160,25 @@
                     </div>
                 </section>
 
+                <!-- Repeated Task Section -->
+                <section id="repeatedTaskSection">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold">Tugas Berulang</h2>
+                        <button id="showRepeatedTaskModal" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                            Tambah Tugas Berulang
+                        </button>
+                    </div>
+                    <div id="repeatedTaskList" class="space-y-3">
+                        <!-- Repeated task items akan ditambahkan di sini oleh JavaScript -->
+                        <p id="noRepeatedTasks" class="text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">Tidak ada tugas berulang yang jatuh tempo saat ini.</p>
+                    </div>
+                </section>
+
                 <!-- To-Do List Section -->
-                <section>
+                <section class="mt-6"> <!-- Tambahkan margin top -->
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl font-bold">To-Do List</h2>
                         <button id="showTaskModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
@@ -290,6 +307,66 @@
         </form>
     </dialog>
 
+    <!-- Repeated Task Modal -->
+    <dialog id="repeatedTaskModal" class="p-0 rounded-lg shadow-xl w-full max-w-md bg-white dark:bg-gray-800">
+        <form id="repeatedTaskForm" class="p-6 space-y-4">
+            <h3 class="text-xl font-medium">Tambah Tugas Berulang</h3>
+            <div>
+                <label for="repeatedTaskName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Task</label>
+                <input type="text" id="repeatedTaskName" name="repeatedTaskName" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+            </div>
+            <div>
+                <label for="repeatType" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berulang Setiap</label>
+                <select id="repeatType" name="repeatType" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+                    <option value="daily">Setiap Hari</option>
+                    <option value="specific_days">Hari Tertentu</option>
+                </select>
+            </div>
+            <div id="specificDaysWrapper" class="hidden space-y-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pilih Hari</label>
+                <div class="grid grid-cols-4 gap-2">
+                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
+                        <input type="checkbox" name="repeatDays" value="mon" class="rounded text-blue-500 focus:ring-blue-500">
+                        <span>Sen</span>
+                    </label>
+                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
+                        <input type="checkbox" name="repeatDays" value="tue" class="rounded text-blue-500 focus:ring-blue-500">
+                        <span>Sel</span>
+                    </label>
+                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
+                        <input type="checkbox" name="repeatDays" value="wed" class="rounded text-blue-500 focus:ring-blue-500">
+                        <span>Rab</span>
+                    </label>
+                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
+                        <input type="checkbox" name="repeatDays" value="thu" class="rounded text-blue-500 focus:ring-blue-500">
+                        <span>Kam</span>
+                    </label>
+                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
+                        <input type="checkbox" name="repeatDays" value="fri" class="rounded text-blue-500 focus:ring-blue-500">
+                        <span>Jum</span>
+                    </label>
+                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
+                        <input type="checkbox" name="repeatDays" value="sat" class="rounded text-blue-500 focus:ring-blue-500">
+                        <span>Sab</span>
+                    </label>
+                    <label class="flex items-center space-x-2 p-2 rounded-md bg-gray-100 dark:bg-gray-700">
+                        <input type="checkbox" name="repeatDays" value="sun" class="rounded text-blue-500 focus:ring-blue-500">
+                        <span>Min</span>
+                    </label>
+                </div>
+            </div>
+            <div>
+                <label for="repeatTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Pada Jam</label>
+                <input type="time" id="repeatTime" name="repeatTime" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+            </div>
+            <div class="flex justify-end space-x-3 pt-4">
+                <button type="button" id="closeRepeatedTaskModal" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg">Batal</button>
+                <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg">Simpan</button>
+            </div>
+        </form>
+    </dialog>
+
+
     <!-- Firebase SDK -->
     <script type="module">
         // Import Firebase modules
@@ -316,64 +393,27 @@
         // --- Firebase Configuration ---
         // These variables (__app_id, __firebase_config, __initial_auth_token) are provided by the environment.
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        
-        // ======================================================================
-        // PERHATIAN UNTUK RUNNING LOKAL / GITHUB PAGES
-        // ======================================================================
-        // Kode di bawah ini MENGHARAPKAN variabel `__firebase_config` dari environment.
-        // Jika Anda menjalankan file ini secara lokal, `__firebase_config` tidak akan ada,
-        // dan `firebaseConfig` akan menjadi objek kosong (`{}`), menyebabkan "Connection Error".
-        //
-        // UNTUK MEMPERBAIKINYA:
-        // 1. Buat proyek Anda sendiri di https://firebase.google.com/
-        // 2. Di proyek Anda, aktifkan 'Firestore Database' dan 'Anonymous Authentication'.
-        // 3. Buka Project Settings -> General -> "Your apps" -> "Web".
-        // 4. Salin objek `firebaseConfig` (terlihat seperti di bawah).
-        // 5. GANTI baris `const firebaseConfig = ...` di bawah ini dengan objek config Anda.
-        //
-        //    Contoh pengganti:
-        //    const firebaseConfig = {
-        //      apiKey: "AIza....",
-        //      authDomain: "your-project-id.firebaseapp.com",
-        //      projectId: "your-project-id",
-        //      storageBucket: "your-project-id.appspot.com",
-        //      messagingSenderId: "...",
-        //      appId: "1:..."
-        //    };
-        // ======================================================================
-		
-		// Import the functions you need from the SDKs you need
-		
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCiIZRywKs7nF92z6_FWMzhOAaRe9SOOJE",
-  authDomain: "personal-to-do-list-5d959.firebaseapp.com",
-  projectId: "personal-to-do-list-5d959",
-  storageBucket: "personal-to-do-list-5d959.firebasestorage.app",
-  messagingSenderId: "713295970134",
-  appId: "1:713295970134:web:6650db1a681742dc30a0f7",
-  measurementId: "G-QG3GEXP3HC"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-        
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {}; // <-- GANTI INI JIKA RUN LOKAL
+        const firebaseConfig = {
+			apiKey: "AIzaSyCiIZRywKs7nF92z6_FWMzhOAaRe9SOOJE",
+			authDomain: "personal-to-do-list-5d959.firebaseapp.com",
+			projectId: "personal-to-do-list-5d959",
+			storageBucket: "personal-to-do-list-5d959.firebasestorage.app",
+			messagingSenderId: "713295970134",
+			appId: "1:713295970134:web:6650db1a681742dc30a0f7",
+			measurementId: "G-QG3GEXP3HC"
+		};
+		
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         let app, auth, db, userId;
-        let tasksCollection, wishlistCollection;
+        let tasksCollection, wishlistCollection, repeatedTasksCollection;
         let tasksUnsubscribe = null;
         let wishlistUnsubscribe = null;
+        let repeatedTasksUnsubscribe = null;
         let taskStatusChart = null;
         let allTasks = [];
+        let allRepeatedTasks = [];
         let currentFilter = 'all';
 
         // --- DOM Elements ---
@@ -405,6 +445,16 @@ const analytics = getAnalytics(app);
         const wishlistForm = document.getElementById('wishlistForm');
         const wishlistGridEl = document.getElementById('wishlistGrid');
         const noWishlistItemsEl = document.getElementById('noWishlistItems');
+
+        // Repeated Task Elements
+        const repeatedTaskModal = document.getElementById('repeatedTaskModal');
+        const showRepeatedTaskModalBtn = document.getElementById('showRepeatedTaskModal');
+        const closeRepeatedTaskModalBtn = document.getElementById('closeRepeatedTaskModal');
+        const repeatedTaskForm = document.getElementById('repeatedTaskForm');
+        const repeatedTaskListEl = document.getElementById('repeatedTaskList');
+        const noRepeatedTasksEl = document.getElementById('noRepeatedTasks');
+        const repeatTypeSelect = document.getElementById('repeatType');
+        const specificDaysWrapper = document.getElementById('specificDaysWrapper');
 
         // --- Initialization ---
         async function initializeFirebase() {
@@ -467,16 +517,19 @@ const analytics = getAnalytics(app);
             const userArtifactsPath = `/artifacts/${appId}/users/${userId}`;
             tasksCollection = collection(db, `${userArtifactsPath}/tasks`);
             wishlistCollection = collection(db, `${userArtifactsPath}/wishlist`);
+            repeatedTasksCollection = collection(db, `${userArtifactsPath}/repeatedTasks`);
 
             // Setup Listeners
             setupTabListeners();
             setupModalListeners();
             setupFormListeners();
-            setupFilterListeners(); // Add this
+            setupFilterListeners();
+            setupRepeatedTaskModalLogic(); // Listener baru
             
             // Attach real-time listeners
             attachTaskListener();
             attachWishlistListener();
+            attachRepeatedTaskListener(); // Listener baru
 
             loadingOverlay.style.display = 'none';
         }
@@ -516,11 +569,29 @@ const analytics = getAnalytics(app);
             wishlistModal.addEventListener('click', (e) => {
                 if (e.target === wishlistModal) wishlistModal.close();
             });
+
+            // Listener untuk modal baru
+            showRepeatedTaskModalBtn.addEventListener('click', () => repeatedTaskModal.showModal());
+            closeRepeatedTaskModalBtn.addEventListener('click', () => repeatedTaskModal.close());
+            repeatedTaskModal.addEventListener('click', (e) => {
+                if (e.target === repeatedTaskModal) repeatedTaskModal.close();
+            });
         }
 
         function setupFormListeners() {
             taskForm.addEventListener('submit', handleTaskSubmit);
             wishlistForm.addEventListener('submit', handleWishlistSubmit);
+            repeatedTaskForm.addEventListener('submit', handleRepeatedTaskSubmit); // Form baru
+        }
+
+        function setupRepeatedTaskModalLogic() {
+            repeatTypeSelect.addEventListener('change', (e) => {
+                if (e.target.value === 'specific_days') {
+                    specificDaysWrapper.classList.remove('hidden');
+                } else {
+                    specificDaysWrapper.classList.add('hidden');
+                }
+            });
         }
 
         function setupFilterListeners() {
@@ -881,6 +952,186 @@ const analytics = getAnalytics(app);
                 });
             }
         }
+
+        // --- Repeated Task Logic ---
+        function attachRepeatedTaskListener() {
+            if (repeatedTasksUnsubscribe) repeatedTasksUnsubscribe();
+            
+            const q = query(repeatedTasksCollection);
+            repeatedTasksUnsubscribe = onSnapshot(q, (snapshot) => {
+                const tasks = [];
+                snapshot.forEach(doc => {
+                    tasks.push({ id: doc.id, ...doc.data() });
+                });
+                allRepeatedTasks = tasks;
+                renderRepeatedTasks();
+            }, (error) => {
+                console.error("Error fetching repeated tasks:", error);
+            });
+        }
+
+        async function handleRepeatedTaskSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(repeatedTaskForm);
+            const selectedDays = [];
+            if (formData.get('repeatType') === 'specific_days') {
+                document.querySelectorAll('input[name="repeatDays"]:checked').forEach(checkbox => {
+                    selectedDays.push(checkbox.value);
+                });
+                if (selectedDays.length === 0) {
+                    // Ganti ini dengan UI kustom jika Anda tidak ingin menggunakan alert
+                    console.warn("Pilih setidaknya satu hari.");
+                    return; 
+                }
+            }
+
+            const task = {
+                name: formData.get('repeatedTaskName'),
+                repeatType: formData.get('repeatType'),
+                repeatTime: formData.get('repeatTime'),
+                repeatDays: selectedDays, // Array hari ['mon', 'tue', ...]
+                lastCompletedDate: null, // "YYYY-MM-DD"
+                lastSkippedDate: null,   // "YYYY-MM-DD"
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(repeatedTasksCollection, task);
+                repeatedTaskForm.reset();
+                specificDaysWrapper.classList.add('hidden');
+                repeatedTaskModal.close();
+            } catch (error) {
+                console.error("Error adding repeated task:", error);
+            }
+        }
+
+        function renderRepeatedTasks() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const todayDateStr = `${y}-${m}-${d}`; // "YYYY-MM-DD"
+            const todayDay = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][now.getDay()]; // "fri"
+            const currentTimeStr = now.toTimeString().split(' ')[0].substring(0, 5); // "HH:MM"
+
+            const tasksDueToday = allRepeatedTasks.filter(task => {
+                // 1. Cek apakah sudah dikerjakan atau di-skip hari ini
+                if (task.lastCompletedDate === todayDateStr || task.lastSkippedDate === todayDateStr) {
+                    return false;
+                }
+
+                // 2. Cek apakah sudah waktunya
+                if (task.repeatTime > currentTimeStr) {
+                    return false;
+                }
+
+                // 3. Cek jadwal
+                if (task.repeatType === 'daily') {
+                    return true; // Tampilkan jika harian dan jam sudah lewat
+                }
+
+                if (task.repeatType === 'specific_days') {
+                    return task.repeatDays.includes(todayDay); // Tampilkan jika harinya cocok
+                }
+
+                return false;
+            });
+
+            // Sortir berdasarkan waktu
+            tasksDueToday.sort((a, b) => a.repeatTime.localeCompare(b.repeatTime));
+
+            repeatedTaskListEl.innerHTML = '';
+            if (tasksDueToday.length === 0) {
+                noRepeatedTasksEl.classList.remove('hidden');
+            } else {
+                noRepeatedTasksEl.classList.add('hidden');
+                tasksDueToday.forEach(task => {
+                    const taskEl = document.createElement('div');
+                    taskEl.className = 'bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex items-center justify-between gap-4';
+                    taskEl.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-purple-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                                <h5 class="font-semibold">${task.name}</h5>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Jatuh tempo pada jam ${task.repeatTime}</p>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0 flex items-center gap-2">
+                            <button data-id="${task.id}" class="complete-repeated-task-btn text-white bg-green-500 hover:bg-green-600 rounded-full p-2" title="Selesai">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </button>
+                            <button data-id="${task.id}" class="skip-repeated-task-btn text-white bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-500 rounded-full p-2" title="Tolak/Lewati">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <button data-id="${task.id}" class="delete-repeated-task-btn text-gray-400 hover:text-red-500 dark:hover:text-red-400 p-2" title="Hapus permanen">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12.56 0c-.34.053-.68.107-1.022.166m11.538 0l-1.06-1.06a1.5 1.5 0 00-2.12 0l-1.06 1.06m-2.122 0l-1.06-1.06a1.5 1.5 0 00-2.12 0l-1.06 1.06m7.424 0l-3.71-3.71a1.5 1.5 0 00-2.12 0L6.63 5.79M15 11.25l-3-3m0 0l-3 3m3-3v7.5" />
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    repeatedTaskListEl.appendChild(taskEl);
+                });
+            }
+
+            // Tambahkan listener untuk tombol-tombol baru
+            document.querySelectorAll('.complete-repeated-task-btn').forEach(btn => {
+                btn.addEventListener('click', () => handleCompleteRepeatedTask(btn.dataset.id));
+            });
+            document.querySelectorAll('.skip-repeated-task-btn').forEach(btn => {
+                btn.addEventListener('click', () => handleSkipRepeatedTask(btn.dataset.id));
+            });
+            document.querySelectorAll('.delete-repeated-task-btn').forEach(btn => {
+                btn.addEventListener('click', () => handleDeleteRepeatedTask(btn.dataset.id));
+            });
+        }
+
+        async function handleCompleteRepeatedTask(id) {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const todayDateStr = `${y}-${m}-${d}`;
+
+            try {
+                const taskRef = doc(repeatedTasksCollection, id);
+                await updateDoc(taskRef, { lastCompletedDate: todayDateStr, lastSkippedDate: null }); // Set completed, reset skipped
+            } catch (error) {
+                console.error("Error completing repeated task:", error);
+            }
+        }
+
+        async function handleSkipRepeatedTask(id) {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const todayDateStr = `${y}-${m}-${d}`;
+
+            try {
+                const taskRef = doc(repeatedTasksCollection, id);
+                await updateDoc(taskRef, { lastSkippedDate: todayDateStr, lastCompletedDate: null }); // Set skipped, reset completed
+            } catch (error) {
+                console.error("Error skipping repeated task:", error);
+            }
+        }
+
+        async function handleDeleteRepeatedTask(id) {
+            if (confirm('Apakah Anda yakin ingin MENGHAPUS PERMANEN tugas berulang ini?')) {
+                try {
+                    await deleteDoc(doc(repeatedTasksCollection, id));
+                } catch (error) {
+                    console.error("Error deleting repeated task:", error);
+                }
+            }
+        }
+
 
         // --- Wishlist Logic ---
         function attachWishlistListener() {
