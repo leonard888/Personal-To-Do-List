@@ -316,7 +316,56 @@
         // --- Firebase Configuration ---
         // These variables (__app_id, __firebase_config, __initial_auth_token) are provided by the environment.
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        
+        // ======================================================================
+        // PERHATIAN UNTUK RUNNING LOKAL / GITHUB PAGES
+        // ======================================================================
+        // Kode di bawah ini MENGHARAPKAN variabel `__firebase_config` dari environment.
+        // Jika Anda menjalankan file ini secara lokal, `__firebase_config` tidak akan ada,
+        // dan `firebaseConfig` akan menjadi objek kosong (`{}`), menyebabkan "Connection Error".
+        //
+        // UNTUK MEMPERBAIKINYA:
+        // 1. Buat proyek Anda sendiri di https://firebase.google.com/
+        // 2. Di proyek Anda, aktifkan 'Firestore Database' dan 'Anonymous Authentication'.
+        // 3. Buka Project Settings -> General -> "Your apps" -> "Web".
+        // 4. Salin objek `firebaseConfig` (terlihat seperti di bawah).
+        // 5. GANTI baris `const firebaseConfig = ...` di bawah ini dengan objek config Anda.
+        //
+        //    Contoh pengganti:
+        //    const firebaseConfig = {
+        //      apiKey: "AIza....",
+        //      authDomain: "your-project-id.firebaseapp.com",
+        //      projectId: "your-project-id",
+        //      storageBucket: "your-project-id.appspot.com",
+        //      messagingSenderId: "...",
+        //      appId: "1:..."
+        //    };
+        // ======================================================================
+		
+		// Import the functions you need from the SDKs you need
+		
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCiIZRywKs7nF92z6_FWMzhOAaRe9SOOJE",
+  authDomain: "personal-to-do-list-5d959.firebaseapp.com",
+  projectId: "personal-to-do-list-5d959",
+  storageBucket: "personal-to-do-list-5d959.firebasestorage.app",
+  messagingSenderId: "713295970134",
+  appId: "1:713295970134:web:6650db1a681742dc30a0f7",
+  measurementId: "G-QG3GEXP3HC"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+        
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {}; // <-- GANTI INI JIKA RUN LOKAL
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         let app, auth, db, userId;
@@ -660,7 +709,7 @@
                 const formattedDeadline = deadlineDate.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
 
                 taskEl.innerHTML = `
-                    <div class="flex-1">
+                    <div class="flex-1 min-w-0"> <!-- PERUBAHAN DI SINI: min-w-0 untuk memperbaiki overflow -->
                         <div class="flex items-center justify-between">
                             <h5 class="text-lg font-semibold">${task.name}</h5>
                             <div class="flex items-center gap-2">
