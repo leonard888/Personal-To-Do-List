@@ -57,6 +57,33 @@
             border-radius: 0.5rem; /* rounded-lg */
         }
 
+        /* Styling untuk chat bubble Gemini */
+        .chat-bubble {
+            max-width: 75%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            word-wrap: break-word;
+        }
+        .chat-bubble.user {
+            background-color: #2563eb; /* bg-blue-600 */
+            color: white;
+            align-self: flex-end;
+        }
+        .chat-bubble.model {
+            background-color: #4b5563; /* bg-gray-600 */
+            color: white;
+            align-self: flex-start;
+        }
+        .chat-bubble.error {
+            background-color: #dc2626; /* bg-red-600 */
+            color: white;
+            align-self: flex-start;
+        }
+         /* Simple markdown formatting */
+        .chat-bubble.model strong { font-weight: 700; }
+        .chat-bubble.model ul { list-style-type: disc; padding-left: 1.5rem; }
+        .chat-bubble.model ol { list-style-type: decimal; padding-left: 1.5rem; }
+
         /* --- Kalender --- */
         #calendarGrid {
             display: grid;
@@ -120,33 +147,6 @@
         }
         .event-dot-task { background-color: #eab308; } /* yellow-500 */
         .event-dot-event { background-color: #8b5cf6; } /* violet-500 */
-        
-        /* --- GEMINI CHAT (KEMBALI) --- */
-        .chat-bubble {
-            max-width: 75%;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            word-wrap: break-word;
-        }
-        .chat-bubble.user {
-            background-color: #2563eb; /* bg-blue-600 */
-            color: white;
-            align-self: flex-end;
-        }
-        .chat-bubble.model {
-            background-color: #4b5563; /* bg-gray-600 */
-            color: white;
-            align-self: flex-start;
-        }
-        .chat-bubble.error {
-            background-color: #dc2626; /* bg-red-600 */
-            color: white;
-            align-self: flex-start;
-        }
-         /* Simple markdown formatting */
-        .chat-bubble.model strong { font-weight: 700; }
-        .chat-bubble.model ul { list-style-type: disc; padding-left: 1.5rem; }
-        .chat-bubble.model ol { list-style-type: decimal; padding-left: 1.5rem; }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 h-full overflow-hidden">
@@ -199,7 +199,6 @@
                             <span class="hidden md:block ml-4">Wishlist</span>
                         </button>
                     </li>
-                    <!-- GEMINI TAB (KEMBALI) -->
                     <li>
                         <button data-tab="gemini" class="nav-tab w-full flex items-center p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -213,7 +212,7 @@
                     <!-- Tombol Open Gemini (Browser) -->
                     <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="w-full text-sm flex items-center justify-center md:justify-start p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 mb-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.14 8.272l.46-.46a3.75 3.75 0 015.304 5.304l-.46.46M8.272 13.14l-.46.46a3.75 3.75 0 01-5.304-5.304l.46-.46M12 12l.46.46m-1.378-1.378a3.75 3.75 0 015.304 0l.46.46" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6.375c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125H9.375m0-3.75c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125H8.25m2.25 0H5.625m3.75 0H9.375m0-3.75H5.625m0 0H8.25m0 0H9.375m2.25 3.75h1.5l.375-.625m0 0l.375.625h1.5M12 13.5h.375m.375 0h1.5l.375.625m0 0l.375-.625h1.5m0 0h-.375m.375 0h.375m0 0h1.5l.375.625m0 0l.375-.625h1.5m0 0H18m2.25-3.75h.375m.375 0h1.5l.375-.625m0 0l.375.625H21m0 0h-.375m.375 0h.375m0 0h1.5l.375-.625m0 0l.375.625H21m-3.75 3.75h.375m.375 0h1.5l.375.625m0 0l.375-.625H21m0 0h-.375m.375 0h.375m0 0h1.5l.375.625m0 0l.375-.625H21m-3.75 3.75h.375m.375 0h1.5l.375.625m0 0l.375-.625H21m0 0h-.375m.375 0h.375M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zM8.25 6h7.5" />
                         </svg>
                         <span class="hidden md:block ml-2">Buka Gemini</span>
                     </a>
@@ -346,11 +345,6 @@
                             <div class="flex justify-between items-center mb-4">
                                 <h2 class="text-2xl font-bold">Kalender</h2>
                                 <div class="flex items-center gap-4">
-                                    <!-- TOMBOL TAMBAH EVENT BARU -->
-                                    <button id="showEventModalBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-3 rounded-lg flex items-center text-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                                        Tambah Event
-                                    </button>
                                     <div class="flex items-center gap-2 text-xs">
                                         <span class="event-dot event-dot-task"></span> Task
                                         <span class="event-dot event-dot-event ml-2"></span> Event
@@ -364,6 +358,13 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
                                         </button>
                                     </div>
+                                    <!-- Tombol Tambah Event di atas Kalender -->
+                                    <button id="addEventFromCalendar" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg flex items-center text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                        </svg>
+                                        Tambah Event
+                                    </button>
                                 </div>
                             </div>
                             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
@@ -386,11 +387,23 @@
                         <section id="calendarDetailSection" class="mt-6 hidden">
                             <div class="flex justify-between items-center mb-4">
                                 <h2 class="text-2xl font-bold">Detail untuk <span id="detailDateTitle"></span></h2>
-                                <button id="closeDetailView" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
+                                <div class="flex gap-2">
+                                    <!-- TOMBOL BARU: + Tambah Task -->
+                                    <button id="detailAddTaskBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded-lg flex items-center text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                                        Task
+                                    </button>
+                                    <!-- TOMBOL BARU: + Tambah Event -->
+                                    <button id="detailAddEventBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-1 px-3 rounded-lg flex items-center text-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                                        Event
+                                    </button>
+                                    <button id="closeDetailView" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Kolom Task -->
@@ -432,14 +445,14 @@
                             <p id="noWishlistItems" class="text-center text-gray-500 dark:text-gray-400 col-span-full">Belum ada barang di wishlist.</p>
                         </div>
                     </div>
-                    
-                    <!-- GEMINI TAB KONTEN (KEMBALI) -->
-                    <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-10rem)]">
+
+                    <!-- Gemini Tab -->
+                    <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-10rem)]"> <!-- Penyesuaian tinggi -->
                         <h2 class="text-2xl font-bold mb-4">Gemini Assistant</h2>
                         <div class="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col space-y-4 overflow-y-auto" id="chatContainer">
                             <!-- Chat messages will be appended here -->
                             <div class="chat-bubble model">
-                                Halo! Saya Gemini. Apa yang bisa saya bantu hari ini?
+                                Halo! Saya Gemini. Apa yang bisa saya bantu hari ini? (Pastikan API Key Anda sudah dimasukkan di kode)
                             </div>
                         </div>
                         <div id="geminiLoading" class="hidden flex items-center justify-center p-4">
@@ -544,10 +557,10 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label for="eventDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tanggal</label>
-                    <input type="date" id="eventDate" name="eventDate" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700" readonly>
+                    <input type="date" id="eventDate" name="eventDate" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
                 </div>
                 <div>
-                    <label for="eventTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Jam</Tlabel>
+                    <label for="eventTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Jam</label>
                     <input type="time" id="eventTime" name="eventTime" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
                 </div>
             </div>
@@ -650,7 +663,7 @@
 
         // Task Elements
         const taskModal = document.getElementById('taskModal');
-        const taskModalTitle = document.getElementById('taskModalTitle'); 
+        const taskModalTitle = document.getElementById('taskModalTitle'); // Baru
         const showTaskModalBtn = document.getElementById('showTaskModal');
         const closeTaskModalBtn = document.getElementById('closeTaskModal');
         const taskForm = document.getElementById('taskForm');
@@ -664,7 +677,7 @@
         const deadlineWarningEl = document.getElementById('deadlineWarning');
         const deadlineWarningCard = document.getElementById('filterDeadline');
         const taskTimeInput = document.getElementById('taskTime');
-        const deleteTaskBtn = document.getElementById('deleteTaskBtn'); 
+        const deleteTaskBtn = document.getElementById('deleteTaskBtn'); // Baru
 
         // Wishlist Elements
         const wishlistModal = document.getElementById('wishlistModal');
@@ -684,7 +697,7 @@
         const currentMonthYearEl = document.getElementById('currentMonthYear');
         const prevMonthBtn = document.getElementById('prevMonth');
         const nextMonthBtn = document.getElementById('nextMonth');
-        const showEventModalBtn = document.getElementById('showEventModalBtn'); // TOMBOL BARU
+        const addEventFromCalendarBtn = document.getElementById('addEventFromCalendar'); // Tombol baru
 
         // Calendar Detail Elements
         const calendarDetailSection = document.getElementById('calendarDetailSection');
@@ -692,6 +705,8 @@
         const detailTaskList = document.getElementById('detailTaskList');
         const detailEventList = document.getElementById('detailEventList');
         const closeDetailViewBtn = document.getElementById('closeDetailView');
+        const detailAddTaskBtn = document.getElementById('detailAddTaskBtn'); // Baru
+        const detailAddEventBtn = document.getElementById('detailAddEventBtn'); // Baru
 
         // Event Modal Elements
         const eventModal = document.getElementById('eventModal');
@@ -705,7 +720,7 @@
         const eventErrorEl = document.getElementById('eventError');
         const deleteEventBtn = document.getElementById('deleteEventBtn');
 
-        // GEMINI DOM ELEMENTS (KEMBALI)
+        // Gemini Elements
         const geminiForm = document.getElementById('geminiForm');
         const geminiInput = document.getElementById('geminiInput');
         const chatContainer = document.getElementById('chatContainer');
@@ -865,10 +880,6 @@
             });
 
             // Event Modal (dari kalender)
-            // LISTENER BARU UNTUK TOMBOL TAMBAH EVENT
-            showEventModalBtn.addEventListener('click', () => {
-                openEventModal(getTodayString()); // Buka modal dengan tanggal hari ini
-            });
             closeEventModalBtn.addEventListener('click', () => {
                 eventModal.close();
                 eventErrorEl.classList.add('hidden');
@@ -880,11 +891,19 @@
                 }
             });
             deleteEventBtn.addEventListener('click', handleDeleteEvent);
+            addEventFromCalendarBtn.addEventListener('click', () => {
+                const todayStr = getTodayString();
+                openEventModal(todayStr, null); // Buka modal untuk hari ini
+            });
+
 
             // Calendar Detail View
             closeDetailViewBtn.addEventListener('click', () => {
                 calendarDetailSection.classList.add('hidden');
             });
+            // Listener untuk tombol Add baru
+            detailAddTaskBtn.addEventListener('click', handleDetailAddTask);
+            detailAddEventBtn.addEventListener('click', handleDetailAddEvent);
 
             logoutBtn.addEventListener('click', handleLogout);
         }
@@ -893,7 +912,7 @@
             taskForm.addEventListener('submit', handleTaskSubmit);
             wishlistForm.addEventListener('submit', handleWishlistSubmit);
             eventForm.addEventListener('submit', handleEventSubmit); 
-            geminiForm.addEventListener('submit', handleGeminiSubmit); // LISTENER GEMINI (KEMBALI)
+            geminiForm.addEventListener('submit', handleGeminiSubmit);
         }
 
         function setupCalendarListeners() {
@@ -990,7 +1009,7 @@
         }
 
         // Fungsi Baru: Membuka modal Task untuk Add atau Edit
-        async function openTaskModal(taskId = null) {
+        async function openTaskModal(taskId = null, defaultDate = null) {
             taskForm.reset();
             taskErrorEl.classList.add('hidden');
             taskForm.dataset.taskId = '';
@@ -1019,6 +1038,10 @@
                 // Mode Add
                 taskModalTitle.textContent = 'Tambah Task Baru';
                 deleteTaskBtn.classList.add('hidden');
+                // Set tanggal default jika ada
+                if (defaultDate) {
+                    taskDeadline.value = defaultDate;
+                }
             }
             taskModal.showModal();
         }
@@ -1603,6 +1626,7 @@
             eventErrorEl.classList.add('hidden');
             eventForm.dataset.eventId = '';
             eventDateInput.value = date;
+            eventDateInput.readOnly = false; // Pastikan bisa diedit
             
             // Sembunyikan detail list
             calendarDetailSection.classList.add('hidden');
@@ -1644,8 +1668,8 @@
                 time: eventTimeInput.value, // HH:MM
                 repeatType: eventRepeatInput.value, // 'once', 'daily', 'weekly'
             };
-            if (!eventData.name || !eventData.time) {
-                eventErrorEl.textContent = 'Nama Event dan Jam tidak boleh kosong.';
+            if (!eventData.name || !eventData.time || !eventData.date) {
+                eventErrorEl.textContent = 'Nama Event, Tanggal, dan Jam tidak boleh kosong.';
                 eventErrorEl.classList.remove('hidden');
                 return;
             }
@@ -1689,7 +1713,7 @@
             const now = new Date();
             const todayDateStr = getTodayString(); // "YYYY-MM-DD"
             const todayDay = now.getDay(); // 0-6 (Minggu-Sabtu)
-            // const currentTimeStr = now.toTimeString().split(' ')[0].substring(0, 5); // "HH:MM" // DIHAPUS
+            // const currentTimeStr = now.toTimeString().split(' ')[0].substring(0, 5); // "HH:MM" 
 
             // 1. Dapatkan Events untuk hari ini
             const eventsDueToday = allEvents.filter(event => {
@@ -1815,8 +1839,23 @@
                 console.error("Error skipping event:", error);
             }
         }
+        
+        // --- Fungsi Baru: Menangani klik "+ Tambah Task" dari detail kalender ---
+        function handleDetailAddTask() {
+            const dateStr = detailDateTitle.dataset.date;
+            if (!dateStr) return;
+            openTaskModal(null, dateStr); // Panggil openTaskModal dengan tanggal
+        }
 
-        // --- GEMINI LOGIC (KEMBALI) ---
+        // --- Fungsi Baru: Menangani klik "+ Tambah Event" dari detail kalender ---
+        function handleDetailAddEvent() {
+            const dateStr = detailDateTitle.dataset.date;
+            if (!dateStr) return;
+            openEventModal(dateStr, null); // Panggil openEventModal dengan tanggal
+        }
+        
+
+        // --- FUNGSI-FUNGSI GEMINI ---
 
         /**
          * Menangani submit form Gemini
@@ -1870,7 +1909,7 @@
             // --- PENTING UNTUK LOKAL ---
             // GANTI "" DENGAN API KEY ANDA DARI GOOGLE AI STUDIO
             // JIKA MENJALANKAN DI LUAR PRATINJAU INI
-            const apiKey = "AIzaSyBdvL65RALEcZ1vxHsQb8d1A3GJnJc_QlI"; // <-- GANTI DENGAN API KEY ANDA
+            const apiKey = "AIzaSyBdvL65RALEcZ1vxHsQb8d1A3GJnJc_QlI"; 
 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             const payload = {
@@ -1906,7 +1945,6 @@
                 try {
                     const response = await fetch(url, options);
                     if (!response.ok && (response.status === 429 || response.status >= 500)) {
-                        // Jika 429 (Too Many Requests) atau 5xx (Server Error), coba lagi
                         throw new Error(`Retryable error: ${response.status}`);
                     }
                     return response; // Sukses
@@ -1943,7 +1981,7 @@
 
             return safeText;
         }
-        
+
         // --- Start App ---
         initializeFirebase();
 
