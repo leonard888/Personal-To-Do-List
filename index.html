@@ -147,9 +147,6 @@
         .event-dot-task { background-color: #eab308; } /* yellow-500 */
         .event-dot-event { background-color: #8b5cf6; } /* violet-500 */
         .event-dot-repeated { background-color: #ec4899; } /* pink-500 */
-
-        /* CSS Untuk Floating Button Gemini DIHAPUS */
-
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 h-full overflow-hidden">
@@ -202,7 +199,7 @@
                             <span class="hidden md:block ml-4">Wishlist</span>
                         </button>
                     </li>
-                    <!-- PERUBAHAN: Mengembalikan Tombol Tab Gemini -->
+                    <!-- Tombol Tab Gemini DIKEMBALIKAN -->
                     <li>
                         <button data-tab="gemini" class="nav-tab w-full flex items-center p-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -213,7 +210,7 @@
                     </li>
                 </ul>
                 <div class="p-4 mt-auto">
-                    <!-- Tombol Open Gemini (Tetap ada) -->
+                    <!-- Tombol Open Gemini -->
                     <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="w-full text-sm flex items-center justify-center md:justify-start p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 mb-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
@@ -237,237 +234,249 @@
             </nav>
 
             <!-- Main Content -->
-            <main class="flex-1 overflow-y-auto p-4 md:p-8 relative">
-                <!-- FITUR: Jam dan Hari -->
-                <div id="clockDate" class="absolute top-4 right-4 md:top-8 md:right-8 text-right text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
-                    <div id="clockEl">00:00:00</div>
-                    <div id="dateEl">Kamis, 1 Jan 1970</div>
-                </div>
+            <main class="flex-1 overflow-y-auto p-4 md:p-8">
+                <!-- PERBAIKAN: Wrapper untuk Jam dan Konten -->
+                <div class="flex flex-col">
+                    <!-- Header Konten: Jam dan Tanggal -->
+                    <div class="w-full flex justify-end mb-4">
+                        <div id="clockDate" class="text-right text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
+                            <div id="clockEl">00:00:00</div>
+                            <div id="dateEl">Kamis, 1 Jan 1970</div>
+                        </div>
+                    </div>
 
-                <!-- Dashboard Tab -->
-                <div id="dashboard" class="tab-content space-y-6">
-                    <!-- Stock Market Section -->
-                    <section>
-                        <h2 class="text-2xl font-bold mb-4">Market Overview</h2>
-                        <!-- TradingView Ticker Tape Widget -->
-                        <div class="tradingview-widget-container">
-                            <div class="tradingview-widget-container__widget"></div>
-                            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-                            {
-                            "symbols": [
-                                {
-                                "proName": "IDX:COMPOSITE",
-                                "title": "IHSG"
-                                },
-                                {
-                                "proName": "IDX:BBCA",
-                                "title": "BBCA"
-                                },
-                                {
-                                "proName": "IDX:BBRI",
-                                "title": "BBRI"
-                                },
-                                {
-                                "proName": "IDX:TLKM",
-                                "title": "TLKM"
-                                },
-                                {
-                                "proName": "IDX:ASII",
-                                "title": "ASII"
-                                }
-                            ],
-                            "showSymbolLogo": true,
-                            "colorTheme": "dark",
-                            "isTransparent": false,
-                            "displayMode": "adaptive",
-                            "locale": "id"
-                            }
-                            </script>
-                        </div>
-                        <!-- TradingView Chart Widget -->
-                        <div class="tradingview-widget-container mt-4 resizable-chart-container" style="height:400px; width:100%;">
-                            <div id="tradingview_chart" style="height:100%; width:100%;"></div>
-                            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                            <script type="text/javascript">
-                                new TradingView.widget({
-                                    "width": "100%",
-                                    "height": "100%",
-                                    "symbol": "IDX:COMPOSITE",
-                                    "interval": "D",
-                                    "timezone": "Asia/Jakarta",
-                                    "theme": "dark",
-                                    "style": "1",
-                                    "locale": "id",
-                                    "enable_publishing": false,
-                                    "allow_symbol_change": true,
-                                    "container_id": "tradingview_chart"
-                                });
-                            </script>
-                        </div>
-                    </section>
+                    <!-- Konten Tab Utama -->
+                    <div class="w-full">
+                        <!-- Dashboard Tab -->
+                        <div id="dashboard" class="tab-content space-y-6">
+                            <!-- Stock Market Section -->
+                            <section>
+                                <h2 class="text-2xl font-bold mb-4">Market Overview</h2>
+                                <!-- TradingView Ticker Tape Widget -->
+                                <div class="tradingview-widget-container">
+                                    <div class="tradingview-widget-container__widget"></div>
+                                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                                    {
+                                    "symbols": [
+                                        {
+                                        "proName": "IDX:COMPOSITE",
+                                        "title": "IHSG"
+                                        },
+                                        {
+                                        "proName": "IDX:BBCA",
+                                        "title": "BBCA"
+                                        },
+                                        {
+                                        "proName": "IDX:BBRI",
+                                        "title": "BBRI"
+                                        },
+                                        {
+                                        "proName": "IDX:TLKM",
+                                        "title": "TLKM"
+                                        },
+                                        {
+                                        "proName": "IDX:ASII",
+                                        "title": "ASII"
+                                        }
+                                    ],
+                                    "showSymbolLogo": true,
+                                    "colorTheme": "dark",
+                                    "isTransparent": false,
+                                    "displayMode": "adaptive",
+                                    "locale": "id"
+                                    }
+                                    </script>
+                                </div>
+                                <!-- TradingView Chart Widget -->
+                                <div class="tradingview-widget-container mt-4 resizable-chart-container" style="height:400px; width:100%;">
+                                    <div id="tradingview_chart" style="height:100%; width:100%;"></div>
+                                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                                    <script type="text/javascript">
+                                        new TradingView.widget({
+                                            "width": "100%",
+                                            "height": "100%",
+                                            "symbol": "IDX:COMPOSITE",
+                                            "interval": "D",
+                                            "timezone": "Asia/Jakarta",
+                                            "theme": "dark",
+                                            "style": "1",
+                                            "locale": "id",
+                                            "enable_publishing": false,
+                                            "allow_symbol_change": true,
+                                            "container_id": "tradingview_chart"
+                                        });
+                                    </script>
+                                </div>
+                            </section>
 
-                    <!-- Repeated Task Section -->
-                    <section id="repeatedTaskSection">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-2xl font-bold">Tugas Berulang</h2>
-                            <button id="showRepeatedTaskModal" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                </svg>
-                                Tambah Tugas Berulang
-                            </button>
-                        </div>
-                        <div id="repeatedTaskList" class="space-y-3">
-                            <!-- Repeated task items akan ditambahkan di sini oleh JavaScript -->
-                            <p id="noRepeatedTasks" class="text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">Tidak ada tugas berulang yang jatuh tempo saat ini.</p>
-                        </div>
-                    </section>
+                            <!-- Repeated Task Section -->
+                            <section id="repeatedTaskSection">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-2xl font-bold">Tugas Berulang</h2>
+                                    <button id="showRepeatedTaskModal" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                        </svg>
+                                        Tambah Tugas Berulang
+                                    </button>
+                                </div>
+                                <div id="repeatedTaskList" class="space-y-3">
+                                    <!-- Repeated task items akan ditambahkan di sini oleh JavaScript -->
+                                    <p id="noRepeatedTasks" class="text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">Tidak ada tugas berulang yang jatuh tempo saat ini.</p>
+                                </div>
+                            </section>
 
-                    <!-- To-Do List Section -->
-                    <section class="mt-6"> <!-- Tambahkan margin top -->
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-2xl font-bold">To-Do List</h2>
-                            <button id="showTaskModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                                Tambah Task
-                            </button>
+                            <!-- To-Do List Section -->
+                            <section class="mt-6"> <!-- Tambahkan margin top -->
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-2xl font-bold">To-Do List</h2>
+                                    <button id="showTaskModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                                        Tambah Task
+                                    </button>
+                                </div>
+
+                                <!-- Task Status Chart & Dashboard -->
+                                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+                                    <!-- Chart -->
+                                    <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md h-64 relative">
+                                        <h4 class="text-lg font-semibold text-center mb-2">Visualisasi Status Task</h4>
+                                        <canvas id="taskStatusChart"></canvas>
+                                    </div>
+                                    
+                                    <!-- Cards -->
+                                    <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        <div id="filterAll" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                            <h4 class="text-sm font-medium text-gray-700 dark:text-white">Total Tasks</h4>
+                                            <p id="totalTasks" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
+                                        </div>
+                                        <div id="filterPending" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                            <h4 class="text-sm font-medium text-gray-700 dark:text-white">Pending</h4>
+                                            <p id="pendingTasks" class="text-3xl font-bold text-yellow-500">0</p>
+                                        </div>
+                                        <div id="filterInProgress" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                            <h4 class="text-sm font-medium text-gray-700 dark:text-white">In Progress</h4>
+                                            <p id="inProgressTasks" class="text-3xl font-bold text-blue-500">0</p>
+                                        </div>
+                                        <div id="filterCompleted" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
+                                            <h4 class="text-sm font-medium text-gray-700 dark:text-white">Completed</h4>
+                                            <p id="completedTasks" class="text-3xl font-bold text-green-500">0</p>
+                                        </div>
+                                        <div id="filterDeadline" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md ring-2 ring-transparent cursor-pointer filter-card transition-all duration-200">
+                                            <h4 class="text-sm font-medium text-gray-700 dark:text-white">Mendekati Deadline</h4>
+                                            <p id="deadlineWarning" class="text-3xl font-bold text-red-500">0</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Task List -->
+                                <div id="taskList" class="space-y-4">
+                                    <!-- Task items akan ditambahkan di sini oleh JavaScript -->
+                                    <p id="noTasks" class="text-center text-gray-500 dark:text-gray-400">Belum ada task. Silakan tambahkan!</p>
+                                </div>
+                            </section>
+
+                            <!-- FITUR BARU: Kalender -->
+                            <section id="calendarSection" class="mt-6">
+                                <h2 class="text-2xl font-bold mb-4">Kalender Event & Task</h2>
+                                <!-- Header Kalender -->
+                                <div class="flex justify-between items-center mb-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                                    <button id="prevMonthBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                        </svg>
+                                    </button>
+                                    <h3 id="currentMonthYear" class="text-xl font-semibold">Januari 2024</h3>
+                                    <button id="nextMonthBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <!-- Grid Kalender -->
+                                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                                    <div id="calendarDayHeaders" class="grid grid-cols-7">
+                                        <div class="calendar-day-header">Min</div>
+                                        <div class="calendar-day-header">Sen</div>
+                                        <div class="calendar-day-header">Sel</div>
+                                        <div class="calendar-day-header">Rab</div>
+                                        <div class="calendar-day-header">Kam</div>
+                                        <div class="calendar-day-header">Jum</div>
+                                        <div class="calendar-day-header">Sab</div>
+                                    </div>
+                                    <div id="calendarGrid">
+                                        <!-- Hari-hari kalender akan di-generate oleh JS -->
+                                    </div>
+                                    <!-- Legenda Kalender -->
+                                    <div class="p-4 flex flex-wrap justify-center gap-4 text-xs">
+                                        <div class="flex items-center gap-2">
+                                            <span class="event-dot event-dot-task"></span>
+                                            <span>Deadline Task</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="event-dot event-dot-event"></span>
+                                            <span>Event</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="event-dot event-dot-repeated"></span>
+                                            <span>Event Berulang</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
 
-                        <!-- Task Status Chart & Dashboard -->
-                        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
-                            <!-- Chart -->
-                            <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md h-64 relative">
-                                <h4 class="text-lg font-semibold text-center mb-2">Visualisasi Status Task</h4>
-                                <canvas id="taskStatusChart"></canvas>
+                        <!-- Wishlist Tab -->
+                        <div id="wishlist" class="tab-content hidden space-y-6">
+                            <!-- PERBAIKAN: Wrapper untuk Judul dan Tombol -->
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h2 class="text-2xl font-bold">Wishlist Belanja</h2>
+                                    <!-- FITUR: Total Harga Wishlist -->
+                                    <div class="flex items-baseline gap-2 mt-1">
+                                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Estimasi:</h3>
+                                        <p id="wishlistTotal" class="text-xl font-bold text-blue-600 dark:text-blue-400">Rp 0</p>
+                                    </div>
+                                </div>
+                                <button id="showWishlistModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center flex-shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                                    Tambah Barang
+                                </button>
                             </div>
-                            
-                            <!-- Cards -->
-                            <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-4">
-                                <div id="filterAll" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                    <h4 class="text-sm font-medium text-gray-700 dark:text-white">Total Tasks</h4>
-                                    <p id="totalTasks" class="text-3xl font-bold text-gray-900 dark:text-white">0</p>
-                                </div>
-                                <div id="filterPending" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                    <h4 class="text-sm font-medium text-gray-700 dark:text-white">Pending</h4>
-                                    <p id="pendingTasks" class="text-3xl font-bold text-yellow-500">0</p>
-                                </div>
-                                <div id="filterInProgress" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                    <h4 class="text-sm font-medium text-gray-700 dark:text-white">In Progress</h4>
-                                    <p id="inProgressTasks" class="text-3xl font-bold text-blue-500">0</p>
-                                </div>
-                                <div id="filterCompleted" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer filter-card transition-all duration-200">
-                                    <h4 class="text-sm font-medium text-gray-700 dark:text-white">Completed</h4>
-                                    <p id="completedTasks" class="text-3xl font-bold text-green-500">0</p>
-                                </div>
-                                <div id="filterDeadline" class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md ring-2 ring-transparent cursor-pointer filter-card transition-all duration-200">
-                                    <h4 class="text-sm font-medium text-gray-700 dark:text-white">Mendekati Deadline</h4>
-                                    <p id="deadlineWarning" class="text-3xl font-bold text-red-500">0</p>
-                                </div>
+                            <div id="wishlistGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <!-- Wishlist items akan ditambahkan di sini -->
+                                <p id="noWishlistItems" class="text-center text-gray-500 dark:text-gray-400 col-span-full">Belum ada barang di wishlist.</p>
                             </div>
                         </div>
 
-                        <!-- Task List -->
-                        <div id="taskList" class="space-y-4">
-                            <!-- Task items akan ditambahkan di sini oleh JavaScript -->
-                            <p id="noTasks" class="text-center text-gray-500 dark:text-gray-400">Belum ada task. Silakan tambahkan!</p>
-                        </div>
-                    </section>
-
-                    <!-- FITUR: Kalender Section -->
-                    <section id="calendarSection" class="mt-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-2xl font-bold">Kalender & Events</h2>
-                            <div class="flex items-center gap-4">
-                                <button id="prevMonthBtn" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 p-2 rounded-full">
+                        <!-- KONTEN TAB GEMINI (Dikembalikan) -->
+                        <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-10rem)]">
+                            <h2 class="text-2xl font-bold mb-4">Gemini Assistant</h2>
+                            <div class="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col space-y-4 overflow-y-auto" id="chatContainer">
+                                <!-- Chat messages will be appended here -->
+                                <div class="chat-bubble model">
+                                    Halo! Saya Gemini. Apa yang bisa saya bantu hari ini?
+                                </div>
+                            </div>
+                            <div id="geminiLoading" class="hidden flex items-center justify-center p-4">
+                                <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6 mr-2"></div>
+                                <span>Gemini sedang berpikir...</span>
+                            </div>
+                            <form id="geminiForm" class="mt-4 flex gap-2">
+                                <input type="text" id="geminiInput" placeholder="Ketik pesan Anda..." class="flex-1 rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700" autocomplete="off">
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.875L5.999 12zm0 0h7.5" />
                                     </svg>
                                 </button>
-                                <h3 id="currentMonthYear" class="text-xl font-semibold text-center w-48"></h3>
-                                <button id="nextMonthBtn" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 p-2 rounded-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <button id="showEventModal" class="bg-violet-600 hover:bg-violet-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                                </svg>
-                                Tambah Event
-                            </button>
+                            </form>
                         </div>
-                        <div class="legend flex justify-center gap-4 mb-4 text-sm">
-                            <div class="flex items-center gap-2"><span class="event-dot event-dot-task"></span> Task Deadline</div>
-                            <div class="flex items-center gap-2"><span class="event-dot event-dot-event"></span> Event</div>
-                            <div class="flex items-center gap-2"><span class="event-dot event-dot-repeated"></span> Tugas Berulang</div>
-                        </div>
-                        <div id="calendarHeader" class="grid grid-cols-7 gap-1 mb-1">
-                            <div class="calendar-day-header">Min</div>
-                            <div class="calendar-day-header">Sen</div>
-                            <div class="calendar-day-header">Sel</div>
-                            <div class="calendar-day-header">Rab</div>
-                            <div class="calendar-day-header">Kam</div>
-                            <div class="calendar-day-header">Jum</div>
-                            <div class="calendar-day-header">Sab</div>
-                        </div>
-                        <div id="calendarGrid" class="rounded-lg overflow-hidden">
-                            <!-- Hari kalender akan di-generate oleh JS -->
-                        </div>
-                    </section>
-                </div>
 
-                <!-- Wishlist Tab -->
-                <div id="wishlist" class="tab-content hidden space-y-6">
-                    <div class="flex justify-between items-start mb-4"> <!-- Diubah ke items-start -->
-                        <div>
-                            <h2 class="text-2xl font-bold">Wishlist Belanja</h2>
-                            <!-- FITUR BARU: Total Harga Wishlist -->
-                            <div class="flex items-baseline gap-2 mt-1">
-                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Estimasi:</h3>
-                                <p id="wishlistTotal" class="text-xl font-bold text-blue-600 dark:text-blue-400">Rp 0</p>
-                            </div>
-                        </div>
-                        <button id="showWishlistModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"> <!-- Dihapus self-end -->
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-                            Tambah Barang
-                        </button>
-                    </div>
-                    <div id="wishlistGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Wishlist items akan ditambahkan di sini -->
-                        <p id="noWishlistItems" class="text-center text-gray-500 dark:text-gray-400 col-span-full">Belum ada barang di wishlist.</p>
                     </div>
                 </div>
-
-                <!-- PERUBAHAN: Mengembalikan Konten Tab Gemini -->
-                <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-4rem)]">
-                    <h2 class="text-2xl font-bold mb-4">Gemini Assistant</h2>
-                    <div class="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col space-y-4 overflow-y-auto" id="chatContainer">
-                        <!-- Chat messages will be appended here -->
-                        <div class="chat-bubble model">
-                            Halo! Saya Gemini. Apa yang bisa saya bantu hari ini?
-                        </div>
-                    </div>
-                    <div id="geminiLoading" class="hidden flex items-center justify-center p-4">
-                        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6 mr-2"></div>
-                        <span>Gemini sedang berpikir...</span>
-                    </div>
-                    <form id="geminiForm" class="mt-4 flex gap-2">
-                        <input type="text" id="geminiInput" placeholder="Ketik pesan Anda..." class="flex-1 rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700" autocomplete="off">
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.875L5.999 12zm0 0h7.5" />
-                            </svg>
-                        </button>
-                    </form>
-                </div>
-
             </main>
         </div>
     </div>
-
-    <!-- Floating Button Gemini DIHAPUS -->
-    <!-- Modal Chat Gemini DIHAPUS -->
 
     <!-- Task Modal -->
     <dialog id="taskModal" class="p-0 rounded-lg shadow-xl w-full max-w-md bg-white dark:bg-gray-800">
@@ -596,45 +605,60 @@
         </form>
     </dialog>
 
-    <!-- FITUR: Modal Event Kalender -->
+    <!-- FITUR BARU: Modal Event Kalender -->
     <dialog id="eventModal" class="p-0 rounded-lg shadow-xl w-full max-w-md bg-white dark:bg-gray-800">
         <form id="eventForm" class="p-6 space-y-4">
-            <h3 class="text-xl font-medium">Tambah/Edit Event</h3>
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-medium">Tambah/Edit Event</h3>
+                <button type="button" id="closeEventModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Error container -->
             <div id="eventError" class="hidden text-sm text-red-500 bg-red-100 dark:bg-red-900 dark:text-red-200 p-3 rounded-md"></div>
+            
+            <input type="hidden" id="eventDate" name="eventDate">
+            <input type="hidden" id="eventId" name="eventId">
+
             <div>
                 <label for="eventName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Event</label>
                 <input type="text" id="eventName" name="eventName" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
             </div>
-            <div>
-                <label for="eventDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tanggal</label>
-                <input type="date" id="eventDate" name="eventDate" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700" readonly>
-            </div>
-            <div>
-                <label for="eventTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Waktu (Opsional)</label>
-                <input type="time" id="eventTime" name="eventTime" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
-            </div>
-            <!-- Fitur event berulang ditambahkan di sini -->
-            <div>
-                <label for="eventRepeat" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Berulang</label>
-                <select id="eventRepeat" name="eventRepeat" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
-                    <option value="none">Tidak Berulang</option>
-                    <option value="daily">Setiap Hari</option>
-                    <option value="weekly">Setiap Minggu (di hari ini)</option>
-                    <option value="monthly">Setiap Bulan (di tanggal ini)</option>
-                </select>
-            </div>
-            <div class="flex justify-between items-center pt-4">
-                <button type="button" id="deleteEventBtn" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg hidden">Hapus Event</button>
-                <div class="flex-1 flex justify-end space-x-3">
-                    <button type="button" id="closeEventModal" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg">Batal</button>
-                    <button type="submit" class="bg-violet-600 hover:bg-violet-700 text-white font-medium py-2 px-4 rounded-lg">Simpan Event</button>
+            
+            <div class="flex gap-4">
+                <div class="flex-1">
+                    <label for="eventStartTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Waktu Mulai</label>
+                    <input type="time" id="eventStartTime" name="eventStartTime" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
+                </div>
+                <div class="flex-1">
+                    <label for="eventEndTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Waktu Selesai</g_label>
+                    <input type="time" id="eventEndTime" name="eventEndTime" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700">
                 </div>
             </div>
-            <!-- Daftar event untuk hari ini -->
-            <div id="eventListForDay" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <h4 class="text-md font-medium mb-2">Event di tanggal ini:</h4>
-                <div id="eventListContainer" class="space-y-2 max-h-32 overflow-y-auto">
-                    <!-- Event items akan di-render di sini -->
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Jenis Event</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center">
+                        <input type="radio" name="eventType" value="event" class="text-violet-500 focus:ring-violet-500" checked>
+                        <span class="ml-2 text-sm">Event Sekali</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="eventType" value="repeated" class="text-pink-500 focus:ring-pink-500">
+                        <span class="ml-2 text-sm">Event Berulang</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button type="button" id="deleteEventBtn" class="text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-medium text-sm hidden">
+                    Hapus Event
+                </button>
+                <div class="flex-1 flex justify-end">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg">Simpan Event</button>
                 </div>
             </div>
         </form>
@@ -662,7 +686,8 @@
             collection, 
             onSnapshot,
             serverTimestamp,
-            query
+            query,
+            getDocs // Ditambahkan untuk fetch data kalender
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Firebase Configuration ---
@@ -686,19 +711,17 @@
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         let app, auth, db, userId;
-        let tasksCollection, wishlistCollection, repeatedTasksCollection, eventsCollection; // Collection baru
+        let tasksCollection, wishlistCollection, repeatedTasksCollection, eventsCollection; // <-- Collection baru
         let tasksUnsubscribe = null;
         let wishlistUnsubscribe = null;
         let repeatedTasksUnsubscribe = null;
-        let eventsUnsubscribe = null; // Unsubscriber baru
+        let eventsUnsubscribe = null; // <-- Unsubscribe baru
         let taskStatusChart = null;
         let allTasks = [];
         let allRepeatedTasks = [];
-        let allEvents = []; // Array baru untuk events
+        let allEvents = []; // <-- Array baru
         let currentFilter = 'active'; // Filter default baru
-
-        // Variabel untuk Kalender
-        let currentCalendarDate = new Date();
+        let currentCalendarDate = new Date(); // <-- State baru untuk kalender
 
         // --- DOM Elements ---
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -711,7 +734,7 @@
         const userAvatarEl = document.getElementById('userAvatar');
         const userNameEl = document.getElementById('userName');
         
-        // FITUR: Jam/Hari
+        // Clock
         const clockEl = document.getElementById('clockEl');
         const dateEl = document.getElementById('dateEl');
 
@@ -741,7 +764,7 @@
         const wishlistForm = document.getElementById('wishlistForm');
         const wishlistGridEl = document.getElementById('wishlistGrid');
         const noWishlistItemsEl = document.getElementById('noWishlistItems');
-        const wishlistTotalEl = document.getElementById('wishlistTotal'); // <-- ELEMEN BARU
+        const wishlistTotalEl = document.getElementById('wishlistTotal'); // <-- Total wishlist
 
         // Repeated Task Elements
         const repeatedTaskModal = document.getElementById('repeatedTaskModal');
@@ -754,26 +777,28 @@
         const repeatTypeSelect = document.getElementById('repeatType');
         const specificDaysWrapper = document.getElementById('specificDaysWrapper');
 
-        // PERUBAHAN: DOM Element untuk Gemini Tab
+        // Gemini Elements (dikembalikan ke tab)
         const geminiForm = document.getElementById('geminiForm');
         const geminiInput = document.getElementById('geminiInput');
         const chatContainer = document.getElementById('chatContainer');
         const geminiLoading = document.getElementById('geminiLoading');
 
-        // FITUR: Kalender Elements
-        const calendarGridEl = document.getElementById('calendarGrid');
+        // Calendar Elements
+        const calendarGrid = document.getElementById('calendarGrid');
         const currentMonthYearEl = document.getElementById('currentMonthYear');
         const prevMonthBtn = document.getElementById('prevMonthBtn');
         const nextMonthBtn = document.getElementById('nextMonthBtn');
         const eventModal = document.getElementById('eventModal');
-        const showEventModalBtn = document.getElementById('showEventModal'); // Tombol ini untuk event baru 'umum'
-        const closeEventModalBtn = document.getElementById('closeEventModal');
         const eventForm = document.getElementById('eventForm');
+        const closeEventModalBtn = document.getElementById('closeEventModal');
         const eventErrorEl = document.getElementById('eventError');
-        const eventDateEl = document.getElementById('eventDate');
-        const eventListForDayEl = document.getElementById('eventListForDay');
-        const eventListContainerEl = document.getElementById('eventListContainer');
+        const eventNameInput = document.getElementById('eventName');
+        const eventDateInput = document.getElementById('eventDate');
+        const eventIdInput = document.getElementById('eventId');
+        const eventStartTimeInput = document.getElementById('eventStartTime');
+        const eventEndTimeInput = document.getElementById('eventEndTime');
         const deleteEventBtn = document.getElementById('deleteEventBtn');
+
 
         // --- Initialization ---
         async function initializeFirebase() {
@@ -784,6 +809,7 @@
 
                 // Pasang listener tombol login SEKARANG, jangan menunggu login.
                 loginBtn.addEventListener('click', handleGoogleLogin);
+                startClock(); // <-- Mulai jam
 
                 // Listener utama status otentikasi
                 onAuthStateChanged(auth, (user) => {
@@ -833,40 +859,44 @@
             tasksCollection = collection(db, `${userArtifactsPath}/tasks`);
             wishlistCollection = collection(db, `${userArtifactsPath}/wishlist`);
             repeatedTasksCollection = collection(db, `${userArtifactsPath}/repeatedTasks`);
-            eventsCollection = collection(db, `${userArtifactsPath}/events`); // Collection baru
+            eventsCollection = collection(db, `${userArtifactsPath}/events`); // <-- Inisialisasi collection baru
 
             // Setup Listeners
             setupTabListeners();
             setupModalListeners();
-            setupFormListeners(); // Ini sekarang juga memasang listener Gemini
+            setupFormListeners(); // Ini sekarang juga memasang listener Gemini & Event
             setupFilterListeners();
-            setupRepeatedTaskModalLogic(); 
-            setupCalendarListeners(); // Listener baru
+            setupRepeatedTaskModalLogic();
+            setupCalendarListeners(); // <-- Listener baru untuk kalender
             
             // Atur filter default secara visual
             updateFilterButtons(); 
+            
+            // Render kalender
+            renderCalendar();
             
             // Attach real-time listeners
             attachTaskListener();
             attachWishlistListener();
             attachRepeatedTaskListener(); 
-            attachEventsListener(); // Listener baru
-
-            // Jalankan Jam
-            updateClock();
-            setInterval(updateClock, 1000);
-
-            // Render Kalender awal
-            renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
+            attachEventListener(); // <-- Listener baru untuk event
         }
 
-        // --- FITUR: Jam dan Hari ---
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const dateString = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            clockEl.textContent = timeString;
-            dateEl.textContent = dateString;
+        // --- Clock Logic ---
+        function startClock() {
+            const locale = 'id-ID';
+            function updateTime() {
+                const now = new Date();
+                clockEl.textContent = now.toLocaleTimeString(locale, { hour12: false });
+                dateEl.textContent = now.toLocaleDateString(locale, { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
+            updateTime();
+            setInterval(updateTime, 1000); // Update setiap detik
         }
 
         // --- Authentication Logic ---
@@ -897,14 +927,14 @@
             if (tasksUnsubscribe) tasksUnsubscribe();
             if (wishlistUnsubscribe) wishlistUnsubscribe();
             if (repeatedTasksUnsubscribe) repeatedTasksUnsubscribe();
-            if (eventsUnsubscribe) eventsUnsubscribe(); // Cleanup baru
+            if (eventsUnsubscribe) eventsUnsubscribe(); // <-- Cleanup listener baru
             tasksUnsubscribe = null;
             wishlistUnsubscribe = null;
             repeatedTasksUnsubscribe = null;
-            eventsUnsubscribe = null; // Cleanup baru
+            eventsUnsubscribe = null; // <-- Cleanup listener baru
             allTasks = [];
             allRepeatedTasks = [];
-            allEvents = []; // Cleanup baru
+            allEvents = []; // <-- Cleanup array baru
             if (taskStatusChart) {
                 taskStatusChart.destroy();
                 taskStatusChart = null;
@@ -974,14 +1004,17 @@
             });
 
             // Event Modal
-            showEventModalBtn.addEventListener('click', () => {
-                const today = new Date().toISOString().split('T')[0];
-                openEventModal(today); // Buka modal dengan tanggal hari ini
+            closeEventModalBtn.addEventListener('click', () => {
+                eventModal.close();
+                eventErrorEl.classList.add('hidden');
             });
-            closeEventModalBtn.addEventListener('click', () => eventModal.close());
             eventModal.addEventListener('click', (e) => {
-                if (e.target === eventModal) eventModal.close();
+                if (e.target === eventModal) {
+                    eventModal.close();
+                    eventErrorEl.classList.add('hidden');
+                }
             });
+            deleteEventBtn.addEventListener('click', handleDeleteEvent);
 
             // Listener untuk tombol Logout
             logoutBtn.addEventListener('click', handleLogout);
@@ -991,10 +1024,8 @@
             taskForm.addEventListener('submit', handleTaskSubmit);
             wishlistForm.addEventListener('submit', handleWishlistSubmit);
             repeatedTaskForm.addEventListener('submit', handleRepeatedTaskSubmit);
-            eventForm.addEventListener('submit', handleEventSubmit); // Form baru
-            
-            // PERUBAHAN: Listener Form Gemini
-            geminiForm.addEventListener('submit', handleGeminiSubmit);
+            geminiForm.addEventListener('submit', handleGeminiSubmit); // Listener Gemini
+            eventForm.addEventListener('submit', handleEventSubmit); // Listener Event
         }
 
         function setupRepeatedTaskModalLogic() {
@@ -1065,7 +1096,7 @@
                 });
                 allTasks = tasks; // Store all tasks
                 renderFilteredTasks(); // Render based on filter
-                renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth()); // Update kalender
+                renderCalendar(); // <-- Update kalender saat task berubah
             }, (error) => {
                 console.error("Error fetching tasks:", error);
             });
@@ -1224,6 +1255,11 @@
                 let formattedDeadline = '<i>Tidak ada deadline</i>';
                 if (task.deadline) {
                     const deadlineDate = new Date(task.deadline);
+                    // Tambahkan 1 hari ke tanggal karena input <type="date">
+                    // seringkali menyimpan waktu sebagai T00:00:00 UTC,
+                    // yang bisa jadi "kemarin" di zona waktu lokal.
+                    // Ini adalah perbaikan sederhana untuk masalah zona waktu.
+                    deadlineDate.setMinutes(deadlineDate.getMinutes() + deadlineDate.getTimezoneOffset());
                     formattedDeadline = deadlineDate.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
                 }
 
@@ -1413,7 +1449,7 @@
                 });
                 allRepeatedTasks = tasks;
                 renderRepeatedTasks();
-                renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth()); // Update kalender
+                renderCalendar(); // <-- Update kalender saat tugas berulang berubah
             }, (error) => {
                 console.error("Error fetching repeated tasks:", error);
             });
@@ -1700,221 +1736,7 @@
             }
         }
         
-        // --- FITUR: Kalender Logic ---
-        function setupCalendarListeners() {
-            prevMonthBtn.addEventListener('click', () => {
-                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
-                renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
-            });
-            nextMonthBtn.addEventListener('click', () => {
-                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
-                renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
-            });
-        }
-
-        function attachEventsListener() {
-            if (eventsUnsubscribe) eventsUnsubscribe();
-            const q = query(eventsCollection);
-            eventsUnsubscribe = onSnapshot(q, (snapshot) => {
-                allEvents = [];
-                snapshot.forEach(doc => {
-                    allEvents.push({ id: doc.id, ...doc.data() });
-                });
-                // Render ulang kalender dengan event baru
-                renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
-            }, (error) => {
-                console.error("Error fetching events:", error);
-            });
-        }
-
-        function renderCalendar(year, month) {
-            calendarGridEl.innerHTML = '';
-            currentMonthYearEl.textContent = new Date(year, month).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-
-            const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 = Minggu, 1 = Senin, ...
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
-
-            // Sel kosong untuk hari sebelum tanggal 1
-            for (let i = 0; i < firstDayOfMonth; i++) {
-                const emptyCell = document.createElement('div');
-                emptyCell.className = 'calendar-day other-month';
-                calendarGridEl.appendChild(emptyCell);
-            }
-
-            // Sel untuk setiap hari di bulan ini
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'calendar-day';
-                const date = new Date(year, month, day);
-                const dateStr = date.toISOString().split('T')[0]; // "YYYY-MM-DD"
-                const dayOfWeek = date.getDay(); // 0-6
-                const dayOfMonth = date.getDate(); // 1-31
-
-                if (dateStr === todayStr) {
-                    dayCell.classList.add('today');
-                }
-
-                // Cek event untuk hari ini
-                const dotContainer = document.createElement('div');
-                dotContainer.className = 'event-dot-container';
-
-                // 1. Cek Task Deadlines
-                const tasksOnThisDay = allTasks.filter(task => task.deadline === dateStr);
-                if (tasksOnThisDay.length > 0) {
-                    const taskDot = document.createElement('div');
-                    taskDot.className = 'event-dot event-dot-task';
-                    taskDot.title = `${tasksOnThisDay.length} task deadline`;
-                    dotContainer.appendChild(taskDot);
-                }
-
-                // 2. Cek Events
-                const eventsOnThisDay = allEvents.filter(event => {
-                    if (event.repeat === 'none' && event.date === dateStr) return true;
-                    if (event.repeat === 'daily') return true;
-                    if (event.repeat === 'weekly' && new Date(event.date).getDay() === dayOfWeek) return true;
-                    if (event.repeat === 'monthly' && new Date(event.date).getDate() === dayOfMonth) return true;
-                    return false;
-                });
-                if (eventsOnThisDay.length > 0) {
-                    const eventDot = document.createElement('div');
-                    eventDot.className = 'event-dot event-dot-event';
-                    eventDot.title = `${eventsOnThisDay.length} event`;
-                    dotContainer.appendChild(eventDot);
-                }
-
-                // 3. Cek Repeated Tasks
-                const repeatedTasksOnThisDay = allRepeatedTasks.filter(task => {
-                    const taskDay = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][dayOfWeek];
-                    if (task.repeatType === 'daily') return true;
-                    if (task.repeatType === 'specific_days' && task.repeatDays.includes(taskDay)) return true;
-                    return false;
-                });
-                if (repeatedTasksOnThisDay.length > 0) {
-                     const repeatedDot = document.createElement('div');
-                    repeatedDot.className = 'event-dot event-dot-repeated';
-                    repeatedDot.title = `${repeatedTasksOnThisDay.length} tugas berulang`;
-                    dotContainer.appendChild(repeatedDot);
-                }
-
-
-                dayCell.innerHTML = `<span class="day-number">${day}</span>`;
-                dayCell.appendChild(dotContainer);
-                dayCell.addEventListener('click', () => openEventModal(dateStr));
-                calendarGridEl.appendChild(dayCell);
-            }
-        }
-
-        function openEventModal(dateStr) {
-            eventForm.reset();
-            eventErrorEl.classList.add('hidden');
-            deleteEventBtn.classList.add('hidden');
-            eventDateEl.value = dateStr;
-            eventForm.dataset.eventId = ''; // Hapus ID event sebelumnya
-
-            // Render daftar event untuk hari itu
-            renderEventListForDay(dateStr);
-            eventModal.showModal();
-        }
-
-        function renderEventListForDay(dateStr) {
-            eventListContainerEl.innerHTML = '';
-            const date = new Date(dateStr + 'T00:00:00'); // Atasi masalah timezone
-            const dayOfWeek = date.getDay();
-            const dayOfMonth = date.getDate();
-
-            const eventsOnThisDay = allEvents.filter(event => {
-                const eventDate = new Date(event.date + 'T00:00:00');
-                if (event.repeat === 'none' && event.date === dateStr) return true;
-                if (event.repeat === 'daily') return true;
-                if (event.repeat === 'weekly' && eventDate.getDay() === dayOfWeek) return true;
-                if (event.repeat === 'monthly' && eventDate.getDate() === dayOfMonth) return true;
-                return false;
-            });
-
-            if (eventsOnThisDay.length === 0) {
-                eventListContainerEl.innerHTML = '<p class="text-sm text-gray-500">Tidak ada event di tanggal ini.</p>';
-                return;
-            }
-
-            eventsOnThisDay.forEach(event => {
-                const eventEl = document.createElement('div');
-                eventEl.className = 'flex justify-between items-center p-2 bg-gray-100 dark:bg-gray-700 rounded-md cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600';
-                eventEl.innerHTML = `
-                    <span class="text-sm font-medium">${event.name} ${event.time ? `(${event.time})` : ''}</span>
-                    <span class="text-xs text-gray-500">${event.repeat !== 'none' ? `(Berulang ${event.repeat})` : ''}</span>
-                `;
-                eventEl.addEventListener('click', () => {
-                    // Isi form untuk edit
-                    eventForm.dataset.eventId = event.id;
-                    document.getElementById('eventName').value = event.name;
-                    document.getElementById('eventTime').value = event.time || '';
-                    document.getElementById('eventRepeat').value = event.repeat || 'none';
-                    deleteEventBtn.classList.remove('hidden');
-                });
-                eventListContainerEl.appendChild(eventEl);
-            });
-        }
-
-
-        async function handleEventSubmit(e) {
-            e.preventDefault();
-            eventErrorEl.classList.add('hidden');
-            const formData = new FormData(eventForm);
-            const eventId = eventForm.dataset.eventId;
-
-            const eventName = formData.get('eventName');
-            if (!eventName || eventName.trim() === '') {
-                eventErrorEl.textContent = 'Nama Event tidak boleh kosong.';
-                eventErrorEl.classList.remove('hidden');
-                return;
-            }
-
-            const eventData = {
-                name: eventName,
-                date: formData.get('eventDate'),
-                time: formData.get('eventTime') || null,
-                repeat: formData.get('eventRepeat') || 'none',
-            };
-
-            try {
-                if (eventId) {
-                    // Update event
-                    const eventRef = doc(eventsCollection, eventId);
-                    await updateDoc(eventRef, eventData);
-                } else {
-                    // Tambah event baru
-                    await addDoc(eventsCollection, eventData);
-                }
-                eventForm.reset();
-                eventModal.close();
-            } catch (error) {
-                console.error("Error saving event:", error);
-                eventErrorEl.textContent = `Gagal menyimpan: ${error.message}`;
-                eventErrorEl.classList.remove('hidden');
-            }
-        }
-
-        // Listener untuk tombol delete (di-setup di openEventModal saat event diklik)
-        deleteEventBtn.addEventListener('click', async () => {
-            const eventId = eventForm.dataset.eventId;
-            if (!eventId) return;
-
-            if (confirm('Apakah Anda yakin ingin menghapus event ini?')) {
-                try {
-                    await deleteDoc(doc(eventsCollection, eventId));
-                    eventForm.reset();
-                    eventModal.close();
-                } catch (error) {
-                    console.error("Error deleting event:", error);
-                    eventErrorEl.textContent = `Gagal menghapus: ${error.message}`;
-                    eventErrorEl.classList.remove('hidden');
-                }
-            }
-        });
-
-        // --- FUNGSI-FUNGSI GEMINI ---
+        // --- Gemini Logic (Dikembalikan ke tab) ---
 
         /**
          * Menangani submit form Gemini
@@ -1968,7 +1790,7 @@
             // --- PENTING UNTUK LOKAL ---
             // GANTI "" DENGAN API KEY ANDA DARI GOOGLE AI STUDIO
             // JIKA MENJALANKAN DI LUAR PRATINJAU INI
-            const apiKey = "AIzaSyCiIZRywKs7nF92z6_FWMzhOAaRe9SOOJE"; 
+            const apiKey = "AIzaSyBdvL65RALEcZ1vxHsQb8d1A3GJnJc_QlI"; 
 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             const payload = {
@@ -2042,6 +1864,241 @@
 
             return safeText;
         }
+
+        // --- FITUR BARU: Calendar Logic ---
+
+        function setupCalendarListeners() {
+            prevMonthBtn.addEventListener('click', () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                renderCalendar();
+            });
+            nextMonthBtn.addEventListener('click', () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                renderCalendar();
+            });
+        }
+
+        function attachEventListener() {
+            if (eventsUnsubscribe) eventsUnsubscribe();
+            
+            const q = query(eventsCollection);
+            eventsUnsubscribe = onSnapshot(q, (snapshot) => {
+                const events = [];
+                snapshot.forEach(doc => {
+                    events.push({ id: doc.id, ...doc.data() });
+                });
+                allEvents = events;
+                renderCalendar(); // Update kalender saat event berubah
+            }, (error) => {
+                console.error("Error fetching events:", error);
+            });
+        }
+
+        function renderCalendar() {
+            calendarGrid.innerHTML = '';
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth(); // 0-11
+            
+            currentMonthYearEl.textContent = currentCalendarDate.toLocaleDateString('id-ID', {
+                month: 'long',
+                year: 'numeric'
+            });
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0=Minggu, 1=Senin, ...
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+            // 1. Tambahkan hari-hari dari bulan sebelumnya
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const day = daysInPrevMonth - firstDayOfMonth + 1 + i;
+                calendarGrid.appendChild(createCalendarDay(day, month - 1, year, true));
+            }
+
+            // 2. Tambahkan hari-hari dari bulan ini
+            for (let i = 1; i <= daysInMonth; i++) {
+                calendarGrid.appendChild(createCalendarDay(i, month, year, false));
+            }
+
+            // 3. Tambahkan hari-hari dari bulan berikutnya
+            const totalDaysRendered = firstDayOfMonth + daysInMonth;
+            const nextMonthDays = (7 - (totalDaysRendered % 7)) % 7;
+            for (let i = 1; i <= nextMonthDays; i++) {
+                calendarGrid.appendChild(createCalendarDay(i, month + 1, year, true));
+            }
+        }
+        
+        function createCalendarDay(day, month, year, isOtherMonth) {
+            const date = new Date(year, month, day);
+            const dateStr = date.toISOString().split('T')[0]; // "YYYY-MM-DD"
+            const dayEl = document.createElement('div');
+            dayEl.className = 'calendar-day';
+            if (isOtherMonth) {
+                dayEl.classList.add('other-month');
+            }
+
+            // Cek apakah hari ini
+            const today = new Date();
+            if (date.toDateString() === today.toDateString()) {
+                dayEl.classList.add('today');
+            }
+
+            const dayNumber = document.createElement('span');
+            dayNumber.className = 'day-number';
+            dayNumber.textContent = day;
+            dayEl.appendChild(dayNumber);
+
+            // Tambahkan container untuk dot
+            const dotContainer = document.createElement('div');
+            dotContainer.className = 'event-dot-container';
+            dayEl.appendChild(dotContainer);
+
+            // Cek Task
+            const tasksOnThisDay = allTasks.filter(task => {
+                if (!task.deadline) return false;
+                // Perbaiki perbandingan tanggal dengan mengabaikan zona waktu
+                const taskDate = new Date(task.deadline);
+                taskDate.setMinutes(taskDate.getMinutes() + taskDate.getTimezoneOffset());
+                return taskDate.toDateString() === date.toDateString();
+            });
+            if (tasksOnThisDay.length > 0) {
+                dotContainer.appendChild(createEventDot('task'));
+            }
+
+            // Cek Event
+            const eventsOnThisDay = allEvents.filter(event => {
+                if (event.type === 'event') {
+                    return event.date === dateStr;
+                }
+                return false;
+            });
+            if (eventsOnThisDay.length > 0) {
+                dotContainer.appendChild(createEventDot('event'));
+            }
+
+            // Cek Event Berulang (misal: kuliah)
+            const dayOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][date.getDay()];
+            const repeatedEventsOnThisDay = allEvents.filter(event => {
+                return event.type === 'repeated' && event.repeatDays.includes(dayOfWeek);
+            });
+            if (repeatedEventsOnThisDay.length > 0) {
+                dotContainer.appendChild(createEventDot('repeated'));
+            }
+
+            // Tambahkan listener klik (hanya untuk hari di bulan ini)
+            if (!isOtherMonth) {
+                dayEl.addEventListener('click', () => showEventModal(dateStr, eventsOnThisDay, repeatedEventsOnThisDay));
+            }
+
+            return dayEl;
+        }
+
+        function createEventDot(type) {
+            const dot = document.createElement('span');
+            dot.className = `event-dot event-dot-${type}`;
+            dot.title = type === 'task' ? 'Deadline Task' : (type === 'event' ? 'Event' : 'Event Berulang');
+            return dot;
+        }
+
+        function showEventModal(dateStr, events, repeatedEvents) {
+            // Untuk demo ini, kita hanya fokus pada 1 event per hari
+            // ATAU membuat event baru
+            const event = events[0]; // Ambil event pertama jika ada
+
+            eventForm.reset();
+            eventErrorEl.classList.add('hidden');
+            eventDateInput.value = dateStr;
+
+            if (event) {
+                // Mode Edit
+                eventIdInput.value = event.id;
+                eventNameInput.value = event.name;
+                eventStartTimeInput.value = event.startTime || '';
+                eventEndTimeInput.value = event.endTime || '';
+                document.querySelector(`input[name="eventType"][value="${event.type}"]`).checked = true;
+                deleteEventBtn.classList.remove('hidden');
+            } else {
+                // Mode Tambah Baru
+                eventIdInput.value = '';
+                deleteEventBtn.classList.add('hidden');
+                document.querySelector(`input[name="eventType"][value="event"]`).checked = true;
+            }
+            
+            // TODO: Tampilkan juga 'repeatedEvents' dalam daftar
+            // Saat ini, modal hanya menangani 1 event sekali atau membuat baru
+
+            eventModal.showModal();
+        }
+
+        async function handleEventSubmit(e) {
+            e.preventDefault();
+            eventErrorEl.classList.add('hidden');
+
+            const eventName = eventNameInput.value.trim();
+            if (!eventName) {
+                eventErrorEl.textContent = 'Nama Event tidak boleh kosong.';
+                eventErrorEl.classList.remove('hidden');
+                return;
+            }
+
+            const eventId = eventIdInput.value;
+            const eventType = document.querySelector('input[name="eventType"]:checked').value;
+
+            const eventData = {
+                name: eventName,
+                date: eventDateInput.value,
+                startTime: eventStartTimeInput.value || null,
+                endTime: eventEndTimeInput.value || null,
+                type: eventType,
+                repeatDays: eventType === 'repeated' ? getDayOfWeekFromDate(eventDateInput.value) : []
+            };
+
+            try {
+                if (eventId) {
+                    // Update event
+                    const eventRef = doc(eventsCollection, eventId);
+                    await updateDoc(eventRef, eventData);
+                } else {
+                    // Add event baru
+                    await addDoc(eventsCollection, eventData);
+                }
+                eventForm.reset();
+                eventModal.close();
+            } catch (error) {
+                console.error("Error saving event:", error);
+                eventErrorEl.textContent = `Gagal menyimpan event: ${error.message}`;
+                eventErrorEl.classList.remove('hidden');
+            }
+        }
+
+        async function handleDeleteEvent() {
+            const eventId = eventIdInput.value;
+            if (!eventId) return;
+
+            if (confirm("Apakah Anda yakin ingin menghapus event ini?")) {
+                try {
+                    await deleteDoc(doc(eventsCollection, eventId));
+                    eventForm.reset();
+                    eventModal.close();
+                } catch (error) {
+                    console.error("Error deleting event:", error);
+                    eventErrorEl.textContent = `Gagal menghapus event: ${error.message}`;
+                    eventErrorEl.classList.remove('hidden');
+                }
+            }
+        }
+
+        function getDayOfWeekFromDate(dateStr) {
+            // dateStr format "YYYY-MM-DD"
+            const date = new Date(dateStr);
+            date.setMinutes(date.getMinutes() + date.getTimezoneOffset()); // Koreksi zona waktu
+            const day = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][date.getDay()];
+            return [day]; // Kembalikan sebagai array
+        }
+
+        // --- Custom Confirm ---
+        // Ganti window.confirm dengan fungsi kustom jika diperlukan,
+        // karena alert/confirm bawaan mungkin diblokir.
+        // Untuk saat ini, kita tetap gunakan confirm() bawaan.
 
         // --- Start App ---
         initializeFirebase();
