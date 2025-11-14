@@ -419,9 +419,16 @@
 
                 <!-- Wishlist Tab -->
                 <div id="wishlist" class="tab-content hidden space-y-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-bold">Wishlist Belanja</h2>
-                        <button id="showWishlistModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                    <div class="flex justify-between items-start mb-4"> <!-- Diubah ke items-start -->
+                        <div>
+                            <h2 class="text-2xl font-bold">Wishlist Belanja</h2>
+                            <!-- FITUR BARU: Total Harga Wishlist -->
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Estimasi:</h3>
+                                <p id="wishlistTotal" class="text-xl font-bold text-blue-600 dark:text-blue-400">Rp 0</p>
+                            </div>
+                        </div>
+                        <button id="showWishlistModal" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center"> <!-- Dihapus self-end -->
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                             Tambah Barang
                         </button>
@@ -734,6 +741,7 @@
         const wishlistForm = document.getElementById('wishlistForm');
         const wishlistGridEl = document.getElementById('wishlistGrid');
         const noWishlistItemsEl = document.getElementById('noWishlistItems');
+        const wishlistTotalEl = document.getElementById('wishlistTotal'); // <-- ELEMEN BARU
 
         // Repeated Task Elements
         const repeatedTaskModal = document.getElementById('repeatedTaskModal');
@@ -1636,6 +1644,7 @@
 
         function renderWishlist(items) {
             wishlistGridEl.innerHTML = '';
+            let totalHarga = 0; // <-- Variabel baru untuk total
             
             if (items.length === 0) {
                 noWishlistItemsEl.classList.remove('hidden');
@@ -1646,6 +1655,7 @@
             }
 
             items.forEach(item => {
+                totalHarga += item.price; // <-- Menambahkan harga ke total
                 const itemEl = document.createElement('div');
                 itemEl.className = 'bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-col justify-between';
                 
@@ -1674,6 +1684,10 @@
             document.querySelectorAll('.delete-wishlist-btn').forEach(btn => {
                 btn.addEventListener('click', () => deleteWishlistItem(btn.dataset.id));
             });
+
+            // --- PERBARUI TOTAL HARGA ---
+            const formattedTotal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalHarga);
+            wishlistTotalEl.textContent = formattedTotal;
         }
 
         async function deleteWishlistItem(id) {
