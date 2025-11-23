@@ -158,7 +158,7 @@
             100% { left: 100%; }
         }
 
-        /* --- 3D PARALLAX CARD (Moved to Chart) --- */
+        /* --- 3D PARALLAX CARD (For Chart) --- */
         .parallax-container {
             perspective: 1000px;
             transform-style: preserve-3d;
@@ -1096,8 +1096,6 @@
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
-            
-            // initLogin3D(); // REMOVED
 
             els.loginBtn.addEventListener('click', async () => {
                 try {
@@ -1122,7 +1120,6 @@
                     els.loginScreen.classList.remove('hidden');
                     els.mainApp.classList.add('hidden');
                     els.loading.style.display = 'none';
-                    initMagicHover(); // Ensure hover works on login screen
                 }
             });
         }
@@ -1291,6 +1288,7 @@
             els.taskList.innerHTML = '';
             const now = new Date().getTime();
             const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+
             const filtered = allTasks.filter(t => {
                 if (currentFilter === 'all') return true;
                 if (currentFilter === 'active') return t.status === 'pending' || t.status === 'in-progress';
@@ -1305,7 +1303,10 @@
             }).sort((a,b) => (a.deadline || '9999') > (b.deadline || '9999') ? 1 : -1);
 
             if(filtered.length === 0) {
-                els.taskList.innerHTML = `<div class="text-center py-8 text-gray-500 glass-card">Tidak ada tugas.</div>`;
+                let msg = "Tidak ada tugas aktif.";
+                if (currentFilter === 'all') msg = "Belum ada tugas.";
+                else if (currentFilter === 'completed') msg = "Belum ada tugas selesai.";
+                els.taskList.innerHTML = `<div class="text-center py-8 text-gray-500 glass-card">${msg}</div>`;
                 return;
             }
 
@@ -1326,8 +1327,12 @@
                                 <option value="in-progress" ${t.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
                                 <option value="completed" ${t.status === 'completed' ? 'selected' : ''}>Completed</option>
                             </select>
-                            <button class="text-xs bg-white/10 hover:bg-white/20 px-2 py-1 rounded text-gray-300" onclick="document.dispatchEvent(new CustomEvent('edit-task', {detail: '${t.id}'}))"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
-                            <button class="text-xs bg-red-500/20 text-red-400 hover:bg-red-500/40 px-2 py-1 rounded" onclick="document.dispatchEvent(new CustomEvent('delete-quick', {detail: '${t.id}'}))"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                            <button class="text-xs bg-white/10 hover:bg-white/20 px-2 py-1 rounded text-gray-300" onclick="document.dispatchEvent(new CustomEvent('edit-task', {detail: '${t.id}'}))">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                            </button>
+                            <button class="text-xs bg-red-500/20 text-red-400 hover:bg-red-500/40 px-2 py-1 rounded" onclick="document.dispatchEvent(new CustomEvent('delete-quick', {detail: '${t.id}'}))">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
                         </div>
                     </div>
                     ${t.notes ? `<p class="text-sm text-gray-400 bg-black/20 p-2 rounded mt-1">${t.notes}</p>` : ''}
@@ -1370,6 +1375,7 @@
             initChart3D();
         }
 
+        // --- CALENDAR ---
         function renderCalendar() {
             els.calendarGrid.innerHTML = '';
             const y = currentCalendarDate.getFullYear();
@@ -1494,7 +1500,6 @@
                     </div>
                 `;
                 
-                // Attach magic hover manually since dynamic
                 contentDiv.onmousemove = e => {
                     const rect = contentDiv.getBoundingClientRect();
                     const x = e.clientX - rect.left;
@@ -1545,11 +1550,7 @@
                 rowDiv.appendChild(btnContainer);
                 els.upcomingList.appendChild(rowDiv);
             });
-            initMagicHover();
         }
-
-        // Remove old inline listener logic that might conflict
-        // document.addEventListener('complete-task', ... ) -> Removed/Replaced by direct onclick above
 
         // --- WISHLIST ---
         async function handleWishlistSubmit(e) {
