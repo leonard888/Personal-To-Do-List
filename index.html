@@ -1568,9 +1568,9 @@
                     </div>
                     <div class="flex gap-2 relative z-10">
                          ${item.type === 'task' 
-                            ? `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="complete-task">Done</button>`
-                            : `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="complete-event">Done</button>
-                               <button class="text-red-400 hover:text-white bg-red-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="skip-event">Skip</button>`}
+                            ? `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="complete-task" data-id="${item.id}">Done</button>`
+                            : `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="complete-event" data-id="${item.id}">Done</button>
+                               <button class="text-red-400 hover:text-white bg-red-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="skip-event" data-id="${item.id}">Skip</button>`}
                     </div>
                 `;
                 els.upcomingList.appendChild(div);
