@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -72,16 +72,42 @@
             to { background-position: 200% center; }
         }
 
-        /* Blur Text Animation (Applied via JS to individual digits) */
-        .blur-digit {
-            display: inline-block;
-            transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+        /* --- COUNTER CLOCK ANIMATION --- */
+        .clock-wrapper {
+            display: flex;
+            gap: 0.1rem;
+            font-family: 'Outfit', monospace; /* Monospace font for alignment */
+            font-weight: 700;
+            font-size: 2.25rem; /* 4xl size */
+            line-height: 1;
+            overflow: hidden;
+            height: 1em; /* Only show one number height */
         }
-        .blur-digit.changing {
-            filter: blur(5px);
-            opacity: 0;
-            transform: translateY(-5px);
+
+        .digit-column {
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* Springy effect */
         }
+
+        .digit-column span {
+            height: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, #818cf8, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .clock-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #818cf8;
+            padding-bottom: 0.2em;
+        }
+
 
         /* --- GLASS COMPONENTS --- */
         .glass-panel {
@@ -277,9 +303,9 @@
             color: var(--text-secondary);
             position: relative;
             overflow: hidden;
-            cursor: pointer; /* Ensure cursor changes */
-            background: transparent; /* Reset background */
-            border: 1px solid transparent; /* Reset border */
+            cursor: pointer; 
+            background: transparent;
+            border: 1px solid transparent; 
         }
         .sidebar-link:hover {
             background: rgba(255, 255, 255, 0.05);
@@ -432,21 +458,21 @@
                     <!-- Header Area -->
                     <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
                         <div>
-                            <h2 class="text-3xl font-bold text-white animate-gradient-text">Dashboard</h2>
-                            <p class="text-gray-400">Selamat datang kembali di workspace Anda.</p>
+                            <!-- UPDATED TITLE SIZE: text-5xl -->
+                            <h2 class="text-5xl font-extrabold text-white animate-gradient-text mb-2">Dashboard</h2>
+                            <p class="text-lg text-gray-400">Selamat datang kembali di workspace Anda.</p>
                         </div>
                         <div class="text-right">
-                            <!-- Jam dengan animasi Blur -->
-                            <div id="clockContainer" class="text-3xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 flex justify-end gap-1">
+                            <!-- COUNTER CLOCK -->
+                            <div id="clockContainer" class="clock-wrapper flex justify-end gap-1">
                                 <!-- Digits will be injected here by JS -->
-                                <span>00:00:00</span>
                             </div>
-                            <div id="dateEl" class="text-sm text-gray-400 uppercase tracking-widest font-medium">---</div>
+                            <div id="dateEl" class="text-sm text-gray-400 uppercase tracking-widest font-medium mt-1">---</div>
                         </div>
                     </div>
 
                     <!-- DASHBOARD TAB -->
-                    <div id="dashboard" class="tab-content space-y-8 animate-fade-in">
+                    <div id="dashboard" class="tab-content space-y-10 animate-fade-in">
                         
                         <!-- Market Section (TradingView) -->
                         <section>
@@ -469,9 +495,10 @@
 
                         <!-- Upcoming Events & Tasks Section -->
                         <section>
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-xl font-bold text-white flex items-center gap-2 animate-gradient-text">
-                                    <span class="w-2 h-8 bg-indigo-500 rounded-full block"></span>
+                            <div class="flex justify-between items-center mb-6">
+                                <!-- UPDATED TITLE SIZE: text-3xl -->
+                                <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
+                                    <span class="w-2 h-8 bg-indigo-500 rounded-full block shadow-lg shadow-indigo-500/50"></span>
                                     Agenda Hari Ini
                                 </h3>
                             </div>
@@ -485,9 +512,10 @@
 
                         <!-- To-Do List Section -->
                         <section>
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-xl font-bold text-white flex items-center gap-2 animate-gradient-text">
-                                    <span class="w-2 h-8 bg-cyan-500 rounded-full block"></span>
+                            <div class="flex justify-between items-center mb-6">
+                                <!-- UPDATED TITLE SIZE: text-3xl -->
+                                <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
+                                    <span class="w-2 h-8 bg-cyan-500 rounded-full block shadow-lg shadow-cyan-500/50"></span>
                                     Manajemen Tugas
                                 </h3>
                                 <button id="showTaskModal" class="glass-button py-2 px-4 rounded-lg flex items-center gap-2 text-sm">
@@ -537,9 +565,10 @@
 
                         <!-- Calendar Section -->
                         <section>
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-xl font-bold text-white flex items-center gap-2 animate-gradient-text">
-                                    <span class="w-2 h-8 bg-pink-500 rounded-full block"></span>
+                            <div class="flex justify-between items-center mb-6">
+                                <!-- UPDATED TITLE SIZE: text-3xl -->
+                                <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
+                                    <span class="w-2 h-8 bg-pink-500 rounded-full block shadow-lg shadow-pink-500/50"></span>
                                     Kalender
                                 </h3>
                                 <div class="flex items-center gap-2 bg-white/5 rounded-lg p-1">
@@ -591,7 +620,8 @@
                     <div id="wishlist" class="tab-content hidden space-y-8 animate-fade-in">
                         <div class="flex justify-between items-center glass-card bg-gradient-to-r from-indigo-900/50 to-purple-900/50">
                             <div>
-                                <h2 class="text-3xl font-bold text-white">Wishlist</h2>
+                                <!-- UPDATED TITLE SIZE: text-4xl -->
+                                <h2 class="text-4xl font-bold text-white animate-gradient-text">Wishlist</h2>
                                 <p class="text-gray-300 text-sm mt-1">Total Estimasi: <span id="wishlistTotal" class="font-mono text-lg font-bold text-green-400">Rp 0</span></p>
                             </div>
                             <button id="showWishlistModal" class="glass-button py-2 px-6 rounded-lg flex items-center gap-2 shadow-lg">
@@ -611,8 +641,9 @@
                     <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-8rem)]">
                         <div class="glass-card flex-1 flex flex-col p-0 overflow-hidden">
                             <div class="p-4 border-b border-white/10 bg-white/5 flex justify-between items-center">
-                                <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                                    <span class="text-2xl">✨</span> Gemini AI
+                                <!-- UPDATED TITLE SIZE: text-3xl -->
+                                <h2 class="text-3xl font-bold text-white flex items-center gap-2 animate-gradient-text">
+                                    <span class="text-3xl">✨</span> Gemini AI
                                 </h2>
                                 <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Model: Flash 2.5</span>
                             </div>
@@ -648,19 +679,15 @@
         </div>
     </div>
 
-    <!-- MODALS (Glass Style) -->
-
-    <!-- Task Modal -->
+    <!-- MODALS -->
     <dialog id="taskModal" class="modal-content rounded-2xl w-full max-w-md text-white">
         <form id="taskForm" class="p-6 space-y-4" data-task-id="">
             <h3 id="taskModalTitle" class="text-2xl font-bold mb-4">Tugas Baru</h3>
             <div id="taskError" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm"></div>
-            
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Tugas</label>
                 <input type="text" id="taskName" name="taskName" class="glass-input w-full rounded-lg px-3 py-2">
             </div>
-            
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label>
@@ -671,7 +698,6 @@
                     <input type="time" id="taskTime" name="taskTime" class="glass-input w-full rounded-lg px-3 py-2">
                 </div>
             </div>
-
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Status</label>
                 <select id="taskStatus" name="taskStatus" class="glass-input w-full rounded-lg px-3 py-2">
@@ -680,17 +706,14 @@
                     <option value="completed" class="bg-gray-900">Completed</option>
                 </select>
             </div>
-
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Catatan</label>
                 <textarea id="taskNotes" name="taskNotes" rows="3" class="glass-input w-full rounded-lg px-3 py-2"></textarea>
             </div>
-
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Link Drive</label>
                 <input type="url" id="taskDriveLink" name="taskDriveLink" placeholder="https://" class="glass-input w-full rounded-lg px-3 py-2">
             </div>
-
             <div class="flex justify-between pt-4 border-t border-white/10 mt-4">
                 <button type="button" id="deleteTaskBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button>
                 <div class="flex gap-3 ml-auto">
@@ -706,12 +729,10 @@
         <form id="eventForm" class="p-6 space-y-4" data-event-id="">
             <h3 id="eventModalTitle" class="text-2xl font-bold mb-4 text-purple-400">Event Baru</h3>
             <div id="eventError" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm"></div>
-            
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Event</label>
                 <input type="text" id="eventName" name="eventName" class="glass-input w-full rounded-lg px-3 py-2">
             </div>
-
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label>
@@ -722,7 +743,6 @@
                     <input type="time" id="eventTime" name="eventTime" class="glass-input w-full rounded-lg px-3 py-2">
                 </div>
             </div>
-
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Berulang</label>
                 <select id="eventRepeat" name="eventRepeat" class="glass-input w-full rounded-lg px-3 py-2">
@@ -731,7 +751,6 @@
                     <option value="weekly" class="bg-gray-900">Setiap Minggu</option>
                 </select>
             </div>
-
             <div class="flex justify-between pt-4 border-t border-white/10 mt-4">
                 <button type="button" id="deleteEventBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button>
                 <div class="flex gap-3 ml-auto">
@@ -795,7 +814,7 @@
         let allTasks = [], allEvents = [];
         let currentFilter = 'active';
         let currentCalendarDate = new Date();
-        let prevTimeString = ""; // Untuk animasi jam
+        let prevTimeString = ""; 
 
         const els = {
             loading: document.getElementById('loadingOverlay'),
@@ -899,7 +918,6 @@
                     els.loginScreen.classList.remove('hidden');
                     els.mainApp.classList.add('hidden');
                     els.loading.style.display = 'none';
-                    // cleanup
                 }
             });
         }
@@ -912,7 +930,6 @@
 
             els.logoutBtn.addEventListener('click', () => signOut(auth));
             
-            // Fix Sidebar Click Logic
             const handleTabClick = (targetId) => {
                  els.sidebarDashboard.classList.remove('active');
                  els.sidebarWishlist.classList.remove('active');
@@ -963,10 +980,8 @@
             document.getElementById('deleteTaskBtn').addEventListener('click', handleDeleteTask);
             els.deleteEventBtn.addEventListener('click', handleDeleteEvent);
 
-            // Filter Listeners
             setupFilterListeners();
 
-            // Data Listeners
             tasksUnsubscribe = onSnapshot(query(tasksCollection), s => {
                 allTasks = s.docs.map(d => ({id: d.id, ...d.data()}));
                 renderTasks();
@@ -985,7 +1000,6 @@
                 renderUpcoming();
             });
 
-            // Custom Animated Clock
             setInterval(updateAnimatedClock, 1000);
             updateAnimatedClock();
 
@@ -993,46 +1007,77 @@
             updateStats();
         }
 
-        // --- BLUR CLOCK ANIMATION ---
+        // --- CLOCK COUNTER ANIMATION ---
+        function createDigitStrip(currentDigit) {
+             const wrapper = document.createElement('div');
+             wrapper.className = 'digit-column';
+             // Create span for current digit
+             const span = document.createElement('span');
+             span.textContent = currentDigit;
+             wrapper.appendChild(span);
+             return wrapper;
+        }
+
         function updateAnimatedClock() {
             const now = new Date();
-            const timeStr = now.toLocaleTimeString('id-ID', { hour12: false }); // HH.MM.SS or HH:MM:SS depending on locale
-            
-            // Format date separately
+            const timeStr = now.toLocaleTimeString('id-ID', { hour12: false }); 
             els.date.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-            // First run
-            if (!prevTimeString) {
+            if (!prevTimeString || els.clockContainer.children.length !== timeStr.length) {
                 els.clockContainer.innerHTML = '';
-                for (let char of timeStr) {
-                    const span = document.createElement('span');
-                    span.textContent = char;
-                    span.className = 'blur-digit';
-                    els.clockContainer.appendChild(span);
-                }
                 prevTimeString = timeStr;
+                for (let char of timeStr) {
+                    if (char === ':' || char === '.') {
+                        const sep = document.createElement('div');
+                        sep.className = 'clock-separator';
+                        sep.textContent = ':';
+                        els.clockContainer.appendChild(sep);
+                    } else {
+                        const wrapperOuter = document.createElement('div');
+                        wrapperOuter.className = 'clock-wrapper'; // Reuse wrapper style for masking
+                        // We just need a container for the strip
+                        wrapperOuter.style.width = '1ch'; 
+                        
+                        const strip = createDigitStrip(char);
+                        wrapperOuter.appendChild(strip);
+                        els.clockContainer.appendChild(wrapperOuter);
+                    }
+                }
                 return;
             }
 
-            // Compare and animate changes
-            const spans = els.clockContainer.children;
-            if (spans.length !== timeStr.length) {
-                els.clockContainer.textContent = timeStr; // Fallback if format changes drastically
-                return;
-            }
-
+            // Update digits
+            let digitIndex = 0;
             for (let i = 0; i < timeStr.length; i++) {
-                if (timeStr[i] !== prevTimeString[i]) {
-                    const span = spans[i];
-                    span.classList.add('changing');
-                    setTimeout(() => {
-                        span.textContent = timeStr[i];
-                        span.classList.remove('changing');
-                    }, 300); // Wait for blur-out before changing text
+                const char = timeStr[i];
+                if (char === ':' || char === '.') continue;
+
+                const wrapperOuter = els.clockContainer.children[i]; // This matches index because separators are children too
+                const strip = wrapperOuter.firstElementChild;
+                const currentSpan = strip.lastElementChild;
+                
+                if (currentSpan.textContent !== char) {
+                     const newSpan = document.createElement('span');
+                     newSpan.textContent = char;
+                     strip.appendChild(newSpan);
+                     // Animate
+                     strip.style.transform = `translateY(-50%)`; // Move to show new digit
+                     
+                     // Cleanup after animation
+                     setTimeout(() => {
+                         strip.style.transition = 'none';
+                         strip.innerHTML = '';
+                         strip.appendChild(newSpan);
+                         strip.style.transform = 'translateY(0)';
+                         // Force reflow
+                         void strip.offsetWidth; 
+                         strip.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                     }, 500);
                 }
             }
             prevTimeString = timeStr;
         }
+
 
         function setupModal(modal, openBtn, closeBtn) {
             if(openBtn) openBtn.addEventListener('click', () => {
@@ -1048,7 +1093,6 @@
         function setupFilterListeners() {
             const setFilter = (filter) => {
                 currentFilter = filter;
-                // Update active class logic
                 [els.filterAll, els.filterPending, els.filterInProgress, els.filterCompleted, els.filterDeadline].forEach(el => el.classList.remove('active-filter'));
                 
                 if(filter === 'all') els.filterAll.classList.add('active-filter');
@@ -1177,7 +1221,6 @@
             });
         }
 
-        // Event delegation
         document.addEventListener('edit-task', e => openTaskModal(e.detail));
         document.addEventListener('change-status', e => updateDoc(doc(tasksCollection, e.detail.id), {status: e.detail.val}));
         document.addEventListener('delete-quick', async e => { if(confirm("Hapus?")) await deleteDoc(doc(tasksCollection, e.detail)); });
@@ -1193,7 +1236,6 @@
             document.getElementById('inProgressTasks').innerText = progress;
             document.getElementById('completedTasks').innerText = completed;
             
-            // Count urgent (deadline within 2 days)
             const now = new Date().getTime();
             const urgent = allTasks.filter(t => {
                 if(t.deadline && t.status !== 'completed') {
@@ -1204,7 +1246,6 @@
             }).length;
             document.getElementById('deadlineWarning').innerText = urgent;
 
-            // Chart Logic
             const ctx = document.getElementById('taskStatusChart');
             if(!ctx) return; 
             
@@ -1253,7 +1294,6 @@
                 div.className = `calendar-day ${dateStr === new Date().toISOString().split('T')[0] ? 'today' : ''}`;
                 div.innerHTML = `<span class="day-number text-xs mb-1">${d}</span><div class="event-dot-container"></div>`;
                 
-                // Dots
                 const dayEvents = allEvents.filter(e => checkEventDate(e, dateStr));
                 const dayTasks = allTasks.filter(t => t.deadline === dateStr && t.status !== 'completed');
 
@@ -1287,7 +1327,6 @@
             els.detailTitle.textContent = new Date(dateStr).toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long'});
             els.detailTitle.dataset.date = dateStr;
 
-            // Render Tasks list in detail
             const tasks = allTasks.filter(t => t.deadline === dateStr);
             els.detailTaskList.innerHTML = tasks.length ? '' : '<p class="text-xs text-gray-500">Kosong</p>';
             tasks.forEach(t => {
@@ -1298,7 +1337,6 @@
                     </div>`;
             });
 
-            // Render Events
             const events = allEvents.filter(e => checkEventDate(e, dateStr));
             els.detailEventList.innerHTML = events.length ? '' : '<p class="text-xs text-gray-500">Kosong</p>';
             events.forEach(e => {
@@ -1366,8 +1404,7 @@
 
             els.upcomingList.innerHTML = '';
             if(combined.length === 0) {
-                els.upcomingList.innerHTML = document.getElementById('noUpcomingEvents').outerHTML; // Use original message logic if needed, but simplified
-                 els.upcomingList.innerHTML = `<div id="noUpcomingEvents" class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700">Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕</div>`;
+                els.upcomingList.innerHTML = `<div class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700">Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕</div>`;
                 return;
             }
             
@@ -1389,13 +1426,10 @@
             });
         }
 
-        // Upcoming Agenda Event Handlers
         document.addEventListener('skip-event', async e => {
-            // Logic to mark event as skipped for today (requires 'lastActionDate' update)
             const today = new Date().toISOString().split('T')[0];
             await updateDoc(doc(eventsCollection, e.detail), { lastActionDate: today });
         });
-
 
         // --- WISHLIST ---
         async function handleWishlistSubmit(e) {
@@ -1447,13 +1481,12 @@
             const text = els.geminiInput.value.trim();
             if(!text) return;
 
-            // Add user message
             appendChat('user', text);
             els.geminiInput.value = '';
             els.geminiLoading.classList.remove('hidden');
 
             try {
-                const apiKey = "AIzaSyBdvL65RALEcZ1vxHsQb8d1A3GJnJc_QlI"; // Local Key
+                const apiKey = "AIzaSyBdvL65RALEcZ1vxHsQb8d1A3GJnJc_QlI"; 
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -1473,12 +1506,11 @@
         function appendChat(role, text, isError=false) {
             const div = document.createElement('div');
             div.className = `chat-bubble ${role} ${isError ? 'bg-red-500/20 border-red-500' : ''} self-${role === 'user' ? 'end' : 'start'}`;
-            div.innerHTML = role === 'user' ? text : marked(text); // Simple markdown handling
+            div.innerHTML = role === 'user' ? text : marked(text); 
             els.chatContainer.appendChild(div);
             els.chatContainer.scrollTop = els.chatContainer.scrollHeight;
         }
 
-        // Simple Markdown parser helper
         function marked(text) {
             return text
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
