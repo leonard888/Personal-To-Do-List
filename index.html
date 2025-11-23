@@ -1096,6 +1096,8 @@
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
+            
+            // initLogin3D(); // REMOVED
 
             els.loginBtn.addEventListener('click', async () => {
                 try {
@@ -1288,7 +1290,6 @@
             els.taskList.innerHTML = '';
             const now = new Date().getTime();
             const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-
             const filtered = allTasks.filter(t => {
                 if (currentFilter === 'all') return true;
                 if (currentFilter === 'active') return t.status === 'pending' || t.status === 'in-progress';
@@ -1303,10 +1304,7 @@
             }).sort((a,b) => (a.deadline || '9999') > (b.deadline || '9999') ? 1 : -1);
 
             if(filtered.length === 0) {
-                let msg = "Tidak ada tugas aktif.";
-                if (currentFilter === 'all') msg = "Belum ada tugas.";
-                else if (currentFilter === 'completed') msg = "Belum ada tugas selesai.";
-                els.taskList.innerHTML = `<div class="text-center py-8 text-gray-500 glass-card">${msg}</div>`;
+                els.taskList.innerHTML = `<div class="text-center py-8 text-gray-500 glass-card">Tidak ada tugas.</div>`;
                 return;
             }
 
@@ -1327,12 +1325,8 @@
                                 <option value="in-progress" ${t.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
                                 <option value="completed" ${t.status === 'completed' ? 'selected' : ''}>Completed</option>
                             </select>
-                            <button class="text-xs bg-white/10 hover:bg-white/20 px-2 py-1 rounded text-gray-300" onclick="document.dispatchEvent(new CustomEvent('edit-task', {detail: '${t.id}'}))">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                            </button>
-                            <button class="text-xs bg-red-500/20 text-red-400 hover:bg-red-500/40 px-2 py-1 rounded" onclick="document.dispatchEvent(new CustomEvent('delete-quick', {detail: '${t.id}'}))">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                            </button>
+                            <button class="text-xs bg-white/10 hover:bg-white/20 px-2 py-1 rounded text-gray-300" onclick="document.dispatchEvent(new CustomEvent('edit-task', {detail: '${t.id}'}))"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
+                            <button class="text-xs bg-red-500/20 text-red-400 hover:bg-red-500/40 px-2 py-1 rounded" onclick="document.dispatchEvent(new CustomEvent('delete-quick', {detail: '${t.id}'}))"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                         </div>
                     </div>
                     ${t.notes ? `<p class="text-sm text-gray-400 bg-black/20 p-2 rounded mt-1">${t.notes}</p>` : ''}
@@ -1500,6 +1494,7 @@
                     </div>
                 `;
                 
+                // Attach magic hover manually since dynamic
                 contentDiv.onmousemove = e => {
                     const rect = contentDiv.getBoundingClientRect();
                     const x = e.clientX - rect.left;
@@ -1510,38 +1505,39 @@
 
                 // 3. Buttons Container - Right Side (OUTSIDE the glass card)
                 const btnContainer = document.createElement('div');
-                btnContainer.className = 'flex gap-2 shrink-0';
+                btnContainer.className = 'flex gap-2 shrink-0 z-50 relative'; // Ensure high z-index
 
                 if (item.type === 'task') {
                     const doneBtn = document.createElement('button');
-                    doneBtn.className = 'glass-button p-3 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all shadow-lg border border-green-500/20';
-                    doneBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+                    doneBtn.className = 'bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm shadow-sm transition-colors';
+                    doneBtn.innerHTML = 'Done';
                     doneBtn.title = "Tandai Selesai";
-                    doneBtn.onclick = async () => {
+                    doneBtn.onclick = (e) => {
+                         e.stopPropagation(); // Prevent card click
                          if(confirm('Tandai tugas ini selesai?')) {
-                            await updateDoc(doc(tasksCollection, item.id), {status: 'completed'});
+                            document.dispatchEvent(new CustomEvent('complete-task', {detail: item.id}));
                          }
                     };
                     btnContainer.appendChild(doneBtn);
                 } else {
                     // Event Buttons
                     const doneBtn = document.createElement('button');
-                    doneBtn.className = 'glass-button p-3 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all shadow-lg border border-green-500/20';
-                    doneBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+                    doneBtn.className = 'bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm shadow-sm transition-colors';
+                    doneBtn.innerHTML = 'Done';
                     doneBtn.title = "Event Selesai";
-                    doneBtn.onclick = async () => {
-                         const today = new Date().toISOString().split('T')[0];
-                         await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
+                    doneBtn.onclick = (e) => {
+                         e.stopPropagation();
+                         document.dispatchEvent(new CustomEvent('complete-event', {detail: item.id}));
                     };
                     btnContainer.appendChild(doneBtn);
 
                     const skipBtn = document.createElement('button');
-                    skipBtn.className = 'glass-button p-3 rounded-xl text-red-300 hover:text-white hover:bg-red-500/30 transition-all shadow-lg border border-red-500/20';
-                    skipBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                    skipBtn.className = 'bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm shadow-sm transition-colors';
+                    skipBtn.innerHTML = 'Skip';
                     skipBtn.title = "Lewati Event";
-                    skipBtn.onclick = async () => {
-                         const today = new Date().toISOString().split('T')[0];
-                         await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
+                    skipBtn.onclick = (e) => {
+                         e.stopPropagation();
+                         document.dispatchEvent(new CustomEvent('skip-event', {detail: item.id}));
                     };
                     btnContainer.appendChild(skipBtn);
                 }
@@ -1551,6 +1547,9 @@
                 els.upcomingList.appendChild(rowDiv);
             });
         }
+
+        // Remove old inline listener logic that might conflict
+        // document.addEventListener('complete-task', ... ) -> Removed/Replaced by direct onclick above
 
         // --- WISHLIST ---
         async function handleWishlistSubmit(e) {
@@ -1573,11 +1572,23 @@
                 total += i.price;
                 const div = document.createElement('div');
                 div.className = 'glass-card flex flex-col justify-between h-full magic-hover';
-                div.innerHTML = `<div><h3 class="font-bold text-lg text-white mb-1">${i.name}</h3><p class="text-2xl font-bold text-green-400 mb-4">Rp ${new Intl.NumberFormat('id-ID').format(i.price)}</p></div><div class="flex gap-2 mt-auto"><a href="${i.link}" target="_blank" class="glass-button text-center flex-1 py-2 rounded text-sm">Beli</a><button class="bg-red-500/20 text-red-400 hover:bg-red-500/40 px-3 rounded" onclick="document.dispatchEvent(new CustomEvent('delete-wishlist', {detail: '${i.id}'}))">🗑️</button></div>`;
+                div.innerHTML = `
+                    <div>
+                        <h3 class="font-bold text-lg text-white mb-1">${i.name}</h3>
+                        <p class="text-2xl font-bold text-green-400 mb-4">Rp ${new Intl.NumberFormat('id-ID').format(i.price)}</p>
+                    </div>
+                    <div class="flex gap-2 mt-auto">
+                        <a href="${i.link}" target="_blank" class="glass-button text-center flex-1 py-2 rounded text-sm">Beli</a>
+                        <button class="bg-red-500/20 text-red-400 hover:bg-red-500/40 px-3 rounded" onclick="document.dispatchEvent(new CustomEvent('delete-wishlist', {detail: '${i.id}'}))">🗑️</button>
+                    </div>
+                `;
                 els.wishlistGrid.appendChild(div);
             });
             document.getElementById('wishlistTotal').innerText = `Rp ${new Intl.NumberFormat('id-ID').format(total)}`;
-            if(items.length === 0) els.wishlistGrid.innerHTML = `<p class="col-span-full text-center text-gray-500">Wishlist kosong.</p>`;
+            
+            if(items.length === 0) {
+                els.wishlistGrid.innerHTML = `<p class="col-span-full text-center text-gray-500">Wishlist kosong.</p>`;
+            }
             initMagicHover();
         }
         
@@ -1585,6 +1596,7 @@
             if(confirm("Hapus item?")) await deleteDoc(doc(wishlistCollection, e.detail));
         });
 
+        // --- GEMINI ---
         async function handleGeminiSubmit(e) {
             e.preventDefault();
             const text = els.geminiInput.value.trim();
@@ -1601,6 +1613,7 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ contents: [{ parts: [{ text }] }] })
                 });
+                
                 const data = await response.json();
                 const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, saya tidak mengerti.";
                 appendChat('model', reply);
@@ -1620,7 +1633,9 @@
         }
 
         function marked(text) {
-            return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
         }
 
         init();
