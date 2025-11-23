@@ -56,6 +56,33 @@
             100% { transform: translate(50px, 50px) scale(1.1); }
         }
 
+        /* --- TEXT ANIMATIONS --- */
+        
+        /* Gradient Text Animation */
+        .animate-gradient-text {
+            background: linear-gradient(to right, #818cf8, #c084fc, #22d3ee, #818cf8);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 5s linear infinite;
+            display: inline-block;
+        }
+        
+        @keyframes gradientMove {
+            to { background-position: 200% center; }
+        }
+
+        /* Blur Text Animation (Applied via JS to individual digits) */
+        .blur-digit {
+            display: inline-block;
+            transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+        }
+        .blur-digit.changing {
+            filter: blur(5px);
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+
         /* --- GLASS COMPONENTS --- */
         .glass-panel {
             background: var(--glass-bg);
@@ -81,7 +108,6 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
         
-        /* Filter card active state */
         .glass-card.active-filter {
             border-color: var(--accent-color);
             background: rgba(99, 102, 241, 0.1);
@@ -100,7 +126,6 @@
             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
         
-        /* Dropdown Style */
         select.glass-input option {
             background-color: #1f2937;
             color: white;
@@ -175,10 +200,10 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* --- CALENDAR STYLES (Fixed) --- */
+        /* --- CALENDAR STYLES --- */
         #calendarGrid {
             display: grid;
-            grid-template-columns: repeat(7, 1fr); /* Ensures 7 columns */
+            grid-template-columns: repeat(7, 1fr);
             gap: 8px;
             background-color: transparent;
             border: none;
@@ -252,6 +277,9 @@
             color: var(--text-secondary);
             position: relative;
             overflow: hidden;
+            cursor: pointer; /* Ensure cursor changes */
+            background: transparent; /* Reset background */
+            border: 1px solid transparent; /* Reset border */
         }
         .sidebar-link:hover {
             background: rgba(255, 255, 255, 0.05);
@@ -292,13 +320,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
             border-bottom-left-radius: 0.25rem;
-        }
-        
-        /* --- UTILS --- */
-        .text-gradient {
-            background: linear-gradient(to right, #818cf8, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
@@ -411,11 +432,15 @@
                     <!-- Header Area -->
                     <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
                         <div>
-                            <h2 class="text-3xl font-bold text-white">Dashboard</h2>
+                            <h2 class="text-3xl font-bold text-white animate-gradient-text">Dashboard</h2>
                             <p class="text-gray-400">Selamat datang kembali di workspace Anda.</p>
                         </div>
                         <div class="text-right">
-                            <div id="clockEl" class="text-3xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">00:00:00</div>
+                            <!-- Jam dengan animasi Blur -->
+                            <div id="clockContainer" class="text-3xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 flex justify-end gap-1">
+                                <!-- Digits will be injected here by JS -->
+                                <span>00:00:00</span>
+                            </div>
                             <div id="dateEl" class="text-sm text-gray-400 uppercase tracking-widest font-medium">---</div>
                         </div>
                     </div>
@@ -445,7 +470,7 @@
                         <!-- Upcoming Events & Tasks Section -->
                         <section>
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2 animate-gradient-text">
                                     <span class="w-2 h-8 bg-indigo-500 rounded-full block"></span>
                                     Agenda Hari Ini
                                 </h3>
@@ -461,7 +486,7 @@
                         <!-- To-Do List Section -->
                         <section>
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2 animate-gradient-text">
                                     <span class="w-2 h-8 bg-cyan-500 rounded-full block"></span>
                                     Manajemen Tugas
                                 </h3>
@@ -472,7 +497,7 @@
                             </div>
 
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                <!-- Stats Cards (Filters) -->
+                                <!-- Stats Cards -->
                                 <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
                                     <div id="filterAll" class="glass-card cursor-pointer hover:bg-white/5 group text-center">
                                         <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Total</p>
@@ -490,15 +515,14 @@
                                         <p class="text-xs text-red-400 uppercase font-bold tracking-wider">Urgent</p>
                                         <p id="deadlineWarning" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
                                     </div>
-                                    <!-- Filter tambahan: Completed -->
-                                    <div id="filterCompleted" class="glass-card cursor-pointer hover:bg-green-500/10 group text-center border-l-4 border-green-500 col-span-2 sm:col-span-4">
+                                     <div id="filterCompleted" class="glass-card cursor-pointer hover:bg-green-500/10 group text-center border-l-4 border-green-500 col-span-2 sm:col-span-4">
                                         <p class="text-xs text-green-400 uppercase font-bold tracking-wider">Selesai</p>
                                         <p id="completedTasks" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
                                     </div>
                                 </div>
                                 
                                 <!-- Chart -->
-                                <div class="glass-card flex items-center justify-center relative h-full min-h-[200px]">
+                                <div class="glass-card flex items-center justify-center relative h-48">
                                     <canvas id="taskStatusChart"></canvas>
                                 </div>
                             </div>
@@ -514,7 +538,7 @@
                         <!-- Calendar Section -->
                         <section>
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2 animate-gradient-text">
                                     <span class="w-2 h-8 bg-pink-500 rounded-full block"></span>
                                     Kalender
                                 </h3>
@@ -624,15 +648,19 @@
         </div>
     </div>
 
-    <!-- MODALS -->
+    <!-- MODALS (Glass Style) -->
+
+    <!-- Task Modal -->
     <dialog id="taskModal" class="modal-content rounded-2xl w-full max-w-md text-white">
         <form id="taskForm" class="p-6 space-y-4" data-task-id="">
             <h3 id="taskModalTitle" class="text-2xl font-bold mb-4">Tugas Baru</h3>
             <div id="taskError" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm"></div>
+            
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Tugas</label>
                 <input type="text" id="taskName" name="taskName" class="glass-input w-full rounded-lg px-3 py-2">
             </div>
+            
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label>
@@ -643,6 +671,7 @@
                     <input type="time" id="taskTime" name="taskTime" class="glass-input w-full rounded-lg px-3 py-2">
                 </div>
             </div>
+
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Status</label>
                 <select id="taskStatus" name="taskStatus" class="glass-input w-full rounded-lg px-3 py-2">
@@ -651,14 +680,17 @@
                     <option value="completed" class="bg-gray-900">Completed</option>
                 </select>
             </div>
+
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Catatan</label>
                 <textarea id="taskNotes" name="taskNotes" rows="3" class="glass-input w-full rounded-lg px-3 py-2"></textarea>
             </div>
+
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Link Drive</label>
                 <input type="url" id="taskDriveLink" name="taskDriveLink" placeholder="https://" class="glass-input w-full rounded-lg px-3 py-2">
             </div>
+
             <div class="flex justify-between pt-4 border-t border-white/10 mt-4">
                 <button type="button" id="deleteTaskBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button>
                 <div class="flex gap-3 ml-auto">
@@ -674,10 +706,12 @@
         <form id="eventForm" class="p-6 space-y-4" data-event-id="">
             <h3 id="eventModalTitle" class="text-2xl font-bold mb-4 text-purple-400">Event Baru</h3>
             <div id="eventError" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm"></div>
+            
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Event</label>
                 <input type="text" id="eventName" name="eventName" class="glass-input w-full rounded-lg px-3 py-2">
             </div>
+
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label>
@@ -688,6 +722,7 @@
                     <input type="time" id="eventTime" name="eventTime" class="glass-input w-full rounded-lg px-3 py-2">
                 </div>
             </div>
+
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Berulang</label>
                 <select id="eventRepeat" name="eventRepeat" class="glass-input w-full rounded-lg px-3 py-2">
@@ -696,6 +731,7 @@
                     <option value="weekly" class="bg-gray-900">Setiap Minggu</option>
                 </select>
             </div>
+
             <div class="flex justify-between pt-4 border-t border-white/10 mt-4">
                 <button type="button" id="deleteEventBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button>
                 <div class="flex gap-3 ml-auto">
@@ -757,8 +793,9 @@
         let tasksUnsubscribe = null, wishlistUnsubscribe = null, eventsUnsubscribe = null;
         let taskStatusChart = null;
         let allTasks = [], allEvents = [];
-        let currentFilter = 'active'; // 'all', 'pending', 'in-progress', 'completed', 'deadline', 'active' (default)
+        let currentFilter = 'active';
         let currentCalendarDate = new Date();
+        let prevTimeString = ""; // Untuk animasi jam
 
         const els = {
             loading: document.getElementById('loadingOverlay'),
@@ -772,7 +809,7 @@
             userName: document.getElementById('userName'),
             tabs: document.querySelectorAll('.nav-tab'),
             tabContents: document.querySelectorAll('.tab-content'),
-            clock: document.getElementById('clockEl'),
+            clockContainer: document.getElementById('clockContainer'),
             date: document.getElementById('dateEl'),
             
             taskModal: document.getElementById('taskModal'),
@@ -816,7 +853,12 @@
             filterPending: document.getElementById('filterPending'),
             filterInProgress: document.getElementById('filterInProgress'),
             filterCompleted: document.getElementById('filterCompleted'),
-            filterDeadline: document.getElementById('filterDeadline')
+            filterDeadline: document.getElementById('filterDeadline'),
+            
+            // Sidebar buttons
+            sidebarDashboard: document.querySelector('[data-tab="dashboard"]'),
+            sidebarWishlist: document.querySelector('[data-tab="wishlist"]'),
+            sidebarGemini: document.querySelector('[data-tab="gemini"]')
         };
 
         function initChart() {
@@ -870,15 +912,25 @@
 
             els.logoutBtn.addEventListener('click', () => signOut(auth));
             
-            els.tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const target = tab.dataset.tab;
-                    els.tabContents.forEach(c => {
-                        c.classList.add('hidden');
-                        if(c.id === target) c.classList.remove('hidden');
-                    });
-                });
-            });
+            // Fix Sidebar Click Logic
+            const handleTabClick = (targetId) => {
+                 els.sidebarDashboard.classList.remove('active');
+                 els.sidebarWishlist.classList.remove('active');
+                 els.sidebarGemini.classList.remove('active');
+
+                 if(targetId === 'dashboard') els.sidebarDashboard.classList.add('active');
+                 if(targetId === 'wishlist') els.sidebarWishlist.classList.add('active');
+                 if(targetId === 'gemini') els.sidebarGemini.classList.add('active');
+
+                 els.tabContents.forEach(c => {
+                     c.classList.add('hidden');
+                     if(c.id === targetId) c.classList.remove('hidden');
+                 });
+            };
+
+            els.sidebarDashboard.addEventListener('click', () => handleTabClick('dashboard'));
+            els.sidebarWishlist.addEventListener('click', () => handleTabClick('wishlist'));
+            els.sidebarGemini.addEventListener('click', () => handleTabClick('gemini'));
 
             setupModal(els.taskModal, els.showTaskBtn, els.closeTaskBtn);
             setupModal(els.wishlistModal, els.showWishlistBtn, els.closeWishlistBtn);
@@ -933,14 +985,53 @@
                 renderUpcoming();
             });
 
-            setInterval(() => {
-                const now = new Date();
-                els.clock.textContent = now.toLocaleTimeString('id-ID');
-                els.date.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            }, 1000);
+            // Custom Animated Clock
+            setInterval(updateAnimatedClock, 1000);
+            updateAnimatedClock();
 
             renderCalendar();
             updateStats();
+        }
+
+        // --- BLUR CLOCK ANIMATION ---
+        function updateAnimatedClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('id-ID', { hour12: false }); // HH.MM.SS or HH:MM:SS depending on locale
+            
+            // Format date separately
+            els.date.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+            // First run
+            if (!prevTimeString) {
+                els.clockContainer.innerHTML = '';
+                for (let char of timeStr) {
+                    const span = document.createElement('span');
+                    span.textContent = char;
+                    span.className = 'blur-digit';
+                    els.clockContainer.appendChild(span);
+                }
+                prevTimeString = timeStr;
+                return;
+            }
+
+            // Compare and animate changes
+            const spans = els.clockContainer.children;
+            if (spans.length !== timeStr.length) {
+                els.clockContainer.textContent = timeStr; // Fallback if format changes drastically
+                return;
+            }
+
+            for (let i = 0; i < timeStr.length; i++) {
+                if (timeStr[i] !== prevTimeString[i]) {
+                    const span = spans[i];
+                    span.classList.add('changing');
+                    setTimeout(() => {
+                        span.textContent = timeStr[i];
+                        span.classList.remove('changing');
+                    }, 300); // Wait for blur-out before changing text
+                }
+            }
+            prevTimeString = timeStr;
         }
 
         function setupModal(modal, openBtn, closeBtn) {
@@ -1275,7 +1366,8 @@
 
             els.upcomingList.innerHTML = '';
             if(combined.length === 0) {
-                els.upcomingList.innerHTML = `<div class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700">Tidak ada agenda untuk hari ini.</div>`;
+                els.upcomingList.innerHTML = document.getElementById('noUpcomingEvents').outerHTML; // Use original message logic if needed, but simplified
+                 els.upcomingList.innerHTML = `<div id="noUpcomingEvents" class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700">Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕</div>`;
                 return;
             }
             
@@ -1287,13 +1379,23 @@
                         <p class="font-bold text-white">${item.name}</p>
                         <p class="text-xs text-gray-400">${item.time} • ${item.type.toUpperCase()}</p>
                     </div>
-                    ${item.type === 'task' 
-                        ? `<button class="text-green-400 hover:text-white" onclick="document.dispatchEvent(new CustomEvent('complete-task', {detail: '${item.id}'}))">Done</button>`
-                        : `<button class="text-gray-400 hover:text-white">View</button>`}
+                    <div class="flex gap-2">
+                         ${item.type === 'task' 
+                            ? `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs" onclick="document.dispatchEvent(new CustomEvent('complete-task', {detail: '${item.id}'}))">Done</button>`
+                            : `<button class="text-red-400 hover:text-white bg-red-500/10 px-3 py-1 rounded text-xs" onclick="document.dispatchEvent(new CustomEvent('skip-event', {detail: '${item.id}'}))">Skip</button>`}
+                    </div>
                 `;
                 els.upcomingList.appendChild(div);
             });
         }
+
+        // Upcoming Agenda Event Handlers
+        document.addEventListener('skip-event', async e => {
+            // Logic to mark event as skipped for today (requires 'lastActionDate' update)
+            const today = new Date().toISOString().split('T')[0];
+            await updateDoc(doc(eventsCollection, e.detail), { lastActionDate: today });
+        });
+
 
         // --- WISHLIST ---
         async function handleWishlistSubmit(e) {
