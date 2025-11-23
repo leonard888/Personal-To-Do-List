@@ -56,7 +56,7 @@
             100% { transform: translate(50px, 50px) scale(1.1); }
         }
 
-        /* --- GLASS SURFACE (Refined) --- */
+        /* --- GLASS SURFACE & MAGIC BENTO --- */
         .glass-surface {
             position: relative;
             background: rgba(255, 255, 255, 0.03);
@@ -64,52 +64,72 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            box-shadow: 
-                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-                inset 0 0 20px rgba(255, 255, 255, 0.02);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             padding: 1.5rem;
-            overflow: hidden;
+            overflow: hidden; /* Needed for magic effect */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
         .glass-surface:hover {
-            box-shadow: 
-                0 10px 15px -3px rgba(0, 0, 0, 0.2),
-                inset 0 0 20px rgba(255, 255, 255, 0.05);
             border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Subtle shimmer animation */
-        .glass-surface::after {
-            content: '';
+        /* Magic Bento Hover Effect */
+        .magic-hover {
+            position: relative;
+        }
+
+        .magic-hover::before {
+            content: "";
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.05),
-                transparent
+            width: 100%;
+            top: 0;
+            left: 0;
+            border-radius: inherit;
+            background: radial-gradient(
+                800px circle at var(--mouse-x) var(--mouse-y), 
+                rgba(255, 255, 255, 0.08), 
+                transparent 40%
             );
-            transition: 0.5s;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 2;
             pointer-events: none;
-            animation: shimmer 8s infinite linear;
         }
 
-        @keyframes shimmer {
-            0% { left: -100%; }
-            20% { left: 100%; }
-            100% { left: 100%; }
+        .magic-hover:hover::before {
+            opacity: 1;
         }
 
-        /* Specific title container style within glass */
-        .glass-title-container {
-            display: inline-flex;
-            flex-direction: column;
+        /* Optional: Border glow for Magic Bento */
+        .magic-hover::after {
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            border-radius: inherit;
+            background: radial-gradient(
+                600px circle at var(--mouse-x) var(--mouse-y), 
+                rgba(255, 255, 255, 0.3), 
+                transparent 40%
+            );
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            /* Use mask to create border only effect */
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            padding: 1px; /* Border width */
         }
 
+        .magic-hover:hover::after {
+            opacity: 1;
+        }
 
         /* --- TEXT ANIMATIONS --- */
         .animate-gradient-text {
@@ -125,7 +145,7 @@
             to { background-position: 200% center; }
         }
 
-        /* --- FLUID CLOCK (Odometer Style) --- */
+        /* --- FLUID CLOCK (Strip Style) --- */
         .clock-container {
             display: inline-flex;
             align-items: center;
@@ -133,15 +153,14 @@
             font-weight: 800;
             font-size: 2.5rem;
             line-height: 1;
-            height: 1em;
-            overflow: hidden;
+            height: 1em; /* Fix height to 1 line */
+            overflow: hidden; /* Hide scrolling numbers */
         }
 
         .digit-wrapper {
             position: relative;
             height: 1em;
-            width: 0.6em;
-            overflow: hidden;
+            width: 0.65em;
         }
 
         .digit-strip {
@@ -151,8 +170,13 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            will-change: transform;
-            /* Transition is applied via JS class for control */
+            /* Initial state */
+            transform: translateY(0);
+        }
+
+        /* Class to trigger animation */
+        .digit-strip.scrolling {
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .digit-strip span {
@@ -164,20 +188,18 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
-        .digit-strip.animate {
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
 
         .clock-sep {
-            color: #818cf8;
-            padding: 0 0.05em;
+            width: 0.3em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding-bottom: 0.15em;
+            color: #818cf8;
             opacity: 0.8;
         }
 
-
-        /* --- GLASS COMPONENTS (General) --- */
+        /* --- GLASS COMPONENTS --- */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(24px);
@@ -445,11 +467,11 @@
                     </svg>
                 </div>
                 <!-- Glass Surface for Welcome Back -->
-                <div class="glass-surface mb-4 w-full">
+                <div class="glass-surface mb-4 w-full magic-hover">
                     <h1 class="text-3xl font-bold text-white animate-gradient-text">Welcome Back</h1>
                     <p class="text-gray-300 mt-1 text-sm">Personal Dashboard Fluid UI</p>
                 </div>
-                <button id="loginWithGoogleBtn" class="glass-button w-full py-3 px-4 rounded-xl flex items-center justify-center gap-3 group-hover:shadow-indigo-500/50 transition-all">
+                <button id="loginWithGoogleBtn" class="glass-button w-full py-3 px-4 rounded-xl flex items-center justify-center gap-3 group-hover:shadow-indigo-500/50 transition-all magic-hover">
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                          <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
                     </svg>
@@ -526,36 +548,42 @@
             <main class="flex-1 overflow-y-auto relative">
                 <div class="p-6 md:p-10 max-w-7xl mx-auto space-y-8">
                     
-                    <!-- Header Area -->
-                    <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
-                        <div class="glass-surface">
-                            <h2 class="text-5xl font-extrabold text-white animate-gradient-text mb-1">Dashboard</h2>
-                            <p class="text-lg text-gray-300">Selamat datang kembali di workspace Anda.</p>
-                        </div>
-                        <div class="text-right">
-                            <!-- COUNTER CLOCK -->
-                            <div class="glass-surface p-3 mb-1 inline-block">
-                                <div id="clockContainer" class="clock-container justify-end">
-                                    <!-- Digits will be injected here by JS -->
-                                </div>
+                    <!-- Global Clock - Always Visible -->
+                    <div class="flex justify-end">
+                         <div class="glass-surface p-3 inline-block magic-hover">
+                            <div id="clockContainer" class="clock-container justify-end">
+                                <!-- Digits will be injected here by JS -->
                             </div>
-                            <div id="dateEl" class="text-sm text-gray-400 uppercase tracking-widest font-medium mt-1">---</div>
                         </div>
                     </div>
 
                     <!-- DASHBOARD TAB -->
                     <div id="dashboard" class="tab-content space-y-10 animate-fade-in">
                         
+                        <!-- Header Area -->
+                        <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
+                            <div>
+                                <!-- Glass Surface for Dashboard Title -->
+                                <div class="glass-surface mb-2 magic-hover">
+                                    <h2 class="text-5xl font-extrabold text-white animate-gradient-text mb-1">Dashboard</h2>
+                                </div>
+                                <p class="text-lg text-gray-300">Selamat datang kembali di workspace Anda.</p>
+                            </div>
+                            <div class="text-right">
+                                <div id="dateEl" class="text-sm text-gray-400 uppercase tracking-widest font-medium mt-1">---</div>
+                            </div>
+                        </div>
+
                         <!-- Market Section (TradingView) -->
                         <section>
-                            <div class="glass-card p-0 overflow-hidden h-[400px] relative group">
+                            <div class="glass-card p-0 overflow-hidden h-[400px] relative group magic-hover">
                                 <div class="absolute inset-0 bg-gradient-to-t from-[#111928] to-transparent z-10 pointer-events-none"></div>
                                 <div class="tradingview-widget-container h-full w-full">
                                     <div id="tradingview_chart" class="h-full w-full"></div>
                                 </div>
                             </div>
                             <!-- Ticker Tape Below -->
-                            <div class="mt-4 glass-card p-0 overflow-hidden">
+                            <div class="mt-4 glass-card p-0 overflow-hidden magic-hover">
                                 <div class="tradingview-widget-container">
                                     <div class="tradingview-widget-container__widget"></div>
                                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
@@ -568,7 +596,7 @@
                         <!-- Upcoming Events & Tasks Section -->
                         <section>
                             <div class="flex justify-between items-center mb-6">
-                                <div class="glass-surface">
+                                <div class="glass-surface magic-hover">
                                     <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
                                         <span class="w-2 h-8 bg-indigo-500 rounded-full block shadow-lg shadow-indigo-500/50"></span>
                                         Agenda Hari Ini
@@ -577,7 +605,7 @@
                             </div>
                             <div id="upcomingEventsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <!-- Items will be injected here -->
-                                <div id="noUpcomingEvents" class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700">
+                                <div id="noUpcomingEvents" class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700 magic-hover">
                                     Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕
                                 </div>
                             </div>
@@ -586,13 +614,13 @@
                         <!-- To-Do List Section -->
                         <section>
                             <div class="flex justify-between items-center mb-6">
-                                <div class="glass-surface">
+                                <div class="glass-surface magic-hover">
                                     <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
                                         <span class="w-2 h-8 bg-cyan-500 rounded-full block shadow-lg shadow-cyan-500/50"></span>
                                         Manajemen Tugas
                                     </h3>
                                 </div>
-                                <button id="showTaskModal" class="glass-button py-2 px-4 rounded-lg flex items-center gap-2 text-sm">
+                                <button id="showTaskModal" class="glass-button py-2 px-4 rounded-lg flex items-center gap-2 text-sm magic-hover">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
                                     Tugas Baru
                                 </button>
@@ -601,30 +629,30 @@
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 <!-- Stats Cards -->
                                 <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                    <div id="filterAll" class="glass-card cursor-pointer hover:bg-white/5 group text-center">
+                                    <div id="filterAll" class="glass-card cursor-pointer hover:bg-white/5 group text-center magic-hover">
                                         <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Total</p>
                                         <p id="totalTasks" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
                                     </div>
-                                    <div id="filterPending" class="glass-card cursor-pointer hover:bg-yellow-500/10 group text-center border-l-4 border-yellow-500">
+                                    <div id="filterPending" class="glass-card cursor-pointer hover:bg-yellow-500/10 group text-center border-l-4 border-yellow-500 magic-hover">
                                         <p class="text-xs text-yellow-500 uppercase font-bold tracking-wider">Pending</p>
                                         <p id="pendingTasks" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
                                     </div>
-                                    <div id="filterInProgress" class="glass-card cursor-pointer hover:bg-blue-500/10 group text-center border-l-4 border-blue-500">
+                                    <div id="filterInProgress" class="glass-card cursor-pointer hover:bg-blue-500/10 group text-center border-l-4 border-blue-500 magic-hover">
                                         <p class="text-xs text-blue-400 uppercase font-bold tracking-wider">Proses</p>
                                         <p id="inProgressTasks" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
                                     </div>
-                                    <div id="filterDeadline" class="glass-card cursor-pointer hover:bg-red-500/10 group text-center border-l-4 border-red-500">
+                                    <div id="filterDeadline" class="glass-card cursor-pointer hover:bg-red-500/10 group text-center border-l-4 border-red-500 magic-hover">
                                         <p class="text-xs text-red-400 uppercase font-bold tracking-wider">Urgent</p>
                                         <p id="deadlineWarning" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
                                     </div>
-                                     <div id="filterCompleted" class="glass-card cursor-pointer hover:bg-green-500/10 group text-center border-l-4 border-green-500 col-span-2 sm:col-span-4">
+                                     <div id="filterCompleted" class="glass-card cursor-pointer hover:bg-green-500/10 group text-center border-l-4 border-green-500 col-span-2 sm:col-span-4 magic-hover">
                                         <p class="text-xs text-green-400 uppercase font-bold tracking-wider">Selesai</p>
                                         <p id="completedTasks" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
                                     </div>
                                 </div>
                                 
                                 <!-- Chart -->
-                                <div class="glass-card flex items-center justify-center relative h-48">
+                                <div class="glass-card flex items-center justify-center relative h-48 magic-hover">
                                     <canvas id="taskStatusChart"></canvas>
                                 </div>
                             </div>
@@ -640,20 +668,20 @@
                         <!-- Calendar Section -->
                         <section>
                             <div class="flex justify-between items-center mb-6">
-                                <div class="glass-surface">
+                                <div class="glass-surface magic-hover">
                                     <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
                                         <span class="w-2 h-8 bg-pink-500 rounded-full block shadow-lg shadow-pink-500/50"></span>
                                         Kalender
                                     </h3>
                                 </div>
-                                <div class="flex items-center gap-2 bg-white/5 rounded-lg p-1">
+                                <div class="flex items-center gap-2 bg-white/5 rounded-lg p-1 magic-hover">
                                     <button id="prevMonth" class="p-2 hover:bg-white/10 rounded-md text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
                                     <span id="currentMonthYear" class="w-32 text-center font-bold text-white"></span>
                                     <button id="nextMonth" class="p-2 hover:bg-white/10 rounded-md text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
                                 </div>
                             </div>
                             
-                            <div class="glass-card p-0 overflow-hidden">
+                            <div class="glass-card p-0 overflow-hidden magic-hover">
                                 <div class="grid grid-cols-7 bg-white/5 border-b border-white/10">
                                     <div class="calendar-day-header">Min</div>
                                     <div class="calendar-day-header">Sen</div>
@@ -667,7 +695,7 @@
                             </div>
                             
                             <!-- Calendar Detail -->
-                            <div id="calendarDetailSection" class="mt-4 hidden glass-card border-l-4 border-purple-500">
+                            <div id="calendarDetailSection" class="mt-4 hidden glass-card border-l-4 border-purple-500 magic-hover">
                                 <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                                     <h4 class="text-lg font-bold text-white">Detail: <span id="detailDateTitle" class="text-purple-400"></span></h4>
                                     <div class="flex gap-2">
@@ -693,7 +721,7 @@
 
                     <!-- WISHLIST TAB -->
                     <div id="wishlist" class="tab-content hidden space-y-8 animate-fade-in">
-                        <div class="flex justify-between items-center glass-card bg-gradient-to-r from-indigo-900/50 to-purple-900/50">
+                        <div class="flex justify-between items-center glass-card bg-gradient-to-r from-indigo-900/50 to-purple-900/50 magic-hover">
                             <div>
                                 <!-- Glass Surface for Wishlist Title -->
                                 <div class="glass-surface mb-1">
@@ -716,7 +744,7 @@
 
                     <!-- GEMINI TAB -->
                     <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-8rem)]">
-                        <div class="glass-card flex-1 flex flex-col p-0 overflow-hidden">
+                        <div class="glass-card flex-1 flex flex-col p-0 overflow-hidden magic-hover">
                             <div class="p-4 border-b border-white/10 bg-white/5 flex justify-between items-center">
                                 <!-- Glass Surface for Gemini Title -->
                                 <div class="glass-surface">
@@ -893,6 +921,7 @@
         let allTasks = [], allEvents = [];
         let currentFilter = 'active';
         let currentCalendarDate = new Date();
+        let prevTimeString = ""; 
 
         const els = {
             loading: document.getElementById('loadingOverlay'),
@@ -958,6 +987,20 @@
             sidebarGemini: document.querySelector('[data-tab="gemini"]')
         };
 
+        // Magic Hover Logic
+        function initMagicHover() {
+            const cards = document.querySelectorAll('.magic-hover');
+            cards.forEach(card => {
+                card.onmousemove = e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                }
+            });
+        }
+
         function initChart() {
             new TradingView.widget({
                 "width": "100%", "height": "100%", "symbol": "IDX:COMPOSITE", "interval": "D",
@@ -996,6 +1039,7 @@
                     els.loginScreen.classList.remove('hidden');
                     els.mainApp.classList.add('hidden');
                     els.loading.style.display = 'none';
+                    initMagicHover(); // Ensure hover works on login screen
                 }
             });
         }
@@ -1083,9 +1127,34 @@
 
             renderCalendar();
             updateStats();
+            initMagicHover(); // Apply magic effect to loaded cards
         }
 
-        // --- FLUID CLOCK ANIMATION (Simplified and Fixed) ---
+        // --- FLUID CLOCK ANIMATION (Refined Strip Logic) ---
+        function createDigitStrip(currentDigit) {
+             const wrapper = document.createElement('div');
+             wrapper.className = 'digit-wrapper';
+             
+             const strip = document.createElement('div');
+             strip.className = 'digit-strip';
+             
+             // Create strip 0-9 then 0 again for seamless loop
+             for(let i=0; i<=10; i++) {
+                 const span = document.createElement('span');
+                 span.textContent = i === 10 ? '0' : i;
+                 strip.appendChild(span);
+             }
+             
+             const val = parseInt(currentDigit);
+             if(!isNaN(val)) {
+                 strip.style.transform = `translateY(-${val}00%)`;
+                 strip.dataset.val = val;
+             }
+
+             wrapper.appendChild(strip);
+             return wrapper;
+        }
+
         function updateAnimatedClock() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('id-ID', { hour12: false }); 
@@ -1100,21 +1169,12 @@
                          sep.textContent = ':';
                          els.clockContainer.appendChild(sep);
                     } else {
-                        const wrapper = document.createElement('div');
-                        wrapper.className = 'digit-wrapper';
-                        const strip = document.createElement('div');
-                        strip.className = 'digit-strip';
-                        
-                        // 0-9-0
-                        for(let j=0; j<=10; j++) {
-                            const span = document.createElement('div');
-                            span.innerHTML = `<span>${j===10?0:j}</span>`;
-                            strip.appendChild(span);
-                        }
-                        wrapper.appendChild(strip);
+                        const wrapper = createDigitStrip(timeStr[i]);
                         els.clockContainer.appendChild(wrapper);
                     }
                 }
+                prevTimeString = timeStr;
+                return;
             }
 
             // Update
@@ -1132,33 +1192,26 @@
                 if(wrapper.classList.contains('digit-wrapper')) {
                     const strip = wrapper.firstChild;
                     const val = parseInt(char);
-                    
-                    // Determine if we need to loop
-                    // Get current transform value approx
-                    // Simplify: just set transform based on value
-                    // To make it fluid 9->0, we start at 9, animate to 10, then reset to 0
-                    
-                    // Check previous value stored in dataset
                     const prevVal = parseInt(strip.dataset.val || -1);
-                    
+
                     if (prevVal === 9 && val === 0) {
-                         strip.classList.add('animate');
-                         strip.style.transform = `translateY(-1000%)`;
+                         strip.classList.add('scrolling');
+                         strip.style.transform = `translateY(-1000%)`; // Move to the 11th digit (visual 0)
                          strip.dataset.val = 0;
                          
-                         // Reset after animation
                          setTimeout(() => {
-                             strip.classList.remove('animate');
-                             strip.style.transform = `translateY(0%)`;
-                         }, 600);
-                    } else if (prevVal !== val) {
-                         strip.classList.add('animate');
+                             strip.classList.remove('scrolling');
+                             strip.style.transform = `translateY(0%)`; // Reset to first 0 instantly
+                         }, 500); // Match transition time
+                    } else if (prevVal !== val && !isNaN(val)) {
+                         strip.classList.add('scrolling');
                          strip.style.transform = `translateY(-${val}00%)`;
                          strip.dataset.val = val;
                     }
                 }
                 digitIndex++;
             }
+            prevTimeString = timeStr;
         }
 
 
@@ -1275,7 +1328,7 @@
 
             filtered.forEach(t => {
                 const div = document.createElement('div');
-                div.className = `glass-card p-4 flex flex-col gap-2 border-l-4 ${t.status === 'completed' ? 'border-green-500 bg-green-500/5' : t.status === 'in-progress' ? 'border-blue-500' : 'border-yellow-500'}`;
+                div.className = `glass-card p-4 flex flex-col gap-2 border-l-4 magic-hover ${t.status === 'completed' ? 'border-green-500 bg-green-500/5' : t.status === 'in-progress' ? 'border-blue-500' : 'border-yellow-500'}`;
                 div.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div class="flex-1 mr-4">
@@ -1302,6 +1355,7 @@
                 `;
                 els.taskList.appendChild(div);
             });
+            initMagicHover();
         }
 
         document.addEventListener('edit-task', e => openTaskModal(e.detail));
@@ -1487,13 +1541,13 @@
 
             els.upcomingList.innerHTML = '';
             if(combined.length === 0) {
-                els.upcomingList.innerHTML = `<div class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700">Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕</div>`;
+                els.upcomingList.innerHTML = `<div class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700 magic-hover">Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕</div>`;
                 return;
             }
             
             combined.forEach(item => {
                 const div = document.createElement('div');
-                div.className = `glass-card p-3 flex justify-between items-center border-l-4 ${item.type === 'task' ? 'border-yellow-500' : 'border-purple-500'}`;
+                div.className = `glass-card p-3 flex justify-between items-center border-l-4 magic-hover ${item.type === 'task' ? 'border-yellow-500' : 'border-purple-500'}`;
                 div.innerHTML = `
                     <div>
                         <p class="font-bold text-white">${item.name}</p>
@@ -1507,6 +1561,7 @@
                 `;
                 els.upcomingList.appendChild(div);
             });
+            initMagicHover();
         }
 
         document.addEventListener('skip-event', async e => {
@@ -1534,7 +1589,7 @@
             items.forEach(i => {
                 total += i.price;
                 const div = document.createElement('div');
-                div.className = 'glass-card flex flex-col justify-between h-full';
+                div.className = 'glass-card flex flex-col justify-between h-full magic-hover';
                 div.innerHTML = `
                     <div>
                         <h3 class="font-bold text-lg text-white mb-1">${i.name}</h3>
@@ -1552,6 +1607,7 @@
             if(items.length === 0) {
                 els.wishlistGrid.innerHTML = `<p class="col-span-full text-center text-gray-500">Wishlist kosong.</p>`;
             }
+            initMagicHover();
         }
         
         document.addEventListener('delete-wishlist', async e => {
