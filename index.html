@@ -73,25 +73,37 @@
         }
 
         /* --- COUNTER CLOCK ANIMATION --- */
-        .clock-wrapper {
+        .clock-container {
             display: flex;
-            gap: 0.1rem;
-            font-family: 'Outfit', monospace; /* Monospace font for alignment */
-            font-weight: 700;
-            font-size: 2.25rem; /* 4xl size */
+            align-items: center;
+            gap: 2px;
+            font-family: 'Outfit', monospace;
+            font-weight: 800;
+            font-size: 3rem; /* Besar */
             line-height: 1;
+            height: 1em;
             overflow: hidden;
-            height: 1em; /* Only show one number height */
         }
 
-        .digit-column {
+        .clock-digit-window {
+            width: 0.65em;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .clock-digit-strip {
             display: flex;
             flex-direction: column;
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* Springy effect */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .digit-column span {
-            height: 1em;
+        .clock-digit-strip span {
+            height: 1em; /* Tinggi sama dengan container */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -101,11 +113,10 @@
         }
 
         .clock-separator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
             color: #818cf8;
-            padding-bottom: 0.2em;
+            padding-bottom: 0.1em;
+            font-size: 0.8em;
+            opacity: 0.8;
         }
 
 
@@ -376,13 +387,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
                     </svg>
                 </div>
-                <h1 class="text-3xl font-bold mb-2 text-white">Welcome Back</h1>
+                <h1 class="text-3xl font-bold mb-2 text-white animate-gradient-text">Welcome Back</h1>
                 <p class="text-gray-400 mb-8">Personal Dashboard Fluid UI</p>
                 <button id="loginWithGoogleBtn" class="glass-button w-full py-3 px-4 rounded-xl flex items-center justify-center gap-3 group-hover:shadow-indigo-500/50 transition-all">
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                          <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
                     </svg>
-                    Login dengan Google
+                    <span class="animate-gradient-text font-bold">Login dengan Google</span>
                 </button>
                 <p id="loginError" class="text-red-400 text-sm mt-4 hidden bg-red-500/10 p-2 rounded-lg border border-red-500/20"></p>
             </div>
@@ -464,7 +475,7 @@
                         </div>
                         <div class="text-right">
                             <!-- COUNTER CLOCK -->
-                            <div id="clockContainer" class="clock-wrapper flex justify-end gap-1">
+                            <div id="clockContainer" class="clock-container justify-end">
                                 <!-- Digits will be injected here by JS -->
                             </div>
                             <div id="dateEl" class="text-sm text-gray-400 uppercase tracking-widest font-medium mt-1">---</div>
@@ -1010,11 +1021,27 @@
         // --- CLOCK COUNTER ANIMATION ---
         function createDigitStrip(currentDigit) {
              const wrapper = document.createElement('div');
-             wrapper.className = 'digit-column';
-             // Create span for current digit
-             const span = document.createElement('span');
-             span.textContent = currentDigit;
-             wrapper.appendChild(span);
+             wrapper.className = 'clock-digit-window';
+             
+             const strip = document.createElement('div');
+             strip.className = 'clock-digit-strip';
+             
+             // Create 0-9-0 strip
+             for(let i=0; i<=10; i++) {
+                 const span = document.createElement('span');
+                 span.textContent = i === 10 ? '0' : i;
+                 strip.appendChild(span);
+             }
+             
+             // Initialize position based on current digit
+             // Map currentDigit char to index
+             const val = parseInt(currentDigit);
+             if(!isNaN(val)) {
+                 strip.style.transform = `translateY(-${val}00%)`;
+                 strip.dataset.val = val;
+             }
+
+             wrapper.appendChild(strip);
              return wrapper;
         }
 
@@ -1033,46 +1060,43 @@
                         sep.textContent = ':';
                         els.clockContainer.appendChild(sep);
                     } else {
-                        const wrapperOuter = document.createElement('div');
-                        wrapperOuter.className = 'clock-wrapper'; // Reuse wrapper style for masking
-                        // We just need a container for the strip
-                        wrapperOuter.style.width = '1ch'; 
-                        
-                        const strip = createDigitStrip(char);
-                        wrapperOuter.appendChild(strip);
-                        els.clockContainer.appendChild(wrapperOuter);
+                        const wrapper = createDigitStrip(char);
+                        els.clockContainer.appendChild(wrapper);
                     }
                 }
                 return;
             }
 
             // Update digits
-            let digitIndex = 0;
             for (let i = 0; i < timeStr.length; i++) {
                 const char = timeStr[i];
+                const prevChar = prevTimeString[i];
+                
                 if (char === ':' || char === '.') continue;
 
-                const wrapperOuter = els.clockContainer.children[i]; // This matches index because separators are children too
-                const strip = wrapperOuter.firstElementChild;
-                const currentSpan = strip.lastElementChild;
+                const wrapper = els.clockContainer.children[i];
+                const strip = wrapper.querySelector('.clock-digit-strip');
                 
-                if (currentSpan.textContent !== char) {
-                     const newSpan = document.createElement('span');
-                     newSpan.textContent = char;
-                     strip.appendChild(newSpan);
-                     // Animate
-                     strip.style.transform = `translateY(-50%)`; // Move to show new digit
+                const oldVal = parseInt(prevChar);
+                const newVal = parseInt(char);
+
+                // Logic to handle wrap around 9 -> 0
+                if (oldVal === 9 && newVal === 0) {
+                     // Animate to 10 (the second 0)
+                     strip.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                     strip.style.transform = `translateY(-1000%)`;
                      
-                     // Cleanup after animation
+                     // Reset to 0 instantly after transition
                      setTimeout(() => {
                          strip.style.transition = 'none';
-                         strip.innerHTML = '';
-                         strip.appendChild(newSpan);
-                         strip.style.transform = 'translateY(0)';
+                         strip.style.transform = `translateY(0%)`;
                          // Force reflow
-                         void strip.offsetWidth; 
-                         strip.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                         void strip.offsetWidth;
                      }, 500);
+                } 
+                else if (newVal !== oldVal) {
+                     strip.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                     strip.style.transform = `translateY(-${newVal}00%)`;
                 }
             }
             prevTimeString = timeStr;
