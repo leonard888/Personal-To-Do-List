@@ -27,7 +27,7 @@
             color: var(--text-primary);
         }
 
-        /* --- BACKGROUNDS --- */
+        /* --- FLUID BACKGROUND ANIMATION --- */
         .fluid-background {
             position: fixed;
             top: 0;
@@ -170,7 +170,7 @@
             position: relative;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.02); /* Slightly transparent for chart */
+            background: rgba(255, 255, 255, 0.02); 
             border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             transform-style: preserve-3d;
@@ -216,18 +216,6 @@
         @keyframes gradientMove {
             to { background-position: 200% center; }
         }
-
-        /* --- FLUID CLOCK --- */
-        .clock-container {
-            display: inline-flex;
-            align-items: center;
-            font-family: 'Outfit', monospace;
-            font-weight: 800;
-            font-size: 2.5rem;
-            line-height: 1;
-        }
-        
-        .digit-strip { display: flex; flex-direction: column; } /* Reset for static if needed */
 
         /* --- GLASS COMPONENTS (General) --- */
         .glass-panel {
@@ -495,7 +483,7 @@
         <p class="text-lg font-medium tracking-wider animate-pulse">MEMUAT DASHBOARD...</p>
     </div>
 
-    <!-- Login Screen with Grid Scan & Light Rays -->
+    <!-- Login Screen -->
     <div id="loginScreen" class="hidden h-full flex items-center justify-center p-4 z-40 relative overflow-hidden bg-[#0f172a]">
         <!-- Background Effects -->
         <div class="grid-scan">
@@ -503,25 +491,25 @@
         </div>
         <div class="light-rays"></div>
 
-        <!-- Standard Glass Card (No Parallax blocking clicks) -->
-        <div class="glass-card p-10 rounded-3xl w-full max-w-lg text-center relative z-10 border border-white/10 shadow-2xl">
-            <div class="w-28 h-28 mx-auto mb-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl shadow-indigo-500/30 transform transition-transform hover:scale-110">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-14 h-14">
+        <!-- Standard Glass Card (Resized & Clickable) -->
+        <div class="glass-card p-16 rounded-[2.5rem] w-full max-w-2xl text-center relative z-10 border border-white/10 shadow-2xl bg-opacity-40">
+            <div class="w-32 h-32 mx-auto mb-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl shadow-indigo-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-16 h-16">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
                 </svg>
             </div>
             
-            <div class="mb-8 inline-block w-full">
-                    <h1 class="text-4xl md:text-5xl font-bold text-white animate-gradient-text">Welcome Back</h1>
+            <div class="mb-10 inline-block w-full">
+                    <h1 class="text-5xl md:text-6xl font-extrabold text-white animate-gradient-text tracking-tight">Welcome Back</h1>
             </div>
 
-            <p class="text-gray-300 mb-12 text-xl">Personal Dashboard Fluid UI</p>
+            <p class="text-gray-300 mb-12 text-2xl font-light">Personal Dashboard Fluid UI</p>
             
-            <button id="loginWithGoogleBtn" class="glass-button w-full py-5 px-8 rounded-2xl flex items-center justify-center gap-4 text-xl transition-all hover:scale-105 active:scale-95 shadow-lg cursor-pointer relative z-50">
-                <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+            <button id="loginWithGoogleBtn" class="glass-button w-full py-6 px-8 rounded-2xl flex items-center justify-center gap-4 text-xl transition-all hover:scale-105 active:scale-95 shadow-xl cursor-pointer relative z-50">
+                <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
                 </svg>
-                <span class="font-bold">Login dengan Google</span>
+                <span class="font-bold tracking-wide">Login dengan Google</span>
             </button>
             <p id="loginError" class="text-red-400 text-sm mt-6 hidden bg-red-500/10 p-3 rounded-xl border border-red-500/20"></p>
         </div>
@@ -610,7 +598,7 @@
                             <p class="text-lg text-gray-300">Selamat datang kembali di workspace Anda.</p>
                         </div>
                         <div class="text-right">
-                            <!-- CLOCK WITH GLASS SURFACE (FIXED) -->
+                            <!-- CLOCK WITH GLASS SURFACE (SIMPLE TEXT) -->
                             <div class="glass-surface p-4 mb-1 inline-block magic-hover">
                                 <div id="clockContainer" class="text-4xl font-bold font-mono text-white tracking-wider">
                                     00:00:00
@@ -1096,6 +1084,8 @@
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
+            
+            // initLogin3D(); // REMOVED
 
             els.loginBtn.addEventListener('click', async () => {
                 try {
@@ -1120,7 +1110,7 @@
                     els.loginScreen.classList.remove('hidden');
                     els.mainApp.classList.add('hidden');
                     els.loading.style.display = 'none';
-                    initMagicHover(); 
+                    initMagicHover(); // Ensure hover works on login screen
                 }
             });
         }
@@ -1555,15 +1545,15 @@
                 const div = document.createElement('div');
                 div.className = `glass-card p-3 flex justify-between items-center border-l-4 magic-hover ${item.type === 'task' ? 'border-yellow-500' : 'border-purple-500'}`;
                 div.innerHTML = `
-                    <div class="flex-1 relative z-10">
+                    <div class="flex-1">
                         <p class="font-bold text-white">${item.name}</p>
                         <p class="text-xs text-gray-400">${item.time} • ${item.type.toUpperCase()}</p>
                     </div>
-                    <div class="flex gap-2 relative z-10">
+                    <div class="flex gap-2">
                          ${item.type === 'task' 
-                            ? `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs cursor-pointer" onclick="document.dispatchEvent(new CustomEvent('complete-task', {detail: '${item.id}'}))">Done</button>`
-                            : `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs cursor-pointer" onclick="document.dispatchEvent(new CustomEvent('complete-event', {detail: '${item.id}'}))">Done</button>
-                               <button class="text-red-400 hover:text-white bg-red-500/10 px-3 py-1 rounded text-xs cursor-pointer" onclick="document.dispatchEvent(new CustomEvent('skip-event', {detail: '${item.id}'}))">Skip</button>`}
+                            ? `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs" onclick="document.dispatchEvent(new CustomEvent('complete-task', {detail: '${item.id}'}))">Done</button>`
+                            : `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs" onclick="document.dispatchEvent(new CustomEvent('complete-event', {detail: '${item.id}'}))">Done</button>
+                               <button class="text-red-400 hover:text-white bg-red-500/10 px-3 py-1 rounded text-xs" onclick="document.dispatchEvent(new CustomEvent('skip-event', {detail: '${item.id}'}))">Skip</button>`}
                     </div>
                 `;
                 els.upcomingList.appendChild(div);
