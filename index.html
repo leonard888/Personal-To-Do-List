@@ -1554,53 +1554,80 @@
             }
             
             combined.forEach(item => {
-                const div = document.createElement('div');
-                div.className = `glass-card p-3 flex justify-between items-center border-l-4 magic-hover ${item.type === 'task' ? 'border-yellow-500' : 'border-purple-500'}`;
-                
-                // Text Container
-                const textDiv = document.createElement('div');
-                textDiv.className = 'flex-1 relative z-10';
-                textDiv.innerHTML = `
-                    <p class="font-bold text-white">${item.name}</p>
-                    <p class="text-xs text-gray-400">${item.time} • ${item.type.toUpperCase()}</p>
+                // Main container for the row
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'flex items-center gap-3 w-full';
+
+                // Glass card for content (with magic hover)
+                const contentDiv = document.createElement('div');
+                contentDiv.className = `glass-card flex-1 p-3 border-l-4 magic-hover ${item.type === 'task' ? 'border-yellow-500' : 'border-purple-500'}`;
+                contentDiv.innerHTML = `
+                    <div>
+                        <p class="font-bold text-white">${item.name}</p>
+                        <p class="text-xs text-gray-400">${item.time} • ${item.type.toUpperCase()}</p>
+                    </div>
                 `;
-                div.appendChild(textDiv);
+                initMagicHoverForEl(contentDiv); // Helper to init hover on specific element
 
-                // Buttons Container
+                // Buttons container (Outside glass card)
                 const btnDiv = document.createElement('div');
-                btnDiv.className = 'flex gap-2 relative z-10';
+                btnDiv.className = 'flex gap-2 shrink-0';
                 
-                const doneBtn = document.createElement('button');
-                doneBtn.className = 'text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs cursor-pointer';
-                doneBtn.textContent = 'Done';
-                doneBtn.onclick = async (e) => {
-                    e.stopPropagation(); 
-                    if(item.type === 'task') {
-                         await updateDoc(doc(tasksCollection, item.id), {status: 'completed'});
-                    } else {
-                         const today = new Date().toISOString().split('T')[0];
-                         await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
-                    }
-                };
-                btnDiv.appendChild(doneBtn);
-
-                if(item.type === 'event') {
+                if (item.type === 'task') {
+                    const doneBtn = document.createElement('button');
+                    doneBtn.className = 'glass-button p-2 rounded-lg text-green-400 hover:text-white hover:bg-green-500/20';
+                    doneBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>`;
+                    doneBtn.title = "Selesai";
+                    doneBtn.onclick = () => document.dispatchEvent(new CustomEvent('complete-task', {detail: item.id}));
+                    btnDiv.appendChild(doneBtn);
+                } else {
+                    // Event buttons
+                    const doneBtn = document.createElement('button');
+                    doneBtn.className = 'glass-button p-2 rounded-lg text-green-400 hover:text-white hover:bg-green-500/20';
+                    doneBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>`;
+                    doneBtn.title = "Selesai";
+                    doneBtn.onclick = () => document.dispatchEvent(new CustomEvent('complete-event', {detail: item.id}));
+                    
                     const skipBtn = document.createElement('button');
-                    skipBtn.className = 'text-red-400 hover:text-white bg-red-500/10 px-3 py-1 rounded text-xs cursor-pointer';
-                    skipBtn.textContent = 'Skip';
-                    skipBtn.onclick = async (e) => {
-                        e.stopPropagation();
-                        const today = new Date().toISOString().split('T')[0];
-                        await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
-                    };
+                    skipBtn.className = 'glass-button p-2 rounded-lg text-red-400 hover:text-white hover:bg-red-500/20';
+                    skipBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>`;
+                    skipBtn.title = "Skip";
+                    skipBtn.onclick = () => document.dispatchEvent(new CustomEvent('skip-event', {detail: item.id}));
+
+                    btnDiv.appendChild(doneBtn);
                     btnDiv.appendChild(skipBtn);
                 }
 
-                div.appendChild(btnDiv);
-                els.upcomingList.appendChild(div);
+                rowDiv.appendChild(contentDiv);
+                rowDiv.appendChild(btnDiv);
+                els.upcomingList.appendChild(rowDiv);
             });
-            initMagicHover();
         }
+        
+        // Add Helper function for single element magic hover
+        function initMagicHoverForEl(el) {
+            el.onmousemove = e => {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                el.style.setProperty('--mouse-x', `${x}px`);
+                el.style.setProperty('--mouse-y', `${y}px`);
+            }
+        }
+
+        document.addEventListener('complete-task', async e => {
+             await updateDoc(doc(tasksCollection, e.detail), {status: 'completed'});
+        });
+
+        document.addEventListener('complete-event', async e => {
+            const today = new Date().toISOString().split('T')[0];
+            await updateDoc(doc(eventsCollection, e.detail), { lastActionDate: today });
+        });
+
+        document.addEventListener('skip-event', async e => {
+            const today = new Date().toISOString().split('T')[0];
+            await updateDoc(doc(eventsCollection, e.detail), { lastActionDate: today });
+        });
 
         // --- WISHLIST ---
         async function handleWishlistSubmit(e) {
