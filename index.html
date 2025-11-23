@@ -56,7 +56,7 @@
             100% { transform: translate(50px, 50px) scale(1.1); }
         }
 
-        /* --- GLASS SURFACE & MAGIC BENTO --- */
+        /* --- GLASS SURFACE (New) --- */
         .glass-surface {
             position: relative;
             background: rgba(255, 255, 255, 0.03);
@@ -70,63 +70,72 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
-        .glass-surface:hover {
-            border-color: rgba(255, 255, 255, 0.2);
+        .glass-surface::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.05),
+                transparent
+            );
+            transition: 0.5s;
+            pointer-events: none;
+            animation: shimmer 8s infinite linear;
         }
 
-        /* Magic Bento Hover Effect */
-        .magic-hover {
+        @keyframes shimmer {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        /* --- 3D PARALLAX CARD (For Login - Resized) --- */
+        .parallax-container {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            width: 100%;
+            max-width: 600px; /* Made wider */
+            margin: 0 auto;
+        }
+
+        .parallax-card {
             position: relative;
-        }
-
-        .magic-hover::before {
-            content: "";
-            position: absolute;
-            height: 100%;
             width: 100%;
-            top: 0;
-            left: 0;
-            border-radius: inherit;
-            background: radial-gradient(
-                800px circle at var(--mouse-x) var(--mouse-y), 
-                rgba(255, 255, 255, 0.08), 
-                transparent 40%
-            );
-            opacity: 0;
-            transition: opacity 0.5s;
-            z-index: 2;
-            pointer-events: none;
+            background: rgba(17, 25, 40, 0.7);
+            border-radius: 32px; /* More rounded */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 5rem 3rem; /* Much larger padding for height */
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out; 
+            will-change: transform;
         }
 
-        .magic-hover:hover::before {
-            opacity: 1;
+        .parallax-content {
+            transform: translateZ(60px); 
+            transform-style: preserve-3d;
+            position: relative;
+            z-index: 10; /* Ensure content is clickable */
         }
-
-        .magic-hover::after {
-            content: "";
+        
+        .parallax-bg-glow {
             position: absolute;
-            height: 100%;
-            width: 100%;
-            top: 0;
-            left: 0;
-            border-radius: inherit;
-            background: radial-gradient(
-                600px circle at var(--mouse-x) var(--mouse-y), 
-                rgba(255, 255, 255, 0.3), 
-                transparent 40%
-            );
-            z-index: 1;
-            opacity: 0;
-            transition: opacity 0.5s;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateZ(-50px);
+            width: 300px; /* Bigger glow */
+            height: 300px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+            filter: blur(60px);
+            border-radius: 50%;
             pointer-events: none;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            padding: 1px; 
-        }
-
-        .magic-hover:hover::after {
-            opacity: 1;
         }
 
         /* --- TEXT ANIMATIONS --- */
@@ -143,55 +152,14 @@
             to { background-position: 200% center; }
         }
 
-        /* --- FLUID CLOCK (Refined) --- */
+        /* --- SIMPLE FLUID CLOCK --- */
         .clock-container {
-            display: inline-flex;
-            align-items: center;
+            display: inline-block;
             font-family: 'Outfit', monospace;
             font-weight: 800;
-            font-size: 2.5rem;
-            line-height: 1.2; /* Adjusted for better centering */
-            height: 1.2em;    /* Match line height */
-            overflow: hidden;
-        }
-
-        .digit-wrapper {
-            position: relative;
-            height: 100%;
-            width: 0.65em;
-            overflow: hidden;
-        }
-
-        .digit-strip {
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            /* Transition managed in JS */
-            will-change: transform;
-        }
-
-        .digit-strip span {
-            height: 1.2em; /* Match container height */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(to bottom, #818cf8, #22d3ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .clock-sep {
-            width: 0.3em;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-bottom: 0.15em;
-            color: #818cf8;
-            opacity: 0.8;
-            font-size: 0.9em;
+            font-size: 3rem; 
+            line-height: 1;
+            color: white;
         }
 
         /* --- GLASS COMPONENTS --- */
@@ -210,19 +178,34 @@
             border-radius: 1rem;
             padding: 1.25rem;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden; /* For magic hover */
         }
 
-        .glass-card:hover {
-            background: rgba(255, 255, 255, 0.07);
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        /* Magic Hover Effect */
+        .magic-hover {
+            position: relative;
         }
-        
-        .glass-card.active-filter {
-            border-color: var(--accent-color);
-            background: rgba(99, 102, 241, 0.1);
+        .magic-hover::before {
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            border-radius: inherit;
+            background: radial-gradient(
+                800px circle at var(--mouse-x) var(--mouse-y), 
+                rgba(255, 255, 255, 0.06), 
+                transparent 40%
+            );
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 2;
         }
+        .magic-hover:hover::before { opacity: 1; }
+
 
         .glass-input {
             background: rgba(0, 0, 0, 0.2);
@@ -249,6 +232,9 @@
             font-weight: 500;
             transition: all 0.3s;
             backdrop-filter: blur(4px);
+            cursor: pointer; /* Ensure pointer cursor */
+            position: relative; /* Ensure correct stacking */
+            z-index: 20; /* Lift above overlays */
         }
         .glass-button:hover {
             background: linear-gradient(135deg, rgba(99, 102, 241, 1), rgba(168, 85, 247, 1));
@@ -449,30 +435,35 @@
         <p class="text-lg font-medium tracking-wider animate-pulse">MEMUAT DASHBOARD...</p>
     </div>
 
-    <!-- Login Screen -->
+    <!-- Login Screen with 3D Parallax (BIGGER CARD) -->
     <div id="loginScreen" class="hidden h-full flex items-center justify-center p-4">
-        <div class="modal-content p-8 rounded-2xl w-full max-w-sm text-center relative overflow-hidden group">
-            <div class="absolute -top-10 -left-10 w-32 h-32 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-            <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div class="parallax-container" id="loginContainer">
+            <div class="parallax-card" id="loginCard">
+                <!-- Background Glow Element inside card -->
+                <div class="parallax-bg-glow"></div>
+                
+                <div class="parallax-content text-center w-full">
+                    <div class="w-28 h-28 mx-auto mb-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl shadow-indigo-500/30 transform transition-transform hover:scale-110" style="transform: translateZ(30px)">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-14 h-14">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
+                        </svg>
+                    </div>
+                    
+                    <!-- Glass Surface Title on Login -->
+                    <div class="glass-surface mb-8 inline-block w-full" style="transform: translateZ(40px)">
+                         <h1 class="text-4xl md:text-6xl font-bold text-white animate-gradient-text">Welcome Back</h1>
+                    </div>
 
-            <div class="relative z-10">
-                <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-10 h-10">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
-                    </svg>
+                    <p class="text-gray-300 mb-12 text-xl" style="transform: translateZ(30px)">Personal Dashboard Fluid UI</p>
+                    
+                    <button id="loginWithGoogleBtn" class="glass-button w-full py-5 px-8 rounded-2xl flex items-center justify-center gap-4 text-xl transition-all hover:scale-105 active:scale-95 relative z-50" style="transform: translateZ(60px); position: relative; z-index: 50;">
+                        <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                             <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+                        </svg>
+                        <span class="font-bold">Login dengan Google</span>
+                    </button>
+                    <p id="loginError" class="text-red-400 text-sm mt-6 hidden bg-red-500/10 p-3 rounded-xl border border-red-500/20" style="transform: translateZ(20px)"></p>
                 </div>
-                <!-- Glass Surface for Welcome Back -->
-                <div class="glass-surface mb-4 w-full magic-hover">
-                    <h1 class="text-3xl font-bold text-white animate-gradient-text">Welcome Back</h1>
-                    <p class="text-gray-300 mt-1 text-sm">Personal Dashboard Fluid UI</p>
-                </div>
-                <button id="loginWithGoogleBtn" class="glass-button w-full py-3 px-4 rounded-xl flex items-center justify-center gap-3 group-hover:shadow-indigo-500/50 transition-all magic-hover">
-                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                         <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
-                    </svg>
-                    <span class="font-bold">Login dengan Google</span>
-                </button>
-                <p id="loginError" class="text-red-400 text-sm mt-4 hidden bg-red-500/10 p-2 rounded-lg border border-red-500/20"></p>
             </div>
         </div>
     </div>
@@ -553,11 +544,9 @@
                             <p class="text-lg text-gray-300">Selamat datang kembali di workspace Anda.</p>
                         </div>
                         <div class="text-right">
-                            <!-- COUNTER CLOCK -->
-                            <div class="glass-surface p-3 mb-1 inline-block magic-hover">
-                                <div id="clockContainer" class="clock-container justify-end">
-                                    <!-- Digits will be injected here by JS -->
-                                </div>
+                            <!-- CLOCK WITH GLASS SURFACE (SIMPLE TEXT) -->
+                            <div class="glass-surface p-4 mb-1 inline-block magic-hover">
+                                <div id="clockContainer" class="clock-container justify-end">00:00:00</div>
                             </div>
                             <div id="dateEl" class="text-sm text-gray-400 uppercase tracking-widest font-medium mt-1">---</div>
                         </div>
@@ -921,6 +910,8 @@
             mainApp: document.getElementById('mainApp'),
             loginBtn: document.getElementById('loginWithGoogleBtn'),
             loginError: document.getElementById('loginError'),
+            loginContainer: document.getElementById('loginContainer'), // For 3D effect
+            loginCard: document.getElementById('loginCard'),         // For 3D effect
             logoutBtn: document.getElementById('logoutBtn'),
             authStatus: document.getElementById('authStatus'),
             userAvatar: document.getElementById('userAvatar'),
@@ -992,6 +983,29 @@
                 }
             });
         }
+        
+        // Login 3D Logic
+        function initLogin3D() {
+            const container = els.loginContainer;
+            const card = els.loginCard;
+
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * -10; 
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                card.style.transform = `rotateX(0deg) rotateY(0deg)`;
+            });
+        }
 
         function initChart() {
             new TradingView.widget({
@@ -1007,6 +1021,8 @@
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
+            
+            initLogin3D(); // Start 3D effect immediately
 
             els.loginBtn.addEventListener('click', async () => {
                 try {
@@ -1113,97 +1129,21 @@
                 renderCalendar();
                 renderUpcoming();
             });
-
-            setInterval(updateAnimatedClock, 1000);
-            updateAnimatedClock(); // Initial call
+            
+            // Simple Clock Update (No complex animation logic needed)
+            const updateSimpleClock = () => {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('id-ID', { hour12: false });
+                els.clockContainer.innerText = timeStr;
+                els.date.innerText = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            };
+            
+            setInterval(updateSimpleClock, 1000);
+            updateSimpleClock(); 
 
             renderCalendar();
             updateStats();
-            initMagicHover(); // Apply magic effect to loaded cards
-        }
-
-        // --- FLUID CLOCK ANIMATION (Refined Strip Logic) ---
-        function createDigitStrip(currentDigit) {
-             const wrapper = document.createElement('div');
-             wrapper.className = 'digit-wrapper';
-             
-             const strip = document.createElement('div');
-             strip.className = 'digit-strip';
-             
-             // Create strip 0-9 then 0 again for seamless loop
-             for(let i=0; i<=10; i++) {
-                 const span = document.createElement('span');
-                 span.textContent = i === 10 ? '0' : i;
-                 strip.appendChild(span);
-             }
-             
-             const val = parseInt(currentDigit);
-             if(!isNaN(val)) {
-                 strip.style.transform = `translateY(-${val}00%)`;
-                 strip.dataset.val = val;
-             }
-
-             wrapper.appendChild(strip);
-             return wrapper;
-        }
-
-        function updateAnimatedClock() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('id-ID', { hour12: false }); 
-            els.date.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-
-            // Initial Render
-            if (els.clockContainer.innerHTML === '') {
-                for(let i=0; i<timeStr.length; i++) {
-                    if (timeStr[i] === ':' || timeStr[i] === '.') {
-                         const sep = document.createElement('div');
-                         sep.className = 'clock-sep';
-                         sep.textContent = ':';
-                         els.clockContainer.appendChild(sep);
-                    } else {
-                        const wrapper = createDigitStrip(timeStr[i]);
-                        els.clockContainer.appendChild(wrapper);
-                    }
-                }
-                prevTimeString = timeStr;
-                return;
-            }
-
-            // Update
-            let digitIndex = 0;
-            const children = Array.from(els.clockContainer.children);
-            
-            for(let i=0; i<timeStr.length; i++) {
-                const char = timeStr[i];
-                if(char === ':' || char === '.') {
-                    digitIndex++;
-                    continue;
-                }
-
-                const wrapper = children[digitIndex];
-                if(wrapper.classList.contains('digit-wrapper')) {
-                    const strip = wrapper.firstChild;
-                    const val = parseInt(char);
-                    const prevVal = parseInt(strip.dataset.val || -1);
-
-                    if (prevVal === 9 && val === 0) {
-                         strip.classList.add('scrolling');
-                         strip.style.transform = `translateY(-1000%)`; // Move to the 11th digit (visual 0)
-                         strip.dataset.val = 0;
-                         
-                         setTimeout(() => {
-                             strip.classList.remove('scrolling');
-                             strip.style.transform = `translateY(0%)`; // Reset to first 0 instantly
-                         }, 500); // Match transition time
-                    } else if (prevVal !== val && !isNaN(val)) {
-                         strip.classList.add('scrolling');
-                         strip.style.transform = `translateY(-${val}00%)`;
-                         strip.dataset.val = val;
-                    }
-                }
-                digitIndex++;
-            }
-            prevTimeString = timeStr;
+            initMagicHover(); 
         }
 
 
@@ -1533,7 +1473,7 @@
 
             els.upcomingList.innerHTML = '';
             if(combined.length === 0) {
-                els.upcomingList.innerHTML = `<div class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700 magic-hover">Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕</div>`;
+                els.upcomingList.innerHTML = `<div class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700 magic-hover w-full">Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕</div>`;
                 return;
             }
             
@@ -1546,8 +1486,10 @@
                         <p class="text-xs text-gray-400">${item.time} • ${item.type.toUpperCase()}</p>
                     </div>
                     <div class="flex gap-2">
-                         <button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs" onclick="document.dispatchEvent(new CustomEvent('complete-${item.type}', {detail: '${item.id}'}))">Done</button>
-                         ${item.type === 'event' ? `<button class="text-red-400 hover:text-white bg-red-500/10 px-3 py-1 rounded text-xs" onclick="document.dispatchEvent(new CustomEvent('skip-event', {detail: '${item.id}'}))">Skip</button>` : ''}
+                         ${item.type === 'task' 
+                            ? `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs" onclick="document.dispatchEvent(new CustomEvent('complete-task', {detail: '${item.id}'}))">Done</button>`
+                            : `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs" onclick="document.dispatchEvent(new CustomEvent('complete-event', {detail: '${item.id}'}))">Done</button>
+                               <button class="text-red-400 hover:text-white bg-red-500/10 px-3 py-1 rounded text-xs" onclick="document.dispatchEvent(new CustomEvent('skip-event', {detail: '${item.id}'}))">Skip</button>`}
                     </div>
                 `;
                 els.upcomingList.appendChild(div);
