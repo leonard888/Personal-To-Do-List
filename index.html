@@ -20,7 +20,7 @@
         }
 
         body {
-            font-family: 'Outfit', sans-serif; /* Font yang lebih modern */
+            font-family: 'Outfit', sans-serif;
             margin: 0;
             overflow: hidden;
             background-color: #0f172a;
@@ -80,6 +80,12 @@
             border-color: rgba(255, 255, 255, 0.2);
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
+        
+        /* Filter card active state */
+        .glass-card.active-filter {
+            border-color: var(--accent-color);
+            background: rgba(99, 102, 241, 0.1);
+        }
 
         .glass-input {
             background: rgba(0, 0, 0, 0.2);
@@ -92,6 +98,12 @@
             border-color: var(--accent-color);
             outline: none;
             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+        
+        /* Dropdown Style */
+        select.glass-input option {
+            background-color: #1f2937;
+            color: white;
         }
 
         .glass-button {
@@ -163,11 +175,13 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        /* --- CALENDAR STYLES --- */
+        /* --- CALENDAR STYLES (Fixed) --- */
         #calendarGrid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr); /* Ensures 7 columns */
+            gap: 8px;
             background-color: transparent;
             border: none;
-            gap: 8px;
         }
         .calendar-day-header {
             background: transparent;
@@ -175,14 +189,21 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            text-align: center;
+            padding-bottom: 8px;
         }
         .calendar-day {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 0.75rem;
             color: var(--text-primary);
-            min-height: 100px;
+            min-height: 80px;
             transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px;
+            cursor: pointer;
         }
         .calendar-day:hover {
             background: rgba(255, 255, 255, 0.08);
@@ -192,6 +213,7 @@
             opacity: 0.3;
             background: transparent;
             border: none;
+            cursor: default;
         }
         .calendar-day.today {
             border: 1px solid var(--accent-color);
@@ -200,10 +222,28 @@
         .calendar-day.today .day-number {
             background: var(--accent-color);
             box-shadow: 0 0 10px var(--accent-color);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .event-dot-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            justify-content: center;
+            margin-top: 4px;
         }
         .event-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
             box-shadow: 0 0 5px currentColor;
         }
+        .event-dot-task { background-color: #eab308; }
+        .event-dot-event { background-color: #8b5cf6; }
 
         /* --- SIDEBAR --- */
         .sidebar-link {
@@ -280,7 +320,6 @@
     <!-- Login Screen -->
     <div id="loginScreen" class="hidden h-full flex items-center justify-center p-4">
         <div class="modal-content p-8 rounded-2xl w-full max-w-sm text-center relative overflow-hidden group">
-            <!-- Glow effect behind -->
             <div class="absolute -top-10 -left-10 w-32 h-32 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
             <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
 
@@ -433,7 +472,7 @@
                             </div>
 
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                <!-- Stats Cards -->
+                                <!-- Stats Cards (Filters) -->
                                 <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
                                     <div id="filterAll" class="glass-card cursor-pointer hover:bg-white/5 group text-center">
                                         <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Total</p>
@@ -451,10 +490,15 @@
                                         <p class="text-xs text-red-400 uppercase font-bold tracking-wider">Urgent</p>
                                         <p id="deadlineWarning" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
                                     </div>
+                                    <!-- Filter tambahan: Completed -->
+                                    <div id="filterCompleted" class="glass-card cursor-pointer hover:bg-green-500/10 group text-center border-l-4 border-green-500 col-span-2 sm:col-span-4">
+                                        <p class="text-xs text-green-400 uppercase font-bold tracking-wider">Selesai</p>
+                                        <p id="completedTasks" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
+                                    </div>
                                 </div>
                                 
                                 <!-- Chart -->
-                                <div class="glass-card flex items-center justify-center relative h-48">
+                                <div class="glass-card flex items-center justify-center relative h-full min-h-[200px]">
                                     <canvas id="taskStatusChart"></canvas>
                                 </div>
                             </div>
@@ -580,19 +624,15 @@
         </div>
     </div>
 
-    <!-- MODALS (Glass Style) -->
-
-    <!-- Task Modal -->
+    <!-- MODALS -->
     <dialog id="taskModal" class="modal-content rounded-2xl w-full max-w-md text-white">
         <form id="taskForm" class="p-6 space-y-4" data-task-id="">
             <h3 id="taskModalTitle" class="text-2xl font-bold mb-4">Tugas Baru</h3>
             <div id="taskError" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm"></div>
-            
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Tugas</label>
                 <input type="text" id="taskName" name="taskName" class="glass-input w-full rounded-lg px-3 py-2">
             </div>
-            
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label>
@@ -603,7 +643,6 @@
                     <input type="time" id="taskTime" name="taskTime" class="glass-input w-full rounded-lg px-3 py-2">
                 </div>
             </div>
-
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Status</label>
                 <select id="taskStatus" name="taskStatus" class="glass-input w-full rounded-lg px-3 py-2">
@@ -612,17 +651,14 @@
                     <option value="completed" class="bg-gray-900">Completed</option>
                 </select>
             </div>
-
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Catatan</label>
                 <textarea id="taskNotes" name="taskNotes" rows="3" class="glass-input w-full rounded-lg px-3 py-2"></textarea>
             </div>
-
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Link Drive</label>
                 <input type="url" id="taskDriveLink" name="taskDriveLink" placeholder="https://" class="glass-input w-full rounded-lg px-3 py-2">
             </div>
-
             <div class="flex justify-between pt-4 border-t border-white/10 mt-4">
                 <button type="button" id="deleteTaskBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button>
                 <div class="flex gap-3 ml-auto">
@@ -638,12 +674,10 @@
         <form id="eventForm" class="p-6 space-y-4" data-event-id="">
             <h3 id="eventModalTitle" class="text-2xl font-bold mb-4 text-purple-400">Event Baru</h3>
             <div id="eventError" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm"></div>
-            
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Event</label>
                 <input type="text" id="eventName" name="eventName" class="glass-input w-full rounded-lg px-3 py-2">
             </div>
-
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label>
@@ -654,7 +688,6 @@
                     <input type="time" id="eventTime" name="eventTime" class="glass-input w-full rounded-lg px-3 py-2">
                 </div>
             </div>
-
             <div class="space-y-1">
                 <label class="text-xs text-gray-400 uppercase font-bold ml-1">Berulang</label>
                 <select id="eventRepeat" name="eventRepeat" class="glass-input w-full rounded-lg px-3 py-2">
@@ -663,7 +696,6 @@
                     <option value="weekly" class="bg-gray-900">Setiap Minggu</option>
                 </select>
             </div>
-
             <div class="flex justify-between pt-4 border-t border-white/10 mt-4">
                 <button type="button" id="deleteEventBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button>
                 <div class="flex gap-3 ml-auto">
@@ -697,38 +729,17 @@
         </form>
     </dialog>
 
-    <!-- JAVASCRIPT LOGIC (KEPT INTACT) -->
+    <!-- JAVASCRIPT LOGIC -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged,
-            GoogleAuthProvider,
-            signInWithPopup,
-            signOut
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            setDoc, 
-            addDoc, 
-            deleteDoc, 
-            updateDoc, 
-            collection, 
-            onSnapshot,
-            serverTimestamp,
-            getDoc,
-            query
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, addDoc, deleteDoc, updateDoc, collection, onSnapshot, serverTimestamp, getDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- Firebase Configuration ---
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         
-        // ======================================================================
         // KONFIGURASI LOKAL
-        // ======================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCiIZRywKs7nF92z6_FWMzhOAaRe9SOOJE",
             authDomain: "personal-to-do-list-5d959.firebaseapp.com",
@@ -738,7 +749,6 @@
             appId: "1:713295970134:web:6650db1a681742dc30a0f7",
             measurementId: "G-QG3GEXP3HC"
         };
-        // ======================================================================
         
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
@@ -747,10 +757,9 @@
         let tasksUnsubscribe = null, wishlistUnsubscribe = null, eventsUnsubscribe = null;
         let taskStatusChart = null;
         let allTasks = [], allEvents = [];
-        let currentFilter = 'active';
+        let currentFilter = 'active'; // 'all', 'pending', 'in-progress', 'completed', 'deadline', 'active' (default)
         let currentCalendarDate = new Date();
 
-        // DOM Elements
         const els = {
             loading: document.getElementById('loadingOverlay'),
             loginScreen: document.getElementById('loginScreen'),
@@ -766,7 +775,6 @@
             clock: document.getElementById('clockEl'),
             date: document.getElementById('dateEl'),
             
-            // Task
             taskModal: document.getElementById('taskModal'),
             showTaskBtn: document.getElementById('showTaskModal'),
             closeTaskBtn: document.getElementById('closeTaskModal'),
@@ -774,14 +782,12 @@
             taskError: document.getElementById('taskError'),
             taskList: document.getElementById('taskList'),
             
-            // Wishlist
             wishlistModal: document.getElementById('wishlistModal'),
             showWishlistBtn: document.getElementById('showWishlistModal'),
             closeWishlistBtn: document.getElementById('closeWishlistModal'),
             wishlistForm: document.getElementById('wishlistForm'),
             wishlistGrid: document.getElementById('wishlistGrid'),
             
-            // Events/Calendar
             upcomingList: document.getElementById('upcomingEventsList'),
             calendarGrid: document.getElementById('calendarGrid'),
             monthYear: document.getElementById('currentMonthYear'),
@@ -792,7 +798,6 @@
             closeEventBtn: document.getElementById('closeEventModalBtn'),
             deleteEventBtn: document.getElementById('deleteEventBtn'),
             
-            // Detail View
             detailSection: document.getElementById('calendarDetailSection'),
             detailTitle: document.getElementById('detailDateTitle'),
             detailTaskList: document.getElementById('detailTaskList'),
@@ -801,25 +806,28 @@
             detailAddTaskBtn: document.getElementById('detailAddTaskBtn'),
             detailAddEventBtn: document.getElementById('detailAddEventBtn'),
 
-            // Gemini
             geminiForm: document.getElementById('geminiForm'),
             geminiInput: document.getElementById('geminiInput'),
             chatContainer: document.getElementById('chatContainer'),
-            geminiLoading: document.getElementById('geminiLoading')
+            geminiLoading: document.getElementById('geminiLoading'),
+
+            // Filters
+            filterAll: document.getElementById('filterAll'),
+            filterPending: document.getElementById('filterPending'),
+            filterInProgress: document.getElementById('filterInProgress'),
+            filterCompleted: document.getElementById('filterCompleted'),
+            filterDeadline: document.getElementById('filterDeadline')
         };
 
-        // Initialize Chart
         function initChart() {
             new TradingView.widget({
                 "width": "100%", "height": "100%", "symbol": "IDX:COMPOSITE", "interval": "D",
                 "timezone": "Asia/Jakarta", "theme": "dark", "style": "1", "locale": "id",
                 "enable_publishing": false, "allow_symbol_change": true, "container_id": "tradingview_chart",
-                "backgroundColor": "rgba(17, 25, 40, 0)" // Transparent bg
+                "backgroundColor": "rgba(17, 25, 40, 0)"
             });
         }
         initChart();
-
-        // --- APP LOGIC ---
 
         async function init() {
             app = initializeApp(firebaseConfig);
@@ -860,13 +868,10 @@
             wishlistCollection = collection(db, `${path}/wishlist`);
             eventsCollection = collection(db, `${path}/events`);
 
-            // Listeners
             els.logoutBtn.addEventListener('click', () => signOut(auth));
             
-            // Tabs
             els.tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    els.tabs.forEach(t => t.classList.remove('active')); // Remove styling manually handled by css logic above for now just hide/show
                     const target = tab.dataset.tab;
                     els.tabContents.forEach(c => {
                         c.classList.add('hidden');
@@ -875,18 +880,15 @@
                 });
             });
 
-            // Modals
             setupModal(els.taskModal, els.showTaskBtn, els.closeTaskBtn);
             setupModal(els.wishlistModal, els.showWishlistBtn, els.closeWishlistBtn);
-            setupModal(els.eventModal, null, els.closeEventBtn); // Event modal trigged by calendar
+            setupModal(els.eventModal, null, els.closeEventBtn); 
 
-            // Forms
             els.taskForm.addEventListener('submit', handleTaskSubmit);
             els.wishlistForm.addEventListener('submit', handleWishlistSubmit);
             els.eventForm.addEventListener('submit', handleEventSubmit);
             els.geminiForm.addEventListener('submit', handleGeminiSubmit);
 
-            // Calendar Nav
             els.prevMonth.addEventListener('click', () => {
                 currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
                 renderCalendar();
@@ -896,7 +898,6 @@
                 renderCalendar();
             });
 
-            // Detail View
             els.closeDetailBtn.addEventListener('click', () => els.detailSection.classList.add('hidden'));
             els.detailAddTaskBtn.addEventListener('click', () => {
                 const date = els.detailTitle.dataset.date;
@@ -907,9 +908,11 @@
                 openEventModal(date);
             });
             
-            // Task Deletion inside modal
             document.getElementById('deleteTaskBtn').addEventListener('click', handleDeleteTask);
             els.deleteEventBtn.addEventListener('click', handleDeleteEvent);
+
+            // Filter Listeners
+            setupFilterListeners();
 
             // Data Listeners
             tasksUnsubscribe = onSnapshot(query(tasksCollection), s => {
@@ -930,7 +933,6 @@
                 renderUpcoming();
             });
 
-            // Clock
             setInterval(() => {
                 const now = new Date();
                 els.clock.textContent = now.toLocaleTimeString('id-ID');
@@ -938,11 +940,11 @@
             }, 1000);
 
             renderCalendar();
+            updateStats();
         }
 
         function setupModal(modal, openBtn, closeBtn) {
             if(openBtn) openBtn.addEventListener('click', () => {
-                // Reset forms
                 if(modal.id === 'taskModal') openTaskModal();
                 else modal.showModal();
             });
@@ -950,6 +952,28 @@
             modal.addEventListener('click', e => {
                 if(e.target === modal) modal.close();
             });
+        }
+
+        function setupFilterListeners() {
+            const setFilter = (filter) => {
+                currentFilter = filter;
+                // Update active class logic
+                [els.filterAll, els.filterPending, els.filterInProgress, els.filterCompleted, els.filterDeadline].forEach(el => el.classList.remove('active-filter'));
+                
+                if(filter === 'all') els.filterAll.classList.add('active-filter');
+                else if(filter === 'pending') els.filterPending.classList.add('active-filter');
+                else if(filter === 'in-progress') els.filterInProgress.classList.add('active-filter');
+                else if(filter === 'completed') els.filterCompleted.classList.add('active-filter');
+                else if(filter === 'deadline') els.filterDeadline.classList.add('active-filter');
+                
+                renderTasks();
+            }
+
+            els.filterAll.addEventListener('click', () => setFilter('all'));
+            els.filterPending.addEventListener('click', () => setFilter('pending'));
+            els.filterInProgress.addEventListener('click', () => setFilter('in-progress'));
+            els.filterCompleted.addEventListener('click', () => setFilter('completed'));
+            els.filterDeadline.addEventListener('click', () => setFilter('deadline'));
         }
 
         // --- TASKS ---
@@ -1007,14 +1031,27 @@
 
         function renderTasks() {
             els.taskList.innerHTML = '';
+            const now = new Date().getTime();
+            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+
             const filtered = allTasks.filter(t => {
-                if(currentFilter === 'all') return true;
-                // Simple filter logic, can be expanded
-                return true; 
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'active') return t.status === 'pending' || t.status === 'in-progress';
+                if (currentFilter === 'deadline') {
+                   if (t.deadline && t.status !== 'completed') {
+                       const d = new Date(t.deadline + 'T00:00:00').getTime();
+                       return d <= (now + twoDaysInMs);
+                   }
+                   return false;
+                }
+                return t.status === currentFilter;
             }).sort((a,b) => (a.deadline || '9999') > (b.deadline || '9999') ? 1 : -1);
 
             if(filtered.length === 0) {
-                els.taskList.innerHTML = `<div class="text-center py-8 text-gray-500 glass-card">Tidak ada tugas.</div>`;
+                let msg = "Tidak ada tugas aktif.";
+                if (currentFilter === 'all') msg = "Belum ada tugas.";
+                else if (currentFilter === 'completed') msg = "Belum ada tugas selesai.";
+                els.taskList.innerHTML = `<div class="text-center py-8 text-gray-500 glass-card">${msg}</div>`;
                 return;
             }
 
@@ -1023,52 +1060,88 @@
                 div.className = `glass-card p-4 flex flex-col gap-2 border-l-4 ${t.status === 'completed' ? 'border-green-500 bg-green-500/5' : t.status === 'in-progress' ? 'border-blue-500' : 'border-yellow-500'}`;
                 div.innerHTML = `
                     <div class="flex justify-between items-start">
-                        <div>
+                        <div class="flex-1 mr-4">
                             <h4 class="font-bold text-lg ${t.status === 'completed' ? 'line-through text-gray-500' : 'text-white'}">${t.name}</h4>
-                            <p class="text-xs text-gray-400 flex items-center gap-1">
+                            <p class="text-xs text-gray-400 flex items-center gap-1 mt-1">
                                 📅 ${t.deadline || 'No Date'} ⏰ ${t.time || '--:--'}
                             </p>
                         </div>
-                        <div class="flex gap-2">
-                            <button class="text-xs bg-white/10 hover:bg-white/20 px-2 py-1 rounded" onclick="document.dispatchEvent(new CustomEvent('edit-task', {detail: '${t.id}'}))">Edit</button>
-                            ${t.status !== 'completed' ? `<button class="text-xs bg-green-500/20 text-green-400 hover:bg-green-500/40 px-2 py-1 rounded" onclick="document.dispatchEvent(new CustomEvent('complete-task', {detail: '${t.id}'}))">✓</button>` : ''}
+                        <div class="flex gap-2 items-center">
+                            <select class="glass-input text-xs py-1 px-2 rounded border-none" onchange="document.dispatchEvent(new CustomEvent('change-status', {detail: {id: '${t.id}', val: this.value}}))">
+                                <option value="pending" ${t.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="in-progress" ${t.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                                <option value="completed" ${t.status === 'completed' ? 'selected' : ''}>Completed</option>
+                            </select>
+                            <button class="text-xs bg-white/10 hover:bg-white/20 px-2 py-1 rounded text-gray-300" onclick="document.dispatchEvent(new CustomEvent('edit-task', {detail: '${t.id}'}))">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                            </button>
+                            <button class="text-xs bg-red-500/20 text-red-400 hover:bg-red-500/40 px-2 py-1 rounded" onclick="document.dispatchEvent(new CustomEvent('delete-quick', {detail: '${t.id}'}))">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
                         </div>
                     </div>
-                    ${t.notes ? `<p class="text-sm text-gray-400 bg-black/20 p-2 rounded">${t.notes}</p>` : ''}
+                    ${t.notes ? `<p class="text-sm text-gray-400 bg-black/20 p-2 rounded mt-1">${t.notes}</p>` : ''}
                 `;
                 els.taskList.appendChild(div);
             });
         }
 
-        // Event delegation for dynamic buttons
+        // Event delegation
         document.addEventListener('edit-task', e => openTaskModal(e.detail));
-        document.addEventListener('complete-task', e => updateDoc(doc(tasksCollection, e.detail), {status: 'completed'}));
+        document.addEventListener('change-status', e => updateDoc(doc(tasksCollection, e.detail.id), {status: e.detail.val}));
+        document.addEventListener('delete-quick', async e => { if(confirm("Hapus?")) await deleteDoc(doc(tasksCollection, e.detail)); });
 
         function updateStats() {
-            document.getElementById('totalTasks').innerText = allTasks.length;
-            document.getElementById('pendingTasks').innerText = allTasks.filter(t => t.status === 'pending').length;
-            document.getElementById('inProgressTasks').innerText = allTasks.filter(t => t.status === 'in-progress').length;
-            // Logic for urgent...
+            const total = allTasks.length;
+            const pending = allTasks.filter(t => t.status === 'pending').length;
+            const progress = allTasks.filter(t => t.status === 'in-progress').length;
+            const completed = allTasks.filter(t => t.status === 'completed').length;
             
-            // Chart
-            const ctx = document.getElementById('taskStatusChart').getContext('2d');
-            if(taskStatusChart) taskStatusChart.destroy();
-            taskStatusChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Pending', 'Progress', 'Done'],
-                    datasets: [{
-                        data: [
-                            allTasks.filter(t => t.status === 'pending').length,
-                            allTasks.filter(t => t.status === 'in-progress').length,
-                            allTasks.filter(t => t.status === 'completed').length
-                        ],
-                        backgroundColor: ['#eab308', '#3b82f6', '#22c55e'],
-                        borderWidth: 0
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: 'white' } } } }
-            });
+            document.getElementById('totalTasks').innerText = total;
+            document.getElementById('pendingTasks').innerText = pending;
+            document.getElementById('inProgressTasks').innerText = progress;
+            document.getElementById('completedTasks').innerText = completed;
+            
+            // Count urgent (deadline within 2 days)
+            const now = new Date().getTime();
+            const urgent = allTasks.filter(t => {
+                if(t.deadline && t.status !== 'completed') {
+                    const d = new Date(t.deadline + 'T00:00:00').getTime();
+                    return d <= (now + 172800000);
+                }
+                return false;
+            }).length;
+            document.getElementById('deadlineWarning').innerText = urgent;
+
+            // Chart Logic
+            const ctx = document.getElementById('taskStatusChart');
+            if(!ctx) return; 
+            
+            if(taskStatusChart) {
+                taskStatusChart.data.datasets[0].data = [pending, progress, completed];
+                taskStatusChart.update();
+            } else {
+                taskStatusChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Pending', 'Progress', 'Done'],
+                        datasets: [{
+                            data: [pending, progress, completed],
+                            backgroundColor: ['#eab308', '#3b82f6', '#22c55e'],
+                            borderWidth: 0,
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { position: 'right', labels: { color: 'white' } } 
+                        },
+                        cutout: '75%'
+                    }
+                });
+            }
         }
 
         // --- CALENDAR ---
@@ -1086,8 +1159,8 @@
             for(let d=1; d<=daysInMonth; d++) {
                 const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                 const div = document.createElement('div');
-                div.className = `calendar-day p-1 flex flex-col items-center justify-start cursor-pointer ${dateStr === new Date().toISOString().split('T')[0] ? 'today' : ''}`;
-                div.innerHTML = `<span class="day-number text-xs mb-1">${d}</span><div class="flex gap-1 flex-wrap justify-center w-full"></div>`;
+                div.className = `calendar-day ${dateStr === new Date().toISOString().split('T')[0] ? 'today' : ''}`;
+                div.innerHTML = `<span class="day-number text-xs mb-1">${d}</span><div class="event-dot-container"></div>`;
                 
                 // Dots
                 const dayEvents = allEvents.filter(e => checkEventDate(e, dateStr));
@@ -1095,13 +1168,15 @@
 
                 dayEvents.forEach(e => {
                     const dot = document.createElement('div');
-                    dot.className = 'w-1.5 h-1.5 rounded-full bg-purple-500 event-dot';
-                    div.querySelector('div').appendChild(dot);
+                    dot.className = 'event-dot event-dot-event';
+                    dot.title = "Event: " + e.name;
+                    div.querySelector('.event-dot-container').appendChild(dot);
                 });
                 dayTasks.forEach(t => {
                     const dot = document.createElement('div');
-                    dot.className = 'w-1.5 h-1.5 rounded-full bg-yellow-500 event-dot';
-                    div.querySelector('div').appendChild(dot);
+                    dot.className = 'event-dot event-dot-task';
+                    dot.title = "Task: " + t.name;
+                    div.querySelector('.event-dot-container').appendChild(dot);
                 });
 
                 div.addEventListener('click', () => showDetail(dateStr));
@@ -1200,8 +1275,7 @@
 
             els.upcomingList.innerHTML = '';
             if(combined.length === 0) {
-                els.upcomingList.innerHTML = document.getElementById('noUpcomingEvents').outerHTML;
-                document.getElementById('noUpcomingEvents').classList.remove('hidden');
+                els.upcomingList.innerHTML = `<div class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700">Tidak ada agenda untuk hari ini.</div>`;
                 return;
             }
             
