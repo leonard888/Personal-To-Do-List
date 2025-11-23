@@ -27,7 +27,7 @@
             color: var(--text-primary);
         }
 
-        /* --- BACKGROUNDS --- */
+        /* --- FLUID BACKGROUND ANIMATION --- */
         .fluid-background {
             position: fixed;
             top: 0;
@@ -39,6 +39,7 @@
             background: #0f172a;
         }
 
+        /* Grid Scan Effect */
         .grid-scan {
             position: fixed;
             top: 0;
@@ -70,6 +71,7 @@
             100% { transform: translateY(100%); }
         }
 
+        /* Light Rays Effect */
         .light-rays {
             position: fixed;
             top: -50%;
@@ -100,6 +102,7 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Orbs for non-login pages */
         .orb {
             position: absolute;
             border-radius: 50%;
@@ -107,6 +110,7 @@
             opacity: 0.6;
             animation: float 20s infinite ease-in-out alternate;
         }
+
         .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #4f46e5; animation-duration: 25s; }
         .orb-2 { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: #c026d3; animation-duration: 30s; animation-direction: alternate-reverse; }
         .orb-3 { top: 30%; left: 40%; width: 30vw; height: 30vw; background: #06b6d4; animation-duration: 35s; }
@@ -116,7 +120,7 @@
             100% { transform: translate(50px, 50px) scale(1.1); }
         }
 
-        /* --- GLASS UI --- */
+        /* --- GLASS SURFACE --- */
         .glass-surface {
             position: relative;
             background: rgba(255, 255, 255, 0.03);
@@ -127,6 +131,7 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             padding: 1.5rem;
             overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
         .glass-surface::after {
@@ -136,7 +141,12 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.05),
+                transparent
+            );
             transition: 0.5s;
             pointer-events: none;
             animation: shimmer 8s infinite linear;
@@ -148,30 +158,52 @@
             100% { left: 100%; }
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1rem;
-            padding: 1.25rem;
-            transition: all 0.3s ease;
+        /* --- 3D PARALLAX CARD (Moved to Chart) --- */
+        .parallax-container {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            width: 100%;
+            height: 100%;
+        }
+
+        .parallax-card {
             position: relative;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.02); 
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out; 
+            will-change: transform;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .magic-hover { position: relative; overflow: hidden; }
-        .magic-hover::before {
-            content: "";
+        .parallax-content {
+            transform: translateZ(30px); 
+            transform-style: preserve-3d;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .parallax-bg-glow {
             position: absolute;
-            height: 100%; width: 100%; top: 0; left: 0;
-            border-radius: inherit;
-            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
-            opacity: 0;
-            transition: opacity 0.5s;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateZ(-20px);
+            width: 200px; 
+            height: 200px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+            filter: blur(40px);
+            border-radius: 50%;
             pointer-events: none;
-            z-index: 2;
         }
-        .magic-hover:hover::before { opacity: 1; }
 
+        /* --- TEXT ANIMATIONS --- */
         .animate-gradient-text {
             background: linear-gradient(to right, #818cf8, #c084fc, #22d3ee, #818cf8);
             background-size: 200% auto;
@@ -180,180 +212,408 @@
             animation: gradientMove 5s linear infinite;
             display: inline-block;
         }
-        @keyframes gradientMove { to { background-position: 200% center; } }
+        
+        @keyframes gradientMove {
+            to { background-position: 200% center; }
+        }
 
+        /* --- FLUID CLOCK --- */
+        .clock-container {
+            display: inline-flex;
+            align-items: center;
+            font-family: 'Outfit', monospace;
+            font-weight: 800;
+            font-size: 2.5rem;
+            line-height: 1;
+        }
+        
+        /* --- GLASS COMPONENTS (General) --- */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
         }
 
-        /* Buttons & Inputs */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden; 
+        }
+
+        /* Magic Hover Effect */
+        .magic-hover {
+            position: relative;
+        }
+        .magic-hover::before {
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            border-radius: inherit;
+            background: radial-gradient(
+                800px circle at var(--mouse-x) var(--mouse-y), 
+                rgba(255, 255, 255, 0.06), 
+                transparent 40%
+            );
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .magic-hover:hover::before { opacity: 1; }
+
+
         .glass-input {
             background: rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
+            transition: all 0.2s;
         }
         .glass-input:focus {
             background: rgba(0, 0, 0, 0.4);
             border-color: var(--accent-color);
             outline: none;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
-        select.glass-input option { background-color: #1f2937; color: white; }
+        
+        select.glass-input option {
+            background-color: #1f2937;
+            color: white;
+        }
 
         .glass-button {
             background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(168, 85, 247, 0.8));
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
             font-weight: 500;
-            transition: all 0.2s;
+            transition: all 0.3s;
             backdrop-filter: blur(4px);
-            cursor: pointer;
-            position: relative;
-            z-index: 10;
+            cursor: pointer; 
+            position: relative; 
+            z-index: 30; 
         }
         .glass-button:hover {
             background: linear-gradient(135deg, rgba(99, 102, 241, 1), rgba(168, 85, 247, 1));
-            transform: scale(1.02);
             box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+            transform: scale(1.02);
         }
-        
+
         .glass-button-secondary {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
             cursor: pointer;
         }
-        .glass-button-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+        .glass-button-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+        /* --- SCROLLBAR --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
 
-        /* Modal */
-        dialog { background: transparent; }
-        dialog::backdrop { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); }
+        /* --- LOADING SPINNER --- */
+        .loader {
+            border-top-color: var(--accent-color);
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- MODAL ANIMATION --- */
+        dialog {
+            background: transparent;
+        }
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+        }
+        dialog[open] {
+            animation: zoomIn 0.3s ease-out forwards;
+        }
         .modal-content {
             background: rgba(17, 25, 40, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(20px);
         }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
-        /* Calendar */
-        #calendarGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-        .calendar-day-header { color: var(--text-secondary); font-weight: 600; text-align: center; padding-bottom: 8px; }
+        /* --- CALENDAR STYLES --- */
+        #calendarGrid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            background-color: transparent;
+            border: none;
+        }
+        .calendar-day-header {
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-align: center;
+            padding-bottom: 8px;
+        }
         .calendar-day {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 0.75rem;
             color: var(--text-primary);
             min-height: 80px;
+            transition: all 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 4px;
             cursor: pointer;
         }
-        .calendar-day:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); }
-        .calendar-day.other-month { opacity: 0.3; cursor: default; }
-        .calendar-day.today { border: 1px solid var(--accent-color); background: rgba(99, 102, 241, 0.1); }
-        .calendar-day.today .day-number { background: var(--accent-color); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
-        .event-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 4px; }
+        .calendar-day:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .calendar-day.other-month {
+            opacity: 0.3;
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+        .calendar-day.today {
+            border: 1px solid var(--accent-color);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        .calendar-day.today .day-number {
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .event-dot-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            justify-content: center;
+            margin-top: 4px;
+        }
+        .event-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            box-shadow: 0 0 5px currentColor;
+        }
         .event-dot-task { background-color: #eab308; }
         .event-dot-event { background-color: #8b5cf6; }
 
-        /* Sidebar */
-        .sidebar-link { border-radius: 0.75rem; color: var(--text-secondary); position: relative; cursor: pointer; }
-        .sidebar-link:hover { background: rgba(255, 255, 255, 0.05); color: white; }
-        .sidebar-link.active { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
-        
-        /* Chat */
-        .chat-bubble { border-radius: 1rem; padding: 1rem; max-width: 80%; margin-bottom: 0.5rem; }
-        .chat-bubble.user { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; align-self: flex-end; }
-        .chat-bubble.model { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-primary); align-self: flex-start; }
+        /* --- SIDEBAR --- */
+        .sidebar-link {
+            transition: all 0.3s;
+            border-radius: 0.75rem;
+            color: var(--text-secondary);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer; 
+            background: transparent;
+            border: 1px solid transparent; 
+        }
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+        .sidebar-link.active {
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #818cf8;
+            box-shadow: 0 0 10px #818cf8;
+        }
+
+        /* --- CHAT BUBBLES --- */
+        .chat-bubble {
+            border-radius: 1rem;
+            padding: 1rem;
+            max-width: 80%;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .chat-bubble.user {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .chat-bubble.model {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border-bottom-left-radius: 0.25rem;
+        }
     </style>
 </head>
 <body class="h-full overflow-hidden text-sm md:text-base">
 
+    <!-- Global Loading Overlay -->
     <div id="loadingOverlay" class="absolute inset-0 z-50 flex flex-col items-center justify-center glass-panel">
         <div class="loader ease-linear rounded-full border-4 border-t-4 h-12 w-12 mb-4"></div>
         <p class="text-lg font-medium tracking-wider animate-pulse">MEMUAT DASHBOARD...</p>
     </div>
 
-    <!-- LOGIN SCREEN -->
+    <!-- Login Screen with Grid Scan & Light Rays -->
     <div id="loginScreen" class="hidden h-full flex items-center justify-center p-4 z-40 relative overflow-hidden bg-[#0f172a]">
-        <div class="grid-scan"><div class="grid-scan-line"></div></div>
+        <!-- Background Effects -->
+        <div class="grid-scan">
+            <div class="grid-scan-line"></div>
+        </div>
         <div class="light-rays"></div>
 
+        <!-- Standard Glass Card (Resized & Clickable) -->
         <div class="glass-card p-16 rounded-[2.5rem] w-full max-w-2xl text-center relative z-10 border border-white/10 shadow-2xl bg-opacity-40">
-            <div class="w-32 h-32 mx-auto mb-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl shadow-indigo-500/30">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-16 h-16"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" /></svg>
+            <div class="w-32 h-32 mx-auto mb-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl shadow-indigo-500/30 transform transition-transform hover:scale-110">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-16 h-16">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
+                </svg>
             </div>
+            
             <div class="mb-10 inline-block w-full">
-                <h1 class="text-5xl md:text-6xl font-extrabold text-white animate-gradient-text tracking-tight">Welcome Back</h1>
+                    <h1 class="text-5xl md:text-6xl font-extrabold text-white animate-gradient-text tracking-tight">Welcome Back</h1>
             </div>
+
             <p class="text-gray-300 mb-12 text-2xl font-light">Personal Dashboard Fluid UI</p>
-            <!-- Login Button -->
-            <button id="loginWithGoogleBtn" class="glass-button w-full py-6 px-8 rounded-2xl flex items-center justify-center gap-4 text-xl transition-all hover:scale-105 active:scale-95 shadow-xl relative z-50">
-                <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/></svg>
+            
+            <button id="loginWithGoogleBtn" class="glass-button w-full py-6 px-8 rounded-2xl flex items-center justify-center gap-4 text-xl transition-all hover:scale-105 active:scale-95 shadow-xl cursor-pointer relative z-50">
+                <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+                </svg>
                 <span class="font-bold tracking-wide">Login dengan Google</span>
             </button>
             <p id="loginError" class="text-red-400 text-sm mt-6 hidden bg-red-500/10 p-3 rounded-xl border border-red-500/20"></p>
         </div>
     </div>
 
-    <!-- MAIN APP -->
+    <!-- Main Application -->
     <div id="mainApp" class="hidden h-full">
+        <!-- Fluid Background only for Dashboard -->
         <div class="fluid-background">
-            <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
         </div>
 
         <div class="flex h-full w-full">
-            <!-- Sidebar -->
+            <!-- Sidebar Navigation -->
             <nav class="w-20 md:w-72 glass-panel border-r-0 flex flex-col z-20">
                 <div class="p-6 flex items-center gap-3">
                     <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
+                        </svg>
                     </div>
                     <span class="hidden md:block text-xl font-bold tracking-wide text-white">Dash<span class="text-indigo-400">Board</span></span>
                 </div>
+
                 <div class="px-4 py-2">
                     <p class="hidden md:block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-2">Menu</p>
                     <ul class="space-y-1">
-                        <li><button data-tab="dashboard" class="sidebar-link active w-full flex items-center p-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v3.75m0-3.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg><span class="hidden md:block ml-3 font-medium">Overview</span></button></li>
-                        <li><button data-tab="wishlist" class="sidebar-link w-full flex items-center p-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.772M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg><span class="hidden md:block ml-3 font-medium">Wishlist</span></button></li>
-                        <li><button data-tab="gemini" class="sidebar-link w-full flex items-center p-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.457-2.457L14.25 6l1.036-.259a3.375 3.375 0 002.457-2.457L18 2.25l.259 1.035a3.375 3.375 0 002.457 2.457L21.75 6l-1.036.259a3.375 3.375 0 00-2.457 2.457z" /></svg><span class="hidden md:block ml-3 font-medium">AI Assistant</span></button></li>
+                        <li>
+                            <button data-tab="dashboard" class="sidebar-link active w-full flex items-center p-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v3.75m0-3.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                <span class="hidden md:block ml-3 font-medium">Overview</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-tab="wishlist" class="sidebar-link w-full flex items-center p-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.772M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
+                                <span class="hidden md:block ml-3 font-medium">Wishlist</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button data-tab="gemini" class="sidebar-link w-full flex items-center p-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.457-2.457L14.25 6l1.036-.259a3.375 3.375 0 002.457-2.457L18 2.25l.259 1.035a3.375 3.375 0 002.457 2.457L21.75 6l-1.036.259a3.375 3.375 0 00-2.457 2.457z" />
+                                </svg>
+                                <span class="hidden md:block ml-3 font-medium">AI Assistant</span>
+                            </button>
+                        </li>
                     </ul>
                 </div>
+
                 <div class="mt-auto p-4 border-t border-white/10">
-                    <a href="https://gemini.google.com" target="_blank" class="glass-button-secondary w-full flex items-center justify-center md:justify-start p-3 rounded-xl mb-4 text-sm transition-colors"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg><span class="hidden md:block ml-2">Open Gemini Web</span></a>
+                    <a href="https://gemini.google.com" target="_blank" class="glass-button-secondary w-full flex items-center justify-center md:justify-start p-3 rounded-xl mb-4 text-sm transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                        <span class="hidden md:block ml-2">Open Gemini Web</span>
+                    </a>
+                    
                     <div class="flex items-center gap-3 p-2 rounded-xl bg-white/5">
                         <img id="userAvatar" src="" class="w-10 h-10 rounded-full border-2 border-indigo-500/50">
-                        <div class="hidden md:block overflow-hidden"><p id="userName" class="text-sm font-bold text-white truncate">User</p><p class="text-xs text-gray-400">Online</p></div>
+                        <div class="hidden md:block overflow-hidden">
+                            <p id="userName" class="text-sm font-bold text-white truncate">User</p>
+                            <p class="text-xs text-gray-400">Online</p>
+                        </div>
                     </div>
-                    <button id="logoutBtn" class="mt-2 w-full flex items-center justify-center p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors text-xs uppercase font-bold tracking-wide"><span class="hidden md:block">Sign Out</span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 md:hidden"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg></button>
+                    <button id="logoutBtn" class="mt-2 w-full flex items-center justify-center p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors text-xs uppercase font-bold tracking-wide">
+                        <span class="hidden md:block">Sign Out</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 md:hidden"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg>
+                    </button>
                 </div>
             </nav>
 
-            <!-- Main Content -->
+            <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto relative">
                 <div class="p-6 md:p-10 max-w-7xl mx-auto space-y-8">
                     
-                    <!-- Header -->
+                    <!-- Header Area -->
                     <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
                         <div>
+                            <!-- Glass Surface for Dashboard Title -->
                             <div class="glass-surface mb-2 magic-hover">
                                 <h2 class="text-5xl font-extrabold text-white animate-gradient-text mb-1">Dashboard</h2>
                             </div>
                             <p class="text-lg text-gray-300">Selamat datang kembali di workspace Anda.</p>
                         </div>
                         <div class="text-right">
+                            <!-- CLOCK WITH GLASS SURFACE (SIMPLE TEXT) -->
                             <div class="glass-surface p-4 mb-1 inline-block magic-hover">
-                                <div id="clockContainer" class="text-4xl font-bold font-mono text-white tracking-wider">00:00:00</div>
+                                <div id="clockContainer" class="text-4xl font-bold font-mono text-white tracking-wider">
+                                    00:00:00
+                                </div>
                             </div>
                             <div id="dateEl" class="text-sm text-gray-400 uppercase tracking-widest font-medium mt-1">---</div>
                         </div>
@@ -361,12 +621,16 @@
 
                     <!-- DASHBOARD TAB -->
                     <div id="dashboard" class="tab-content space-y-10 animate-fade-in">
-                        <!-- Market -->
+                        
+                        <!-- Market Section (TradingView) -->
                         <section>
                             <div class="glass-card p-0 overflow-hidden h-[400px] relative group magic-hover">
                                 <div class="absolute inset-0 bg-gradient-to-t from-[#111928] to-transparent z-10 pointer-events-none"></div>
-                                <div class="tradingview-widget-container h-full w-full"><div id="tradingview_chart" class="h-full w-full"></div></div>
+                                <div class="tradingview-widget-container h-full w-full">
+                                    <div id="tradingview_chart" class="h-full w-full"></div>
+                                </div>
                             </div>
+                            <!-- Ticker Tape Below -->
                             <div class="mt-4 glass-card p-0 overflow-hidden magic-hover">
                                 <div class="tradingview-widget-container">
                                     <div class="tradingview-widget-container__widget"></div>
@@ -377,7 +641,7 @@
                             </div>
                         </section>
 
-                        <!-- Upcoming Events (Separated Buttons) -->
+                        <!-- Upcoming Events & Tasks Section -->
                         <section>
                             <div class="flex justify-between items-center mb-6">
                                 <div class="glass-surface magic-hover">
@@ -388,11 +652,14 @@
                                 </div>
                             </div>
                             <div id="upcomingEventsList" class="flex flex-col gap-3">
-                                <div id="noUpcomingEvents" class="glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700 magic-hover w-full">Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕</div>
+                                <!-- Items will be injected here -->
+                                <div id="noUpcomingEvents" class="glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700 magic-hover w-full">
+                                    Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕
+                                </div>
                             </div>
                         </section>
 
-                        <!-- To-Do List -->
+                        <!-- To-Do List Section -->
                         <section>
                             <div class="flex justify-between items-center mb-6">
                                 <div class="glass-surface magic-hover">
@@ -402,11 +669,13 @@
                                     </h3>
                                 </div>
                                 <button id="showTaskModal" class="glass-button py-2 px-4 rounded-lg flex items-center gap-2 text-sm magic-hover">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg> Tugas Baru
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                                    Tugas Baru
                                 </button>
                             </div>
 
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <!-- Stats Cards -->
                                 <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
                                     <div id="filterAll" class="glass-card cursor-pointer hover:bg-white/5 group text-center magic-hover">
                                         <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Total</p>
@@ -429,6 +698,8 @@
                                         <p id="completedTasks" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
                                     </div>
                                 </div>
+                                
+                                <!-- Chart with Parallax Effect -->
                                 <div class="glass-card flex items-center justify-center relative h-48 magic-hover parallax-container" id="chartContainer3D">
                                     <div class="parallax-card flex items-center justify-center">
                                          <div class="parallax-bg-glow"></div>
@@ -438,12 +709,16 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Task Items -->
                             <div id="taskList" class="space-y-3 mt-6">
-                                <div id="noTasks" class="text-center py-10 glass-card"><p class="text-gray-400">Belum ada tugas di sini.</p></div>
+                                <div id="noTasks" class="text-center py-10 glass-card">
+                                    <p class="text-gray-400">Belum ada tugas di sini.</p>
+                                </div>
                             </div>
                         </section>
 
-                        <!-- Calendar -->
+                        <!-- Calendar Section -->
                         <section>
                             <div class="flex justify-between items-center mb-6">
                                 <div class="glass-surface magic-hover">
@@ -458,12 +733,21 @@
                                     <button id="nextMonth" class="p-2 hover:bg-white/10 rounded-md text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
                                 </div>
                             </div>
+                            
                             <div class="glass-card p-0 overflow-hidden magic-hover">
                                 <div class="grid grid-cols-7 bg-white/5 border-b border-white/10">
-                                    <div class="calendar-day-header">Min</div><div class="calendar-day-header">Sen</div><div class="calendar-day-header">Sel</div><div class="calendar-day-header">Rab</div><div class="calendar-day-header">Kam</div><div class="calendar-day-header">Jum</div><div class="calendar-day-header">Sab</div>
+                                    <div class="calendar-day-header">Min</div>
+                                    <div class="calendar-day-header">Sen</div>
+                                    <div class="calendar-day-header">Sel</div>
+                                    <div class="calendar-day-header">Rab</div>
+                                    <div class="calendar-day-header">Kam</div>
+                                    <div class="calendar-day-header">Jum</div>
+                                    <div class="calendar-day-header">Sab</div>
                                 </div>
                                 <div id="calendarGrid"></div>
                             </div>
+                            
+                            <!-- Calendar Detail -->
                             <div id="calendarDetailSection" class="mt-4 hidden glass-card border-l-4 border-purple-500 magic-hover">
                                 <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                                     <h4 class="text-lg font-bold text-white">Detail: <span id="detailDateTitle" class="text-purple-400"></span></h4>
@@ -474,107 +758,223 @@
                                     </div>
                                 </div>
                                 <div class="grid md:grid-cols-2 gap-4">
-                                    <div><h5 class="text-sm font-bold text-gray-400 mb-2 uppercase">Tasks</h5><div id="detailTaskList" class="space-y-2"></div></div>
-                                    <div><h5 class="text-sm font-bold text-gray-400 mb-2 uppercase">Events</h5><div id="detailEventList" class="space-y-2"></div></div>
+                                    <div>
+                                        <h5 class="text-sm font-bold text-gray-400 mb-2 uppercase">Tasks</h5>
+                                        <div id="detailTaskList" class="space-y-2"></div>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-sm font-bold text-gray-400 mb-2 uppercase">Events</h5>
+                                        <div id="detailEventList" class="space-y-2"></div>
+                                    </div>
                                 </div>
                             </div>
                         </section>
+
                     </div>
 
-                    <!-- Wishlist Tab -->
+                    <!-- WISHLIST TAB -->
                     <div id="wishlist" class="tab-content hidden space-y-8 animate-fade-in">
                         <div class="flex justify-between items-center glass-card bg-gradient-to-r from-indigo-900/50 to-purple-900/50 magic-hover">
                             <div>
-                                <div class="glass-surface mb-1"><h2 class="text-4xl font-bold text-white animate-gradient-text">Wishlist</h2></div>
+                                <!-- Glass Surface for Wishlist Title -->
+                                <div class="glass-surface mb-1">
+                                    <h2 class="text-4xl font-bold text-white animate-gradient-text">Wishlist</h2>
+                                </div>
                                 <p class="text-gray-300 text-sm mt-1">Total Estimasi: <span id="wishlistTotal" class="font-mono text-lg font-bold text-green-400">Rp 0</span></p>
                             </div>
                             <button id="showWishlistModal" class="glass-button py-2 px-6 rounded-lg flex items-center gap-2 shadow-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg> Item Baru
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                                Item Baru
                             </button>
                         </div>
                         <div id="wishlistGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div id="noWishlistItems" class="col-span-full text-center py-20"><p class="text-gray-500 text-lg">Wishlist masih kosong.</p></div>
+                            <!-- Items injected here -->
+                            <div id="noWishlistItems" class="col-span-full text-center py-20">
+                                <p class="text-gray-500 text-lg">Wishlist masih kosong.</p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Gemini Tab -->
+                    <!-- GEMINI TAB -->
                     <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-8rem)]">
                         <div class="glass-card flex-1 flex flex-col p-0 overflow-hidden magic-hover">
                             <div class="p-4 border-b border-white/10 bg-white/5 flex justify-between items-center">
-                                <div class="glass-surface"><h2 class="text-3xl font-bold text-white flex items-center gap-2 animate-gradient-text"><span class="text-3xl">✨</span> Gemini AI</h2></div>
+                                <!-- Glass Surface for Gemini Title -->
+                                <div class="glass-surface">
+                                    <h2 class="text-3xl font-bold text-white flex items-center gap-2 animate-gradient-text">
+                                        <span class="text-3xl">✨</span> Gemini AI
+                                    </h2>
+                                </div>
                                 <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Model: Flash 2.5</span>
                             </div>
-                            <div id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth"><div class="chat-bubble model">Halo! Saya asisten AI pribadi Anda. Ada yang bisa saya bantu terkait tugas, jadwal, atau ide belanja hari ini?</div></div>
-                            <div id="geminiLoading" class="hidden px-4 py-2"><div class="flex items-center gap-2 text-indigo-400 text-sm animate-pulse">Sedang berpikir...</div></div>
+                            
+                            <div id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
+                                <div class="chat-bubble model">
+                                    Halo! Saya asisten AI pribadi Anda. Ada yang bisa saya bantu terkait tugas, jadwal, atau ide belanja hari ini?
+                                </div>
+                            </div>
+
+                            <div id="geminiLoading" class="hidden px-4 py-2">
+                                <div class="flex items-center gap-2 text-indigo-400 text-sm animate-pulse">
+                                    <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
+                                    <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                                    <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                    Sedang berpikir...
+                                </div>
+                            </div>
+
                             <div class="p-4 bg-white/5 border-t border-white/10">
                                 <form id="geminiForm" class="flex gap-2">
                                     <input type="text" id="geminiInput" placeholder="Tanya sesuatu..." class="glass-input w-full rounded-xl px-4 py-3 text-white" autocomplete="off">
-                                    <button type="submit" class="glass-button px-4 rounded-xl hover:scale-105"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg></button>
+                                    <button type="submit" class="glass-button px-4 rounded-xl hover:scale-105">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                                    </button>
                                 </form>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </main>
         </div>
     </div>
 
-    <!-- Modals (Task, Event, Wishlist) - Same as before but ensuring z-index -->
+    <!-- MODALS -->
     <dialog id="taskModal" class="modal-content rounded-2xl w-full max-w-md text-white">
         <form id="taskForm" class="p-6 space-y-4" data-task-id="">
             <h3 id="taskModalTitle" class="text-2xl font-bold mb-4">Tugas Baru</h3>
             <div id="taskError" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm"></div>
-            <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Tugas</label><input type="text" id="taskName" name="taskName" class="glass-input w-full rounded-lg px-3 py-2"></div>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label><input type="date" id="taskDeadline" name="taskDeadline" class="glass-input w-full rounded-lg px-3 py-2"></div>
-                <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Jam</label><input type="time" id="taskTime" name="taskTime" class="glass-input w-full rounded-lg px-3 py-2"></div>
+            <div class="space-y-1">
+                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Tugas</label>
+                <input type="text" id="taskName" name="taskName" class="glass-input w-full rounded-lg px-3 py-2">
             </div>
-            <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Status</label><select id="taskStatus" name="taskStatus" class="glass-input w-full rounded-lg px-3 py-2"><option value="pending" class="bg-gray-900">Pending</option><option value="in-progress" class="bg-gray-900">In Progress</option><option value="completed" class="bg-gray-900">Completed</option></select></div>
-            <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Catatan</label><textarea id="taskNotes" name="taskNotes" rows="3" class="glass-input w-full rounded-lg px-3 py-2"></textarea></div>
-            <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Link Drive</label><input type="url" id="taskDriveLink" name="taskDriveLink" placeholder="https://" class="glass-input w-full rounded-lg px-3 py-2"></div>
-            <div class="flex justify-between pt-4 border-t border-white/10 mt-4"><button type="button" id="deleteTaskBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button><div class="flex gap-3 ml-auto"><button type="button" id="closeTaskModal" class="text-gray-400 hover:text-white font-medium text-sm px-4 py-2">Batal</button><button type="submit" class="glass-button px-6 py-2 rounded-lg text-sm">Simpan</button></div></div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label>
+                    <input type="date" id="taskDeadline" name="taskDeadline" class="glass-input w-full rounded-lg px-3 py-2">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs text-gray-400 uppercase font-bold ml-1">Jam</label>
+                    <input type="time" id="taskTime" name="taskTime" class="glass-input w-full rounded-lg px-3 py-2">
+                </div>
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Status</label>
+                <select id="taskStatus" name="taskStatus" class="glass-input w-full rounded-lg px-3 py-2">
+                    <option value="pending" class="bg-gray-900">Pending</option>
+                    <option value="in-progress" class="bg-gray-900">In Progress</option>
+                    <option value="completed" class="bg-gray-900">Completed</option>
+                </select>
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Catatan</label>
+                <textarea id="taskNotes" name="taskNotes" rows="3" class="glass-input w-full rounded-lg px-3 py-2"></textarea>
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Link Drive</label>
+                <input type="url" id="taskDriveLink" name="taskDriveLink" placeholder="https://" class="glass-input w-full rounded-lg px-3 py-2">
+            </div>
+            <div class="flex justify-between pt-4 border-t border-white/10 mt-4">
+                <button type="button" id="deleteTaskBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button>
+                <div class="flex gap-3 ml-auto">
+                    <button type="button" id="closeTaskModal" class="text-gray-400 hover:text-white font-medium text-sm px-4 py-2">Batal</button>
+                    <button type="submit" class="glass-button px-6 py-2 rounded-lg text-sm">Simpan</button>
+                </div>
+            </div>
         </form>
     </dialog>
 
+    <!-- Event Modal -->
     <dialog id="eventModal" class="modal-content rounded-2xl w-full max-w-md text-white">
         <form id="eventForm" class="p-6 space-y-4" data-event-id="">
             <h3 id="eventModalTitle" class="text-2xl font-bold mb-4 text-purple-400">Event Baru</h3>
             <div id="eventError" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm"></div>
-            <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Event</label><input type="text" id="eventName" name="eventName" class="glass-input w-full rounded-lg px-3 py-2"></div>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label><input type="date" id="eventDate" name="eventDate" class="glass-input w-full rounded-lg px-3 py-2 bg-white/5"></div>
-                <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Jam</label><input type="time" id="eventTime" name="eventTime" class="glass-input w-full rounded-lg px-3 py-2"></div>
+            <div class="space-y-1">
+                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Event</label>
+                <input type="text" id="eventName" name="eventName" class="glass-input w-full rounded-lg px-3 py-2">
             </div>
-            <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Berulang</label><select id="eventRepeat" name="eventRepeat" class="glass-input w-full rounded-lg px-3 py-2"><option value="once" class="bg-gray-900">Sekali Saja</option><option value="daily" class="bg-gray-900">Setiap Hari</option><option value="weekly" class="bg-gray-900">Setiap Minggu</option></select></div>
-            <div class="flex justify-between pt-4 border-t border-white/10 mt-4"><button type="button" id="deleteEventBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button><div class="flex gap-3 ml-auto"><button type="button" id="closeEventModalBtn" class="text-gray-400 hover:text-white font-medium text-sm px-4 py-2">Batal</button><button type="submit" class="glass-button px-6 py-2 rounded-lg text-sm bg-gradient-to-r from-purple-600 to-pink-600">Simpan</button></div></div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label>
+                    <input type="date" id="eventDate" name="eventDate" class="glass-input w-full rounded-lg px-3 py-2 bg-white/5">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs text-gray-400 uppercase font-bold ml-1">Jam</label>
+                    <input type="time" id="eventTime" name="eventTime" class="glass-input w-full rounded-lg px-3 py-2">
+                </div>
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Berulang</label>
+                <select id="eventRepeat" name="eventRepeat" class="glass-input w-full rounded-lg px-3 py-2">
+                    <option value="once" class="bg-gray-900">Sekali Saja</option>
+                    <option value="daily" class="bg-gray-900">Setiap Hari</option>
+                    <option value="weekly" class="bg-gray-900">Setiap Minggu</option>
+                </select>
+            </div>
+            <div class="flex justify-between pt-4 border-t border-white/10 mt-4">
+                <button type="button" id="deleteEventBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button>
+                <div class="flex gap-3 ml-auto">
+                    <button type="button" id="closeEventModalBtn" class="text-gray-400 hover:text-white font-medium text-sm px-4 py-2">Batal</button>
+                    <button type="submit" class="glass-button px-6 py-2 rounded-lg text-sm bg-gradient-to-r from-purple-600 to-pink-600">Simpan</button>
+                </div>
+            </div>
         </form>
     </dialog>
 
+    <!-- Wishlist Modal -->
     <dialog id="wishlistModal" class="modal-content rounded-2xl w-full max-w-md text-white">
         <form id="wishlistForm" class="p-6 space-y-4">
             <h3 class="text-2xl font-bold mb-4 text-green-400">Wishlist Item</h3>
-            <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Produk</label><input type="text" id="productName" name="productName" class="glass-input w-full rounded-lg px-3 py-2"></div>
-            <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Link Toko</label><input type="url" id="productLink" name="productLink" placeholder="https://" class="glass-input w-full rounded-lg px-3 py-2"></div>
-            <div class="space-y-1"><label class="text-xs text-gray-400 uppercase font-bold ml-1">Harga</label><input type="number" id="productPrice" name="productPrice" class="glass-input w-full rounded-lg px-3 py-2"></div>
-            <div class="flex justify-end gap-3 pt-4 border-t border-white/10 mt-4"><button type="button" id="closeWishlistModal" class="text-gray-400 hover:text-white font-medium text-sm px-4 py-2">Batal</button><button type="submit" class="glass-button px-6 py-2 rounded-lg text-sm bg-gradient-to-r from-green-600 to-emerald-600">Simpan</button></div>
+            <div class="space-y-1">
+                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Produk</label>
+                <input type="text" id="productName" name="productName" class="glass-input w-full rounded-lg px-3 py-2">
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Link Toko</label>
+                <input type="url" id="productLink" name="productLink" placeholder="https://" class="glass-input w-full rounded-lg px-3 py-2">
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Harga</label>
+                <input type="number" id="productPrice" name="productPrice" class="glass-input w-full rounded-lg px-3 py-2">
+            </div>
+            <div class="flex justify-end gap-3 pt-4 border-t border-white/10 mt-4">
+                <button type="button" id="closeWishlistModal" class="text-gray-400 hover:text-white font-medium text-sm px-4 py-2">Batal</button>
+                <button type="submit" class="glass-button px-6 py-2 rounded-lg text-sm bg-gradient-to-r from-green-600 to-emerald-600">Simpan</button>
+            </div>
         </form>
     </dialog>
 
+    <!-- JAVASCRIPT LOGIC -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script type="module">
+        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, addDoc, deleteDoc, updateDoc, collection, onSnapshot, serverTimestamp, getDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = { apiKey: "AIzaSyCiIZRywKs7nF92z6_FWMzhOAaRe9SOOJE", authDomain: "personal-to-do-list-5d959.firebaseapp.com", projectId: "personal-to-do-list-5d959", storageBucket: "personal-to-do-list-5d959.firebasestorage.app", messagingSenderId: "713295970134", appId: "1:713295970134:web:6650db1a681742dc30a0f7", measurementId: "G-QG3GEXP3HC" };
+        
+        // KONFIGURASI LOKAL
+        const firebaseConfig = {
+            apiKey: "AIzaSyCiIZRywKs7nF92z6_FWMzhOAaRe9SOOJE",
+            authDomain: "personal-to-do-list-5d959.firebaseapp.com",
+            projectId: "personal-to-do-list-5d959",
+            storageBucket: "personal-to-do-list-5d959.firebasestorage.app",
+            messagingSenderId: "713295970134",
+            appId: "1:713295970134:web:6650db1a681742dc30a0f7",
+            measurementId: "G-QG3GEXP3HC"
+        };
+        
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-        let app, auth, db, userId, tasksCollection, wishlistCollection, eventsCollection;
-        let tasksUnsubscribe, wishlistUnsubscribe, eventsUnsubscribe, taskStatusChart;
+        let app, auth, db, userId;
+        let tasksCollection, wishlistCollection, eventsCollection;
+        let tasksUnsubscribe = null, wishlistUnsubscribe = null, eventsUnsubscribe = null;
+        let taskStatusChart = null;
         let allTasks = [], allEvents = [];
         let currentFilter = 'active';
         let currentCalendarDate = new Date();
+        let prevTimeString = ""; 
 
         const els = {
             loading: document.getElementById('loadingOverlay'),
@@ -582,6 +982,9 @@
             mainApp: document.getElementById('mainApp'),
             loginBtn: document.getElementById('loginWithGoogleBtn'),
             loginError: document.getElementById('loginError'),
+            // loginContainer & loginCard no longer needed for JS if not doing 3D on them
+            // chartContainer3D for the 3D effect
+            chartContainer: document.getElementById('chartContainer3D'),
             logoutBtn: document.getElementById('logoutBtn'),
             authStatus: document.getElementById('authStatus'),
             userAvatar: document.getElementById('userAvatar'),
@@ -627,41 +1030,82 @@
             chatContainer: document.getElementById('chatContainer'),
             geminiLoading: document.getElementById('geminiLoading'),
 
+            // Filters
             filterAll: document.getElementById('filterAll'),
             filterPending: document.getElementById('filterPending'),
             filterInProgress: document.getElementById('filterInProgress'),
             filterCompleted: document.getElementById('filterCompleted'),
             filterDeadline: document.getElementById('filterDeadline'),
             
+            // Sidebar buttons
             sidebarDashboard: document.querySelector('[data-tab="dashboard"]'),
             sidebarWishlist: document.querySelector('[data-tab="wishlist"]'),
             sidebarGemini: document.querySelector('[data-tab="gemini"]')
         };
 
-        function initChart() {
-            new TradingView.widget({ "width": "100%", "height": "100%", "symbol": "IDX:COMPOSITE", "interval": "D", "timezone": "Asia/Jakarta", "theme": "dark", "style": "1", "locale": "id", "enable_publishing": false, "allow_symbol_change": true, "container_id": "tradingview_chart", "backgroundColor": "rgba(17, 25, 40, 0)" });
-        }
-        initChart();
-
+        // Magic Hover Logic
         function initMagicHover() {
             const cards = document.querySelectorAll('.magic-hover');
             cards.forEach(card => {
                 card.onmousemove = e => {
                     const rect = card.getBoundingClientRect();
-                    card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-                    card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
                 }
             });
         }
+        
+        // Chart 3D Logic
+        function initChart3D() {
+             const container = document.getElementById('chartContainer3D');
+             if(!container) return;
+             const card = container.querySelector('.parallax-card');
+             if(!card) return;
+
+             container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * -10; 
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                card.style.transform = `rotateX(0deg) rotateY(0deg)`;
+            });
+        }
+
+        function initChart() {
+            new TradingView.widget({
+                "width": "100%", "height": "100%", "symbol": "IDX:COMPOSITE", "interval": "D",
+                "timezone": "Asia/Jakarta", "theme": "dark", "style": "1", "locale": "id",
+                "enable_publishing": false, "allow_symbol_change": true, "container_id": "tradingview_chart",
+                "backgroundColor": "rgba(17, 25, 40, 0)"
+            });
+        }
+        initChart();
 
         async function init() {
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
+            
+            // initLogin3D(); // REMOVED
 
             els.loginBtn.addEventListener('click', async () => {
-                try { await signInWithPopup(auth, new GoogleAuthProvider()); } 
-                catch (e) { els.loginError.textContent = e.message; els.loginError.classList.remove('hidden'); }
+                try {
+                    await signInWithPopup(auth, new GoogleAuthProvider());
+                } catch (e) {
+                    els.loginError.textContent = e.message;
+                    els.loginError.classList.remove('hidden');
+                }
             });
 
             onAuthStateChanged(auth, (user) => {
@@ -678,6 +1122,7 @@
                     els.loginScreen.classList.remove('hidden');
                     els.mainApp.classList.add('hidden');
                     els.loading.style.display = 'none';
+                    initMagicHover(); // Ensure hover works on login screen
                 }
             });
         }
@@ -711,8 +1156,14 @@
             els.eventForm.addEventListener('submit', handleEventSubmit);
             els.geminiForm.addEventListener('submit', handleGeminiSubmit);
 
-            els.prevMonth.addEventListener('click', () => { currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1); renderCalendar(); });
-            els.nextMonth.addEventListener('click', () => { currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1); renderCalendar(); });
+            els.prevMonth.addEventListener('click', () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                renderCalendar();
+            });
+            els.nextMonth.addEventListener('click', () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                renderCalendar();
+            });
 
             els.closeDetailBtn.addEventListener('click', () => els.detailSection.classList.add('hidden'));
             els.detailAddTaskBtn.addEventListener('click', () => openTaskModal(null, els.detailTitle.dataset.date));
@@ -723,20 +1174,41 @@
 
             setupFilterListeners();
 
-            tasksUnsubscribe = onSnapshot(query(tasksCollection), s => { allTasks = s.docs.map(d => ({id: d.id, ...d.data()})); renderTasks(); renderCalendar(); renderUpcoming(); updateStats(); });
-            wishlistUnsubscribe = onSnapshot(query(wishlistCollection), s => { renderWishlist(s.docs.map(d => ({id: d.id, ...d.data()}))); });
-            eventsUnsubscribe = onSnapshot(query(eventsCollection), s => { allEvents = s.docs.map(d => ({id: d.id, ...d.data()})); renderCalendar(); renderUpcoming(); });
+            tasksUnsubscribe = onSnapshot(query(tasksCollection), s => {
+                allTasks = s.docs.map(d => ({id: d.id, ...d.data()}));
+                renderTasks();
+                renderCalendar();
+                renderUpcoming();
+                updateStats();
+            });
+            
+            wishlistUnsubscribe = onSnapshot(query(wishlistCollection), s => {
+                renderWishlist(s.docs.map(d => ({id: d.id, ...d.data()})));
+            });
 
-            setInterval(() => {
+            eventsUnsubscribe = onSnapshot(query(eventsCollection), s => {
+                allEvents = s.docs.map(d => ({id: d.id, ...d.data()}));
+                renderCalendar();
+                renderUpcoming();
+            });
+            
+            // Simple Clock Update (No complex animation logic needed)
+            const updateSimpleClock = () => {
                 const now = new Date();
-                els.clockContainer.innerText = now.toLocaleTimeString('id-ID', { hour12: false });
+                const timeStr = now.toLocaleTimeString('id-ID', { hour12: false });
+                els.clockContainer.innerText = timeStr;
                 els.date.innerText = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            }, 1000);
+            };
+            
+            setInterval(updateSimpleClock, 1000);
+            updateSimpleClock(); 
 
             renderCalendar();
             updateStats();
             initMagicHover();
+            initChart3D(); 
         }
+
 
         function setupModal(modal, openBtn, closeBtn) {
             if(openBtn) openBtn.addEventListener('click', () => {
@@ -765,6 +1237,7 @@
             els.filterDeadline.addEventListener('click', () => setFilter('deadline'));
         }
 
+        // --- TASKS ---
         async function handleTaskSubmit(e) {
             e.preventDefault();
             const fd = new FormData(e.target);
@@ -778,8 +1251,12 @@
                 time: fd.get('taskTime') || '00:00',
                 createdAt: serverTimestamp()
             };
-            if(id) await updateDoc(doc(tasksCollection, id), data);
-            else await addDoc(tasksCollection, data);
+
+            if(id) {
+                await updateDoc(doc(tasksCollection, id), data);
+            } else {
+                await addDoc(tasksCollection, data);
+            }
             els.taskModal.close();
         }
 
@@ -787,7 +1264,9 @@
             els.taskForm.reset();
             els.taskForm.dataset.taskId = id || '';
             document.getElementById('deleteTaskBtn').classList.add('hidden');
+            
             if(date) document.getElementById('taskDeadline').value = date;
+
             if(id) {
                 const task = allTasks.find(t => t.id === id);
                 if(task) {
@@ -998,70 +1477,81 @@
             }
             
             combined.forEach(item => {
-                // Container Row
-                const row = document.createElement('div');
-                row.className = 'flex items-center gap-3 w-full';
+                // 1. Wrapper Row (Flex Container)
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'flex items-center gap-3 w-full group'; // Added group for hover effects
 
-                // Info Card (Left)
-                const infoCard = document.createElement('div');
-                infoCard.className = `glass-card flex-1 p-4 border-l-4 magic-hover ${item.type === 'task' ? 'border-yellow-500' : 'border-purple-500'}`;
-                infoCard.innerHTML = `
-                    <p class="font-bold text-white text-lg">${item.name}</p>
-                    <p class="text-sm text-gray-300 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        ${item.time} <span class="opacity-50">•</span> <span class="uppercase tracking-wider text-xs">${item.type}</span>
-                    </p>
+                // 2. Info Card (Glass) - Left Side
+                const contentDiv = document.createElement('div');
+                contentDiv.className = `glass-card flex-1 p-4 border-l-4 magic-hover transition-transform group-hover:translate-x-1 ${item.type === 'task' ? 'border-yellow-500' : 'border-purple-500'}`;
+                contentDiv.innerHTML = `
+                    <div>
+                        <p class="font-bold text-white text-lg">${item.name}</p>
+                        <p class="text-sm text-gray-300 flex items-center gap-2">
+                            <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            ${item.time} <span class="opacity-30">|</span> <span class="uppercase tracking-wider text-xs font-semibold opacity-70">${item.type}</span>
+                        </p>
+                    </div>
                 `;
                 
-                infoCard.onmousemove = e => {
-                    const rect = infoCard.getBoundingClientRect();
-                    infoCard.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-                    infoCard.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+                // Attach magic hover manually since dynamic
+                contentDiv.onmousemove = e => {
+                    const rect = contentDiv.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    contentDiv.style.setProperty('--mouse-x', `${x}px`);
+                    contentDiv.style.setProperty('--mouse-y', `${y}px`);
                 };
 
-                // Buttons (Right - Outside Glass)
+                // 3. Buttons Container - Right Side (OUTSIDE the glass card)
                 const btnContainer = document.createElement('div');
                 btnContainer.className = 'flex gap-2 shrink-0';
 
                 if (item.type === 'task') {
                     const doneBtn = document.createElement('button');
-                    doneBtn.className = 'glass-button p-3 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all shadow-lg';
+                    doneBtn.className = 'glass-button p-3 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all shadow-lg border border-green-500/20';
                     doneBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-                    doneBtn.title = "Selesai";
-                    doneBtn.onclick = () => {
+                    doneBtn.title = "Tandai Selesai";
+                    doneBtn.onclick = async () => {
                          if(confirm('Tandai tugas ini selesai?')) {
-                            updateDoc(doc(tasksCollection, item.id), {status: 'completed'});
+                            await updateDoc(doc(tasksCollection, item.id), {status: 'completed'});
                          }
                     };
                     btnContainer.appendChild(doneBtn);
                 } else {
+                    // Event Buttons
                     const doneBtn = document.createElement('button');
-                    doneBtn.className = 'glass-button p-3 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all shadow-lg';
+                    doneBtn.className = 'glass-button p-3 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all shadow-lg border border-green-500/20';
                     doneBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-                    doneBtn.title = "Selesai";
-                    doneBtn.onclick = () => {
+                    doneBtn.title = "Event Selesai";
+                    doneBtn.onclick = async () => {
                          const today = new Date().toISOString().split('T')[0];
-                         updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
+                         await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
                     };
                     btnContainer.appendChild(doneBtn);
 
                     const skipBtn = document.createElement('button');
-                    skipBtn.className = 'glass-button p-3 rounded-xl text-red-300 hover:text-white hover:bg-red-500/30 transition-all shadow-lg';
+                    skipBtn.className = 'glass-button p-3 rounded-xl text-red-300 hover:text-white hover:bg-red-500/30 transition-all shadow-lg border border-red-500/20';
                     skipBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
-                    skipBtn.title = "Skip";
-                    skipBtn.onclick = () => {
+                    skipBtn.title = "Lewati Event";
+                    skipBtn.onclick = async () => {
                          const today = new Date().toISOString().split('T')[0];
-                         updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
+                         await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
                     };
                     btnContainer.appendChild(skipBtn);
                 }
 
-                row.appendChild(infoCard);
-                row.appendChild(btnContainer);
-                els.upcomingList.appendChild(row);
+                rowDiv.appendChild(contentDiv);
+                rowDiv.appendChild(btnContainer);
+                els.upcomingList.appendChild(rowDiv);
             });
+            initMagicHover();
         }
 
+        // Remove old inline listener logic that might conflict
+        // document.addEventListener('complete-task', ... ) -> Removed/Replaced by direct onclick above
+
+        // --- WISHLIST ---
         async function handleWishlistSubmit(e) {
             e.preventDefault();
             const fd = new FormData(e.target);
