@@ -11,8 +11,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --glass-bg: rgba(17, 25, 40, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.125);
+            --glass-bg: rgba(17, 25, 40, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             --accent-color: #6366f1; /* Indigo-500 */
             --text-primary: #f3f4f6;
@@ -56,9 +56,62 @@
             100% { transform: translate(50px, 50px) scale(1.1); }
         }
 
-        /* --- TEXT ANIMATIONS --- */
+        /* --- GLASS SURFACE (Refined) --- */
+        .glass-surface {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                inset 0 0 20px rgba(255, 255, 255, 0.02);
+            padding: 1.5rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
         
-        /* Gradient Text Animation */
+        .glass-surface:hover {
+            box-shadow: 
+                0 10px 15px -3px rgba(0, 0, 0, 0.2),
+                inset 0 0 20px rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Subtle shimmer animation */
+        .glass-surface::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.05),
+                transparent
+            );
+            transition: 0.5s;
+            pointer-events: none;
+            animation: shimmer 8s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        /* Specific title container style within glass */
+        .glass-title-container {
+            display: inline-flex;
+            flex-direction: column;
+        }
+
+
+        /* --- TEXT ANIMATIONS --- */
         .animate-gradient-text {
             background: linear-gradient(to right, #818cf8, #c084fc, #22d3ee, #818cf8);
             background-size: 200% auto;
@@ -72,38 +125,38 @@
             to { background-position: 200% center; }
         }
 
-        /* --- COUNTER CLOCK ANIMATION --- */
+        /* --- FLUID CLOCK (Odometer Style) --- */
         .clock-container {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 2px;
             font-family: 'Outfit', monospace;
             font-weight: 800;
-            font-size: 3rem; /* Besar */
+            font-size: 2.5rem;
             line-height: 1;
             height: 1em;
             overflow: hidden;
         }
 
-        .clock-digit-window {
-            width: 0.65em;
-            height: 100%;
-            overflow: hidden;
+        .digit-wrapper {
             position: relative;
+            height: 1em;
+            width: 0.6em;
+            overflow: hidden;
         }
 
-        .clock-digit-strip {
-            display: flex;
-            flex-direction: column;
+        .digit-strip {
             position: absolute;
             top: 0;
             left: 0;
+            display: flex;
+            flex-direction: column;
             width: 100%;
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform;
+            /* Transition is applied via JS class for control */
         }
 
-        .clock-digit-strip span {
-            height: 1em; /* Tinggi sama dengan container */
+        .digit-strip span {
+            height: 1em;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -111,20 +164,24 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        
+        .digit-strip.animate {
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
 
-        .clock-separator {
+        .clock-sep {
             color: #818cf8;
-            padding-bottom: 0.1em;
-            font-size: 0.8em;
+            padding: 0 0.05em;
+            padding-bottom: 0.15em;
             opacity: 0.8;
         }
 
 
-        /* --- GLASS COMPONENTS --- */
+        /* --- GLASS COMPONENTS (General) --- */
         .glass-panel {
             background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
         }
@@ -387,13 +444,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
                     </svg>
                 </div>
-                <h1 class="text-3xl font-bold mb-2 text-white animate-gradient-text">Welcome Back</h1>
-                <p class="text-gray-400 mb-8">Personal Dashboard Fluid UI</p>
+                <!-- Glass Surface for Welcome Back -->
+                <div class="glass-surface mb-4 w-full">
+                    <h1 class="text-3xl font-bold text-white animate-gradient-text">Welcome Back</h1>
+                    <p class="text-gray-300 mt-1 text-sm">Personal Dashboard Fluid UI</p>
+                </div>
                 <button id="loginWithGoogleBtn" class="glass-button w-full py-3 px-4 rounded-xl flex items-center justify-center gap-3 group-hover:shadow-indigo-500/50 transition-all">
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                          <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
                     </svg>
-                    <span class="animate-gradient-text font-bold">Login dengan Google</span>
+                    <span class="font-bold">Login dengan Google</span>
                 </button>
                 <p id="loginError" class="text-red-400 text-sm mt-4 hidden bg-red-500/10 p-2 rounded-lg border border-red-500/20"></p>
             </div>
@@ -468,15 +528,16 @@
                     
                     <!-- Header Area -->
                     <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
-                        <div>
-                            <!-- UPDATED TITLE SIZE: text-5xl -->
-                            <h2 class="text-5xl font-extrabold text-white animate-gradient-text mb-2">Dashboard</h2>
-                            <p class="text-lg text-gray-400">Selamat datang kembali di workspace Anda.</p>
+                        <div class="glass-surface">
+                            <h2 class="text-5xl font-extrabold text-white animate-gradient-text mb-1">Dashboard</h2>
+                            <p class="text-lg text-gray-300">Selamat datang kembali di workspace Anda.</p>
                         </div>
                         <div class="text-right">
                             <!-- COUNTER CLOCK -->
-                            <div id="clockContainer" class="clock-container justify-end">
-                                <!-- Digits will be injected here by JS -->
+                            <div class="glass-surface p-3 mb-1 inline-block">
+                                <div id="clockContainer" class="clock-container justify-end">
+                                    <!-- Digits will be injected here by JS -->
+                                </div>
                             </div>
                             <div id="dateEl" class="text-sm text-gray-400 uppercase tracking-widest font-medium mt-1">---</div>
                         </div>
@@ -507,11 +568,12 @@
                         <!-- Upcoming Events & Tasks Section -->
                         <section>
                             <div class="flex justify-between items-center mb-6">
-                                <!-- UPDATED TITLE SIZE: text-3xl -->
-                                <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
-                                    <span class="w-2 h-8 bg-indigo-500 rounded-full block shadow-lg shadow-indigo-500/50"></span>
-                                    Agenda Hari Ini
-                                </h3>
+                                <div class="glass-surface">
+                                    <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
+                                        <span class="w-2 h-8 bg-indigo-500 rounded-full block shadow-lg shadow-indigo-500/50"></span>
+                                        Agenda Hari Ini
+                                    </h3>
+                                </div>
                             </div>
                             <div id="upcomingEventsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <!-- Items will be injected here -->
@@ -524,11 +586,12 @@
                         <!-- To-Do List Section -->
                         <section>
                             <div class="flex justify-between items-center mb-6">
-                                <!-- UPDATED TITLE SIZE: text-3xl -->
-                                <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
-                                    <span class="w-2 h-8 bg-cyan-500 rounded-full block shadow-lg shadow-cyan-500/50"></span>
-                                    Manajemen Tugas
-                                </h3>
+                                <div class="glass-surface">
+                                    <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
+                                        <span class="w-2 h-8 bg-cyan-500 rounded-full block shadow-lg shadow-cyan-500/50"></span>
+                                        Manajemen Tugas
+                                    </h3>
+                                </div>
                                 <button id="showTaskModal" class="glass-button py-2 px-4 rounded-lg flex items-center gap-2 text-sm">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
                                     Tugas Baru
@@ -577,11 +640,12 @@
                         <!-- Calendar Section -->
                         <section>
                             <div class="flex justify-between items-center mb-6">
-                                <!-- UPDATED TITLE SIZE: text-3xl -->
-                                <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
-                                    <span class="w-2 h-8 bg-pink-500 rounded-full block shadow-lg shadow-pink-500/50"></span>
-                                    Kalender
-                                </h3>
+                                <div class="glass-surface">
+                                    <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
+                                        <span class="w-2 h-8 bg-pink-500 rounded-full block shadow-lg shadow-pink-500/50"></span>
+                                        Kalender
+                                    </h3>
+                                </div>
                                 <div class="flex items-center gap-2 bg-white/5 rounded-lg p-1">
                                     <button id="prevMonth" class="p-2 hover:bg-white/10 rounded-md text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
                                     <span id="currentMonthYear" class="w-32 text-center font-bold text-white"></span>
@@ -631,8 +695,10 @@
                     <div id="wishlist" class="tab-content hidden space-y-8 animate-fade-in">
                         <div class="flex justify-between items-center glass-card bg-gradient-to-r from-indigo-900/50 to-purple-900/50">
                             <div>
-                                <!-- UPDATED TITLE SIZE: text-4xl -->
-                                <h2 class="text-4xl font-bold text-white animate-gradient-text">Wishlist</h2>
+                                <!-- Glass Surface for Wishlist Title -->
+                                <div class="glass-surface mb-1">
+                                    <h2 class="text-4xl font-bold text-white animate-gradient-text">Wishlist</h2>
+                                </div>
                                 <p class="text-gray-300 text-sm mt-1">Total Estimasi: <span id="wishlistTotal" class="font-mono text-lg font-bold text-green-400">Rp 0</span></p>
                             </div>
                             <button id="showWishlistModal" class="glass-button py-2 px-6 rounded-lg flex items-center gap-2 shadow-lg">
@@ -652,10 +718,12 @@
                     <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-8rem)]">
                         <div class="glass-card flex-1 flex flex-col p-0 overflow-hidden">
                             <div class="p-4 border-b border-white/10 bg-white/5 flex justify-between items-center">
-                                <!-- UPDATED TITLE SIZE: text-3xl -->
-                                <h2 class="text-3xl font-bold text-white flex items-center gap-2 animate-gradient-text">
-                                    <span class="text-3xl">✨</span> Gemini AI
-                                </h2>
+                                <!-- Glass Surface for Gemini Title -->
+                                <div class="glass-surface">
+                                    <h2 class="text-3xl font-bold text-white flex items-center gap-2 animate-gradient-text">
+                                        <span class="text-3xl">✨</span> Gemini AI
+                                    </h2>
+                                </div>
                                 <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Model: Flash 2.5</span>
                             </div>
                             
@@ -825,7 +893,6 @@
         let allTasks = [], allEvents = [];
         let currentFilter = 'active';
         let currentCalendarDate = new Date();
-        let prevTimeString = ""; 
 
         const els = {
             loading: document.getElementById('loadingOverlay'),
@@ -1012,94 +1079,86 @@
             });
 
             setInterval(updateAnimatedClock, 1000);
-            updateAnimatedClock();
+            updateAnimatedClock(); // Initial call
 
             renderCalendar();
             updateStats();
         }
 
-        // --- CLOCK COUNTER ANIMATION ---
-        function createDigitStrip(currentDigit) {
-             const wrapper = document.createElement('div');
-             wrapper.className = 'clock-digit-window';
-             
-             const strip = document.createElement('div');
-             strip.className = 'clock-digit-strip';
-             
-             // Create 0-9-0 strip
-             for(let i=0; i<=10; i++) {
-                 const span = document.createElement('span');
-                 span.textContent = i === 10 ? '0' : i;
-                 strip.appendChild(span);
-             }
-             
-             // Initialize position based on current digit
-             // Map currentDigit char to index
-             const val = parseInt(currentDigit);
-             if(!isNaN(val)) {
-                 strip.style.transform = `translateY(-${val}00%)`;
-                 strip.dataset.val = val;
-             }
-
-             wrapper.appendChild(strip);
-             return wrapper;
-        }
-
+        // --- FLUID CLOCK ANIMATION (Simplified and Fixed) ---
         function updateAnimatedClock() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('id-ID', { hour12: false }); 
             els.date.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-            if (!prevTimeString || els.clockContainer.children.length !== timeStr.length) {
-                els.clockContainer.innerHTML = '';
-                prevTimeString = timeStr;
-                for (let char of timeStr) {
-                    if (char === ':' || char === '.') {
-                        const sep = document.createElement('div');
-                        sep.className = 'clock-separator';
-                        sep.textContent = ':';
-                        els.clockContainer.appendChild(sep);
+            // Initial Render
+            if (els.clockContainer.innerHTML === '') {
+                for(let i=0; i<timeStr.length; i++) {
+                    if (timeStr[i] === ':' || timeStr[i] === '.') {
+                         const sep = document.createElement('div');
+                         sep.className = 'clock-sep';
+                         sep.textContent = ':';
+                         els.clockContainer.appendChild(sep);
                     } else {
-                        const wrapper = createDigitStrip(char);
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'digit-wrapper';
+                        const strip = document.createElement('div');
+                        strip.className = 'digit-strip';
+                        
+                        // 0-9-0
+                        for(let j=0; j<=10; j++) {
+                            const span = document.createElement('div');
+                            span.innerHTML = `<span>${j===10?0:j}</span>`;
+                            strip.appendChild(span);
+                        }
+                        wrapper.appendChild(strip);
                         els.clockContainer.appendChild(wrapper);
                     }
                 }
-                return;
             }
 
-            // Update digits
-            for (let i = 0; i < timeStr.length; i++) {
+            // Update
+            let digitIndex = 0;
+            const children = Array.from(els.clockContainer.children);
+            
+            for(let i=0; i<timeStr.length; i++) {
                 const char = timeStr[i];
-                const prevChar = prevTimeString[i];
-                
-                if (char === ':' || char === '.') continue;
-
-                const wrapper = els.clockContainer.children[i];
-                const strip = wrapper.querySelector('.clock-digit-strip');
-                
-                const oldVal = parseInt(prevChar);
-                const newVal = parseInt(char);
-
-                // Logic to handle wrap around 9 -> 0
-                if (oldVal === 9 && newVal === 0) {
-                     // Animate to 10 (the second 0)
-                     strip.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                     strip.style.transform = `translateY(-1000%)`;
-                     
-                     // Reset to 0 instantly after transition
-                     setTimeout(() => {
-                         strip.style.transition = 'none';
-                         strip.style.transform = `translateY(0%)`;
-                         // Force reflow
-                         void strip.offsetWidth;
-                     }, 500);
-                } 
-                else if (newVal !== oldVal) {
-                     strip.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                     strip.style.transform = `translateY(-${newVal}00%)`;
+                if(char === ':' || char === '.') {
+                    digitIndex++;
+                    continue;
                 }
+
+                const wrapper = children[digitIndex];
+                if(wrapper.classList.contains('digit-wrapper')) {
+                    const strip = wrapper.firstChild;
+                    const val = parseInt(char);
+                    
+                    // Determine if we need to loop
+                    // Get current transform value approx
+                    // Simplify: just set transform based on value
+                    // To make it fluid 9->0, we start at 9, animate to 10, then reset to 0
+                    
+                    // Check previous value stored in dataset
+                    const prevVal = parseInt(strip.dataset.val || -1);
+                    
+                    if (prevVal === 9 && val === 0) {
+                         strip.classList.add('animate');
+                         strip.style.transform = `translateY(-1000%)`;
+                         strip.dataset.val = 0;
+                         
+                         // Reset after animation
+                         setTimeout(() => {
+                             strip.classList.remove('animate');
+                             strip.style.transform = `translateY(0%)`;
+                         }, 600);
+                    } else if (prevVal !== val) {
+                         strip.classList.add('animate');
+                         strip.style.transform = `translateY(-${val}00%)`;
+                         strip.dataset.val = val;
+                    }
+                }
+                digitIndex++;
             }
-            prevTimeString = timeStr;
         }
 
 
