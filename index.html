@@ -158,51 +158,6 @@
             100% { left: 100%; }
         }
 
-        /* --- 3D PARALLAX CARD (For Chart) --- */
-        .parallax-container {
-            perspective: 1000px;
-            transform-style: preserve-3d;
-            width: 100%;
-            height: 100%;
-        }
-
-        .parallax-card {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.02); 
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out; 
-            will-change: transform;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .parallax-content {
-            transform: translateZ(30px); 
-            transform-style: preserve-3d;
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .parallax-bg-glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) translateZ(-20px);
-            width: 200px; 
-            height: 200px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
-            filter: blur(40px);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
         /* --- TEXT ANIMATIONS --- */
         .animate-gradient-text {
             background: linear-gradient(to right, #818cf8, #c084fc, #22d3ee, #818cf8);
@@ -215,6 +170,16 @@
         
         @keyframes gradientMove {
             to { background-position: 200% center; }
+        }
+
+        /* --- FLUID CLOCK --- */
+        .clock-container {
+            display: inline-flex;
+            align-items: center;
+            font-family: 'Outfit', monospace;
+            font-weight: 800;
+            font-size: 2.5rem;
+            line-height: 1;
         }
         
         /* --- GLASS COMPONENTS (General) --- */
@@ -1086,6 +1051,8 @@
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
+            
+            // initLogin3D(); // REMOVED
 
             els.loginBtn.addEventListener('click', async () => {
                 try {
@@ -1112,6 +1079,15 @@
                     els.loading.style.display = 'none';
                 }
             });
+        }
+
+        // Helper for consistent date string
+        function getLocalTodayDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
         function startApp() {
@@ -1293,7 +1269,10 @@
             }).sort((a,b) => (a.deadline || '9999') > (b.deadline || '9999') ? 1 : -1);
 
             if(filtered.length === 0) {
-                els.taskList.innerHTML = `<div class="text-center py-8 text-gray-500 glass-card">Tidak ada tugas.</div>`;
+                let msg = "Tidak ada tugas aktif.";
+                if (currentFilter === 'all') msg = "Belum ada tugas.";
+                else if (currentFilter === 'completed') msg = "Belum ada tugas selesai.";
+                els.taskList.innerHTML = `<div class="text-center py-8 text-gray-500 glass-card">${msg}</div>`;
                 return;
             }
 
@@ -1453,10 +1432,13 @@
         }
 
         function renderUpcoming() {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalTodayDate();
             const combined = [
                 ...allTasks.filter(t => t.deadline === today && t.status !== 'completed').map(t => ({...t, type: 'task'})),
-                ...allEvents.filter(e => checkEventDate(e, today)).map(e => ({...e, type: 'event'}))
+                ...allEvents.filter(e => {
+                    if (e.lastActionDate === today) return false; // HIDE IF DONE TODAY
+                    return checkEventDate(e, today);
+                }).map(e => ({...e, type: 'event'}))
             ].sort((a,b) => a.time.localeCompare(b.time));
 
             els.upcomingList.innerHTML = '';
@@ -1466,11 +1448,9 @@
             }
             
             combined.forEach(item => {
-                // 1. Wrapper Row (Flex Container)
                 const rowDiv = document.createElement('div');
-                rowDiv.className = 'flex items-center gap-3 w-full group'; // Added group for hover effects
+                rowDiv.className = 'flex items-center gap-3 w-full group'; 
 
-                // 2. Info Card (Glass) - Left Side
                 const contentDiv = document.createElement('div');
                 contentDiv.className = `glass-card flex-1 p-4 border-l-4 magic-hover transition-transform group-hover:translate-x-1 ${item.type === 'task' ? 'border-yellow-500' : 'border-purple-500'}`;
                 contentDiv.innerHTML = `
@@ -1483,7 +1463,6 @@
                     </div>
                 `;
                 
-                // Attach magic hover manually since dynamic
                 contentDiv.onmousemove = e => {
                     const rect = contentDiv.getBoundingClientRect();
                     const x = e.clientX - rect.left;
@@ -1492,9 +1471,8 @@
                     contentDiv.style.setProperty('--mouse-y', `${y}px`);
                 };
 
-                // 3. Buttons Container - Right Side (OUTSIDE the glass card)
                 const btnContainer = document.createElement('div');
-                btnContainer.className = 'flex gap-2 shrink-0 z-50 relative'; // Ensure high z-index
+                btnContainer.className = 'flex gap-2 shrink-0';
 
                 if (item.type === 'task') {
                     const doneBtn = document.createElement('button');
@@ -1508,13 +1486,12 @@
                     };
                     btnContainer.appendChild(doneBtn);
                 } else {
-                    // Event Buttons
                     const doneBtn = document.createElement('button');
                     doneBtn.className = 'glass-button p-3 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all shadow-lg border border-green-500/20';
                     doneBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
                     doneBtn.title = "Event Selesai";
                     doneBtn.onclick = async () => {
-                         const today = new Date().toISOString().split('T')[0];
+                         const today = getLocalTodayDate();
                          await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
                     };
                     btnContainer.appendChild(doneBtn);
@@ -1524,7 +1501,7 @@
                     skipBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
                     skipBtn.title = "Lewati Event";
                     skipBtn.onclick = async () => {
-                         const today = new Date().toISOString().split('T')[0];
+                         const today = getLocalTodayDate();
                          await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
                     };
                     btnContainer.appendChild(skipBtn);
@@ -1536,9 +1513,6 @@
             });
             initMagicHover();
         }
-
-        // Remove old inline listener logic that might conflict
-        // document.addEventListener('complete-task', ... ) -> Removed/Replaced by direct onclick above
 
         // --- WISHLIST ---
         async function handleWishlistSubmit(e) {
