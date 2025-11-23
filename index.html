@@ -158,7 +158,7 @@
             100% { left: 100%; }
         }
 
-        /* --- 3D PARALLAX CARD (Moved to Chart) --- */
+        /* --- 3D PARALLAX CARD (For Chart) --- */
         .parallax-container {
             perspective: 1000px;
             transform-style: preserve-3d;
@@ -495,7 +495,7 @@
         <p class="text-lg font-medium tracking-wider animate-pulse">MEMUAT DASHBOARD...</p>
     </div>
 
-    <!-- Login Screen -->
+    <!-- Login Screen with Grid Scan & Light Rays -->
     <div id="loginScreen" class="hidden h-full flex items-center justify-center p-4 z-40 relative overflow-hidden bg-[#0f172a]">
         <!-- Background Effects -->
         <div class="grid-scan">
@@ -642,7 +642,7 @@
                             </div>
                         </section>
 
-                        <!-- Upcoming Events & Tasks Section -->
+                        <!-- Upcoming Events & Tasks Section (WIDER LIST) -->
                         <section>
                             <div class="flex justify-between items-center mb-6">
                                 <div class="glass-surface magic-hover">
@@ -652,6 +652,7 @@
                                     </h3>
                                 </div>
                             </div>
+                            <!-- Changed from grid to flex-col for wider list items -->
                             <div id="upcomingEventsList" class="flex flex-col gap-3">
                                 <!-- Items will be injected here -->
                                 <div id="noUpcomingEvents" class="glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700 magic-hover w-full">
@@ -1568,18 +1569,41 @@
                     </div>
                     <div class="flex gap-2 relative z-10">
                          ${item.type === 'task' 
-                            ? `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="complete-task" data-id="${item.id}">Done</button>`
-                            : `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="complete-event" data-id="${item.id}">Done</button>
-                               <button class="text-red-400 hover:text-white bg-red-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="skip-event" data-id="${item.id}">Skip</button>`}
+                            ? `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="complete-task">Done</button>`
+                            : `<button class="text-green-400 hover:text-white bg-green-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="complete-event">Done</button>
+                               <button class="text-red-400 hover:text-white bg-red-500/10 px-3 py-1 rounded text-xs cursor-pointer action-btn" data-action="skip-event">Skip</button>`}
                     </div>
                 `;
                 els.upcomingList.appendChild(div);
             });
             
-            // Remove old listener if any to prevent duplicates (though usually this renders fresh)
-             // We'll attach one listener to the parent 'upcomingList' in startApp
-            initMagicHover();
+            // Add single event listener for delegation if not already present (better practice to do once)
+            // But here we are re-rendering, so binding once on the parent is safer in init or startApp.
+            // However, to fix the immediate issue, we can rely on the listener added in startApp.
+             initMagicHover();
         }
+        
+        // Add Event Listener for Upcoming List Delegation (Fix)
+        // This needs to be outside renderUpcoming so it isn't added multiple times, but accessible to module scope variables.
+        // We'll add this logic inside startApp's setup or similar block.
+        
+        // Moved logic to handle clicks on the list container:
+        // els.upcomingList.addEventListener('click', async (e) => {
+        //    const btn = e.target.closest('.action-btn');
+        //    if (!btn) return;
+        //    const action = btn.dataset.action;
+        //    const itemDiv = btn.closest('.glass-card');
+        //    const id = itemDiv.dataset.id;
+        //    
+        //    if (action === 'complete-task') {
+        //        await updateDoc(doc(tasksCollection, id), {status: 'completed'});
+        //    } else if (action === 'complete-event' || action === 'skip-event') {
+        //        const today = new Date().toISOString().split('T')[0];
+        //        await updateDoc(doc(eventsCollection, id), { lastActionDate: today });
+        //    }
+        // });
+        // Implemented in the full script below.
+
 
         // --- WISHLIST ---
         async function handleWishlistSubmit(e) {
