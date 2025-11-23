@@ -216,16 +216,6 @@
         @keyframes gradientMove {
             to { background-position: 200% center; }
         }
-
-        /* --- FLUID CLOCK --- */
-        .clock-container {
-            display: inline-flex;
-            align-items: center;
-            font-family: 'Outfit', monospace;
-            font-weight: 800;
-            font-size: 2.5rem;
-            line-height: 1;
-        }
         
         /* --- GLASS COMPONENTS (General) --- */
         .glass-panel {
@@ -641,7 +631,7 @@
                             </div>
                         </section>
 
-                        <!-- Upcoming Events & Tasks Section -->
+                        <!-- Upcoming Events & Tasks Section (WIDER LIST) -->
                         <section>
                             <div class="flex justify-between items-center mb-6">
                                 <div class="glass-surface magic-hover">
@@ -1096,8 +1086,6 @@
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
-            
-            // initLogin3D(); // REMOVED
 
             els.loginBtn.addEventListener('click', async () => {
                 try {
@@ -1290,6 +1278,7 @@
             els.taskList.innerHTML = '';
             const now = new Date().getTime();
             const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+
             const filtered = allTasks.filter(t => {
                 if (currentFilter === 'all') return true;
                 if (currentFilter === 'active') return t.status === 'pending' || t.status === 'in-progress';
@@ -1509,35 +1498,34 @@
 
                 if (item.type === 'task') {
                     const doneBtn = document.createElement('button');
-                    doneBtn.className = 'bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm shadow-sm transition-colors';
-                    doneBtn.innerHTML = 'Done';
+                    doneBtn.className = 'glass-button p-3 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all shadow-lg border border-green-500/20';
+                    doneBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
                     doneBtn.title = "Tandai Selesai";
-                    doneBtn.onclick = (e) => {
-                         e.stopPropagation(); // Prevent card click
+                    doneBtn.onclick = async () => {
                          if(confirm('Tandai tugas ini selesai?')) {
-                            document.dispatchEvent(new CustomEvent('complete-task', {detail: item.id}));
+                            await updateDoc(doc(tasksCollection, item.id), {status: 'completed'});
                          }
                     };
                     btnContainer.appendChild(doneBtn);
                 } else {
                     // Event Buttons
                     const doneBtn = document.createElement('button');
-                    doneBtn.className = 'bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm shadow-sm transition-colors';
-                    doneBtn.innerHTML = 'Done';
+                    doneBtn.className = 'glass-button p-3 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all shadow-lg border border-green-500/20';
+                    doneBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
                     doneBtn.title = "Event Selesai";
-                    doneBtn.onclick = (e) => {
-                         e.stopPropagation();
-                         document.dispatchEvent(new CustomEvent('complete-event', {detail: item.id}));
+                    doneBtn.onclick = async () => {
+                         const today = new Date().toISOString().split('T')[0];
+                         await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
                     };
                     btnContainer.appendChild(doneBtn);
 
                     const skipBtn = document.createElement('button');
-                    skipBtn.className = 'bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm shadow-sm transition-colors';
-                    skipBtn.innerHTML = 'Skip';
+                    skipBtn.className = 'glass-button p-3 rounded-xl text-red-300 hover:text-white hover:bg-red-500/30 transition-all shadow-lg border border-red-500/20';
+                    skipBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
                     skipBtn.title = "Lewati Event";
-                    skipBtn.onclick = (e) => {
-                         e.stopPropagation();
-                         document.dispatchEvent(new CustomEvent('skip-event', {detail: item.id}));
+                    skipBtn.onclick = async () => {
+                         const today = new Date().toISOString().split('T')[0];
+                         await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
                     };
                     btnContainer.appendChild(skipBtn);
                 }
@@ -1546,6 +1534,7 @@
                 rowDiv.appendChild(btnContainer);
                 els.upcomingList.appendChild(rowDiv);
             });
+            initMagicHover();
         }
 
         // Remove old inline listener logic that might conflict
