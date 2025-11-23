@@ -27,18 +27,82 @@
             color: var(--text-primary);
         }
 
-        /* --- FLUID BACKGROUND ANIMATION --- */
+        /* --- BACKGROUNDS --- */
         .fluid-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: -1;
+            z-index: -2;
             overflow: hidden;
             background: #0f172a;
         }
 
+        /* Grid Scan Effect */
+        .grid-scan {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+        }
+
+        .grid-scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(99, 102, 241, 0.1) 50%, transparent);
+            animation: scanDown 4s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes scanDown {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Light Rays Effect */
+        .light-rays {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            z-index: -2;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                rgba(99, 102, 241, 0.05) 0deg,
+                transparent 20deg,
+                rgba(192, 132, 252, 0.05) 40deg,
+                transparent 60deg,
+                rgba(99, 102, 241, 0.05) 120deg,
+                transparent 160deg,
+                rgba(192, 132, 252, 0.05) 200deg,
+                transparent 240deg,
+                rgba(99, 102, 241, 0.05) 280deg,
+                transparent 320deg,
+                rgba(99, 102, 241, 0.05) 360deg
+            );
+            animation: rotateRays 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotateRays {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Orbs for non-login pages */
         .orb {
             position: absolute;
             border-radius: 50%;
@@ -56,7 +120,7 @@
             100% { transform: translate(50px, 50px) scale(1.1); }
         }
 
-        /* --- GLASS SURFACE (New) --- */
+        /* --- GLASS SURFACE --- */
         .glass-surface {
             position: relative;
             background: rgba(255, 255, 255, 0.03);
@@ -94,46 +158,47 @@
             100% { left: 100%; }
         }
 
-        /* --- 3D PARALLAX CARD (For Login - Resized) --- */
+        /* --- 3D PARALLAX CARD (Moved to Chart) --- */
         .parallax-container {
             perspective: 1000px;
             transform-style: preserve-3d;
             width: 100%;
-            max-width: 600px; /* Made wider */
-            margin: 0 auto;
+            height: 100%;
         }
 
         .parallax-card {
             position: relative;
             width: 100%;
-            background: rgba(17, 25, 40, 0.7);
-            border-radius: 32px; /* More rounded */
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            padding: 5rem 3rem; /* Much larger padding for height */
+            height: 100%;
+            background: rgba(255, 255, 255, 0.02); /* Slightly transparent for chart */
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             transform-style: preserve-3d;
             transition: transform 0.1s ease-out; 
             will-change: transform;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .parallax-content {
-            transform: translateZ(60px); 
+            transform: translateZ(30px); 
             transform-style: preserve-3d;
             position: relative;
-            z-index: 10; /* Ensure content is clickable */
+            z-index: 10;
+            width: 100%;
+            height: 100%;
         }
         
         .parallax-bg-glow {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) translateZ(-50px);
-            width: 300px; /* Bigger glow */
-            height: 300px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
-            filter: blur(60px);
+            transform: translate(-50%, -50%) translateZ(-20px);
+            width: 200px; 
+            height: 200px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+            filter: blur(40px);
             border-radius: 50%;
             pointer-events: none;
         }
@@ -152,17 +217,19 @@
             to { background-position: 200% center; }
         }
 
-        /* --- SIMPLE FLUID CLOCK --- */
+        /* --- FLUID CLOCK --- */
         .clock-container {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             font-family: 'Outfit', monospace;
             font-weight: 800;
-            font-size: 3rem; 
+            font-size: 2.5rem;
             line-height: 1;
-            color: white;
         }
+        
+        .digit-strip { display: flex; flex-direction: column; } /* Reset for static if needed */
 
-        /* --- GLASS COMPONENTS --- */
+        /* --- GLASS COMPONENTS (General) --- */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(24px);
@@ -179,7 +246,7 @@
             padding: 1.25rem;
             transition: all 0.3s ease;
             position: relative;
-            overflow: hidden; /* For magic hover */
+            overflow: hidden; 
         }
 
         /* Magic Hover Effect */
@@ -232,9 +299,9 @@
             font-weight: 500;
             transition: all 0.3s;
             backdrop-filter: blur(4px);
-            cursor: pointer; /* Ensure pointer cursor */
-            position: relative; /* Ensure correct stacking */
-            z-index: 20; /* Lift above overlays */
+            cursor: pointer; 
+            position: relative; 
+            z-index: 30; 
         }
         .glass-button:hover {
             background: linear-gradient(135deg, rgba(99, 102, 241, 1), rgba(168, 85, 247, 1));
@@ -422,54 +489,53 @@
 </head>
 <body class="h-full overflow-hidden text-sm md:text-base">
 
-    <!-- Fluid Background -->
-    <div class="fluid-background">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-    </div>
-
     <!-- Global Loading Overlay -->
     <div id="loadingOverlay" class="absolute inset-0 z-50 flex flex-col items-center justify-center glass-panel">
         <div class="loader ease-linear rounded-full border-4 border-t-4 h-12 w-12 mb-4"></div>
         <p class="text-lg font-medium tracking-wider animate-pulse">MEMUAT DASHBOARD...</p>
     </div>
 
-    <!-- Login Screen with 3D Parallax (BIGGER CARD) -->
-    <div id="loginScreen" class="hidden h-full flex items-center justify-center p-4">
-        <div class="parallax-container" id="loginContainer">
-            <div class="parallax-card" id="loginCard">
-                <!-- Background Glow Element inside card -->
-                <div class="parallax-bg-glow"></div>
-                
-                <div class="parallax-content text-center w-full">
-                    <div class="w-28 h-28 mx-auto mb-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl shadow-indigo-500/30 transform transition-transform hover:scale-110" style="transform: translateZ(30px)">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-14 h-14">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
-                        </svg>
-                    </div>
-                    
-                    <!-- Glass Surface Title on Login -->
-                    <div class="glass-surface mb-8 inline-block w-full" style="transform: translateZ(40px)">
-                         <h1 class="text-4xl md:text-6xl font-bold text-white animate-gradient-text">Welcome Back</h1>
-                    </div>
+    <!-- Login Screen with Grid Scan & Light Rays -->
+    <div id="loginScreen" class="hidden h-full flex items-center justify-center p-4 z-40 relative overflow-hidden bg-[#0f172a]">
+        <!-- Background Effects -->
+        <div class="grid-scan">
+            <div class="grid-scan-line"></div>
+        </div>
+        <div class="light-rays"></div>
 
-                    <p class="text-gray-300 mb-12 text-xl" style="transform: translateZ(30px)">Personal Dashboard Fluid UI</p>
-                    
-                    <button id="loginWithGoogleBtn" class="glass-button w-full py-5 px-8 rounded-2xl flex items-center justify-center gap-4 text-xl transition-all hover:scale-105 active:scale-95 relative z-50" style="transform: translateZ(60px); position: relative; z-index: 50;">
-                        <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                             <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
-                        </svg>
-                        <span class="font-bold">Login dengan Google</span>
-                    </button>
-                    <p id="loginError" class="text-red-400 text-sm mt-6 hidden bg-red-500/10 p-3 rounded-xl border border-red-500/20" style="transform: translateZ(20px)"></p>
-                </div>
+        <!-- Standard Glass Card (No Parallax blocking clicks) -->
+        <div class="glass-card p-10 rounded-3xl w-full max-w-lg text-center relative z-10 border border-white/10 shadow-2xl">
+            <div class="w-28 h-28 mx-auto mb-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl shadow-indigo-500/30 transform transition-transform hover:scale-110">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-14 h-14">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
+                </svg>
             </div>
+            
+            <div class="mb-8 inline-block w-full">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white animate-gradient-text">Welcome Back</h1>
+            </div>
+
+            <p class="text-gray-300 mb-12 text-xl">Personal Dashboard Fluid UI</p>
+            
+            <button id="loginWithGoogleBtn" class="glass-button w-full py-5 px-8 rounded-2xl flex items-center justify-center gap-4 text-xl transition-all hover:scale-105 active:scale-95 shadow-lg cursor-pointer relative z-50">
+                <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+                </svg>
+                <span class="font-bold">Login dengan Google</span>
+            </button>
+            <p id="loginError" class="text-red-400 text-sm mt-6 hidden bg-red-500/10 p-3 rounded-xl border border-red-500/20"></p>
         </div>
     </div>
 
     <!-- Main Application -->
     <div id="mainApp" class="hidden h-full">
+        <!-- Fluid Background only for Dashboard -->
+        <div class="fluid-background">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+
         <div class="flex h-full w-full">
             <!-- Sidebar Navigation -->
             <nav class="w-20 md:w-72 glass-panel border-r-0 flex flex-col z-20">
@@ -544,9 +610,11 @@
                             <p class="text-lg text-gray-300">Selamat datang kembali di workspace Anda.</p>
                         </div>
                         <div class="text-right">
-                            <!-- CLOCK WITH GLASS SURFACE (SIMPLE TEXT) -->
+                            <!-- CLOCK WITH GLASS SURFACE (FIXED) -->
                             <div class="glass-surface p-4 mb-1 inline-block magic-hover">
-                                <div id="clockContainer" class="clock-container justify-end">00:00:00</div>
+                                <div id="clockContainer" class="text-4xl font-bold font-mono text-white tracking-wider">
+                                    00:00:00
+                                </div>
                             </div>
                             <div id="dateEl" class="text-sm text-gray-400 uppercase tracking-widest font-medium mt-1">---</div>
                         </div>
@@ -632,9 +700,14 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Chart -->
-                                <div class="glass-card flex items-center justify-center relative h-48 magic-hover">
-                                    <canvas id="taskStatusChart"></canvas>
+                                <!-- Chart with Parallax Effect -->
+                                <div class="glass-card flex items-center justify-center relative h-48 magic-hover parallax-container" id="chartContainer3D">
+                                    <div class="parallax-card flex items-center justify-center">
+                                         <div class="parallax-bg-glow"></div>
+                                         <div class="parallax-content w-full h-full flex items-center justify-center">
+                                             <canvas id="taskStatusChart"></canvas>
+                                         </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -910,8 +983,9 @@
             mainApp: document.getElementById('mainApp'),
             loginBtn: document.getElementById('loginWithGoogleBtn'),
             loginError: document.getElementById('loginError'),
-            loginContainer: document.getElementById('loginContainer'), // For 3D effect
-            loginCard: document.getElementById('loginCard'),         // For 3D effect
+            // loginContainer & loginCard no longer needed for JS if not doing 3D on them
+            // chartContainer3D for the 3D effect
+            chartContainer: document.getElementById('chartContainer3D'),
             logoutBtn: document.getElementById('logoutBtn'),
             authStatus: document.getElementById('authStatus'),
             userAvatar: document.getElementById('userAvatar'),
@@ -984,12 +1058,13 @@
             });
         }
         
-        // Login 3D Logic
-        function initLogin3D() {
-            const container = els.loginContainer;
-            const card = els.loginCard;
+        // Chart 3D Logic
+        function initChart3D() {
+             const container = document.getElementById('chartContainer3D');
+             const card = container.querySelector('.parallax-card');
+             if(!container || !card) return;
 
-            container.addEventListener('mousemove', (e) => {
+             container.addEventListener('mousemove', (e) => {
                 const rect = container.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
@@ -1021,8 +1096,6 @@
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
-            
-            initLogin3D(); // Start 3D effect immediately
 
             els.loginBtn.addEventListener('click', async () => {
                 try {
@@ -1047,7 +1120,7 @@
                     els.loginScreen.classList.remove('hidden');
                     els.mainApp.classList.add('hidden');
                     els.loading.style.display = 'none';
-                    initMagicHover(); // Ensure hover works on login screen
+                    initMagicHover(); 
                 }
             });
         }
@@ -1143,7 +1216,8 @@
 
             renderCalendar();
             updateStats();
-            initMagicHover(); 
+            initMagicHover();
+            initChart3D(); 
         }
 
 
