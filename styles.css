@@ -908,6 +908,46 @@ input, select, textarea {
   color: #ffffff;
 }
 
+.btn-action-round.remove-repeated {
+  background: rgba(255, 69, 58, 0.08);
+  color: var(--accent-red);
+  border-color: rgba(255, 69, 58, 0.2);
+}
+
+.btn-action-round.remove-repeated:hover {
+  background: var(--accent-red);
+  color: #ffffff;
+}
+
+.task-repeat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: rgba(41, 151, 255, 0.12);
+  color: var(--apple-blue);
+  border: 1px solid rgba(41, 151, 255, 0.25);
+}
+
+.btn-modal-warning {
+  color: var(--accent-gold);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 214, 10, 0.1);
+  border: 1px solid rgba(255, 214, 10, 0.25);
+  transition: all var(--duration-fast) var(--ease-apple);
+}
+
+.btn-modal-warning:hover {
+  background: rgba(255, 214, 10, 0.22);
+  border-color: rgba(255, 214, 10, 0.4);
+}
+
 /* ---------- 10. Overview: Task Management & Stats ---------- */
 .stats-and-chart-grid {
   display: grid;

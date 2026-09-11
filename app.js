@@ -3,6 +3,7 @@
    High Performance, Ultra-Lightweight & Modular
    Firebase Auth, Firestore Realtime Sync, TradingView,
    Chart.js, Full CRUD, Calendar, Wishlist & Gemini AI
+   Includes Repeated Task Management & Duplicate Cleaner
    ============================================================ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -77,12 +78,15 @@ function cacheElements() {
   els.completedTasks = document.getElementById('completedTasksCount');
   els.filterChips = document.querySelectorAll('.stat-chip-card');
 
+  els.cleanDuplicatesBtn = document.getElementById('cleanDuplicatesBtn');
   els.taskList = document.getElementById('taskListContainer');
   els.showTaskModalBtn = document.getElementById('showTaskModalBtn');
   els.taskModal = document.getElementById('taskModal');
   els.taskForm = document.getElementById('taskForm');
+  els.taskRepeat = document.getElementById('taskRepeat');
   els.closeTaskModalBtn = document.getElementById('closeTaskModalBtn');
   els.deleteTaskBtn = document.getElementById('deleteTaskBtn');
+  els.stopTaskRepeatBtn = document.getElementById('stopTaskRepeatBtn');
 
   // Agenda
   els.upcomingList = document.getElementById('upcomingAgendaList');
@@ -150,7 +154,6 @@ function applyTheme(theme, save = true) {
     window.updateCanvasTheme();
   }
 
-  // Update chart colors if chart exists
   if (taskStatusChart) {
     updateChartTheme();
   }
@@ -303,18 +306,28 @@ async function initApp() {
   if (els.eventForm) els.eventForm.addEventListener('submit', handleEventSubmit);
   if (els.geminiForm) els.geminiForm.addEventListener('submit', handleGeminiSubmit);
 
-  // Delete Listeners
+  // Delete & Duplicate Cleanup Listeners
+  if (els.cleanDuplicatesBtn) els.cleanDuplicatesBtn.addEventListener('click', cleanDuplicateTasks);
   if (els.deleteTaskBtn) els.deleteTaskBtn.addEventListener('click', handleDeleteTask);
+  if (els.stopTaskRepeatBtn) els.stopTaskRepeatBtn.addEventListener('click', handleStopTaskRepeat);
   if (els.deleteEventBtn) els.deleteEventBtn.addEventListener('click', handleDeleteEvent);
 
   // Filter Listeners
   setupFilterListeners();
 
-  // Custom Event Dispatch Listeners (for inline button triggers)
+  // Custom Event Dispatch Listeners
   document.addEventListener('edit-task', e => openTaskModal(e.detail));
   document.addEventListener('change-task-status', e => updateDoc(doc(tasksCollection, e.detail.id), { status: e.detail.status }));
   document.addEventListener('delete-task', async e => {
     if (confirm("Hapus tugas ini?")) await deleteDoc(doc(tasksCollection, e.detail));
+  });
+
+  // Remove Task Repeat Custom Event
+  document.addEventListener('remove-task-repeat', async e => {
+    const id = e.detail;
+    if (confirm("Hapus pengulangan untuk tugas ini? Tugas akan dijadikan tugas sekali saja.")) {
+      await updateDoc(doc(tasksCollection, id), { repeatType: 'once' });
+    }
   });
 
   document.addEventListener('edit-event', e => openEventModal(null, e.detail));
@@ -461,6 +474,27 @@ function updateChartTheme() {
   taskStatusChart.update();
 }
 
+// --- Date & Recurrence Match Helpers ---
+function checkTaskDate(task, dateStr) {
+  if (!task.deadline) return false;
+  if ((!task.repeatType || task.repeatType === 'once') && task.deadline === dateStr) return true;
+  if (task.repeatType === 'daily') return true;
+  if (task.repeatType === 'weekly' && new Date(task.deadline).getDay() === new Date(dateStr).getDay()) {
+    return new Date(task.deadline) <= new Date(dateStr);
+  }
+  return false;
+}
+
+function checkEventDate(event, dateStr) {
+  if (!event.date) return false;
+  if (event.repeatType === 'once' && event.date === dateStr) return true;
+  if (event.repeatType === 'daily') return true;
+  if (event.repeatType === 'weekly' && new Date(event.date).getDay() === new Date(dateStr).getDay()) {
+    return new Date(event.date) <= new Date(dateStr);
+  }
+  return false;
+}
+
 // --- Tasks CRUD & Render ---
 function renderTasks() {
   if (!els.taskList) return;
@@ -495,6 +529,7 @@ function renderTasks() {
 
   filtered.forEach(t => {
     const isUrgent = t.deadline && t.status !== 'completed' && (new Date(t.deadline + 'T00:00:00').getTime() <= (now + twoDaysMs));
+    const isRepeated = (t.repeatType && t.repeatType !== 'once');
     const card = document.createElement('div');
     card.className = `task-item-card ${t.status} ${isUrgent ? 'deadline-urgent' : ''}`;
 
@@ -508,6 +543,11 @@ function renderTasks() {
             <span style="opacity: 0.4;">•</span>
             <i class="fa-regular fa-clock" style="opacity: 0.7;"></i>
             <span>${t.time || '--:--'}</span>
+            ${isRepeated ? `
+              <span class="task-repeat-badge" style="margin-left: 6px;">
+                <i class="fa-solid fa-arrows-rotate"></i> ${t.repeatType === 'daily' ? 'Harian' : 'Mingguan'}
+              </span>
+            ` : ''}
           </div>
         </div>
         <div class="task-item-controls">
@@ -516,6 +556,11 @@ function renderTasks() {
             <option value="in-progress" ${t.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
             <option value="completed" ${t.status === 'completed' ? 'selected' : ''}>Completed</option>
           </select>
+          ${isRepeated ? `
+            <button class="btn-icon-action" title="Hapus Pengulangan (Jadikan Sekali)" onclick="document.dispatchEvent(new CustomEvent('remove-task-repeat', {detail: '${t.id}'}))">
+              <i class="fa-solid fa-ban"></i>
+            </button>
+          ` : ''}
           <button class="btn-icon-action" title="Edit Tugas" onclick="document.dispatchEvent(new CustomEvent('edit-task', {detail: '${t.id}'}))">
             <i class="fa-solid fa-pen"></i>
           </button>
@@ -541,6 +586,9 @@ function openTaskModal(id = null, date = null) {
   if (els.deleteTaskBtn) {
     els.deleteTaskBtn.classList.toggle('hidden', !id);
   }
+  if (els.stopTaskRepeatBtn) {
+    els.stopTaskRepeatBtn.classList.add('hidden');
+  }
 
   if (date) {
     document.getElementById('taskDeadline').value = date;
@@ -553,8 +601,15 @@ function openTaskModal(id = null, date = null) {
       document.getElementById('taskDeadline').value = task.deadline || '';
       document.getElementById('taskTime').value = task.time || '';
       document.getElementById('taskStatus').value = task.status || 'pending';
+      if (els.taskRepeat) {
+        els.taskRepeat.value = task.repeatType || 'once';
+      }
       document.getElementById('taskNotes').value = task.notes || '';
       document.getElementById('taskDriveLink').value = task.driveLink || '';
+
+      if (els.stopTaskRepeatBtn && task.repeatType && task.repeatType !== 'once') {
+        els.stopTaskRepeatBtn.classList.remove('hidden');
+      }
     }
   }
 
@@ -573,6 +628,8 @@ async function handleTaskSubmit(e) {
     status: fd.get('taskStatus') || 'pending',
     deadline: fd.get('taskDeadline') || null,
     time: fd.get('taskTime') || '00:00',
+    repeatType: fd.get('taskRepeat') || 'once',
+    lastActionDate: null,
     createdAt: serverTimestamp()
   };
 
@@ -592,13 +649,65 @@ async function handleDeleteTask() {
   }
 }
 
+async function handleStopTaskRepeat() {
+  const id = els.taskForm.dataset.taskId;
+  if (!id) return;
+  if (confirm("Hapus pengulangan untuk tugas ini? Tugas akan dijadikan tugas sekali saja.")) {
+    await updateDoc(doc(tasksCollection, id), { repeatType: 'once' });
+    els.taskModal.close();
+  }
+}
+
+// --- Duplicate Repeated Tasks Cleaner ---
+async function cleanDuplicateTasks() {
+  if (allTasks.length === 0) {
+    alert("Belum ada tugas.");
+    return;
+  }
+
+  const seen = new Map();
+  const duplicates = [];
+
+  allTasks.forEach(task => {
+    const key = (task.name || '').trim().toLowerCase();
+    if (seen.has(key)) {
+      duplicates.push(task);
+    } else {
+      seen.set(key, task);
+    }
+  });
+
+  if (duplicates.length === 0) {
+    alert("Bagus! Tidak ditemukan tugas berulang atau duplikat.");
+    return;
+  }
+
+  const dupNames = [...new Set(duplicates.map(d => d.name))].join(', ');
+  const msg = `Ditemukan ${duplicates.length} tugas berulang/duplikat:\n\n"${dupNames}"\n\nHapus ${duplicates.length} tugas duplikat ini dan sisakan 1 tugas asli?`;
+
+  if (confirm(msg)) {
+    try {
+      for (const dup of duplicates) {
+        await deleteDoc(doc(tasksCollection, dup.id));
+      }
+      alert(`${duplicates.length} tugas duplikat berhasil dihapus!`);
+    } catch (err) {
+      alert("Gagal menghapus tugas duplikat: " + err.message);
+    }
+  }
+}
+
 // --- Agenda Hari Ini ---
 function renderUpcoming() {
   if (!els.upcomingList) return;
   const today = getLocalTodayDate();
 
   const combined = [
-    ...allTasks.filter(t => t.deadline === today && t.status !== 'completed').map(t => ({ ...t, itemType: 'task' })),
+    ...allTasks.filter(t => {
+      if (t.status === 'completed') return false;
+      if (t.lastActionDate === today) return false;
+      return checkTaskDate(t, today);
+    }).map(t => ({ ...t, itemType: 'task' })),
     ...allEvents.filter(e => {
       if (e.lastActionDate === today) return false;
       return checkEventDate(e, today);
@@ -616,6 +725,7 @@ function renderUpcoming() {
   }
 
   combined.forEach(item => {
+    const isRepeated = (item.repeatType && item.repeatType !== 'once');
     const row = document.createElement('div');
     row.className = `agenda-item-row ${item.itemType}-type`;
 
@@ -626,36 +736,66 @@ function renderUpcoming() {
           <i class="fa-regular fa-clock" style="opacity: 0.7;"></i>
           <span>${item.time || '--:--'}</span>
           <span class="agenda-badge-tag ${item.itemType}">${item.itemType}</span>
+          ${isRepeated ? `
+            <span class="task-repeat-badge" style="font-size: 0.68rem;">
+              <i class="fa-solid fa-arrows-rotate"></i> ${item.repeatType === 'daily' ? 'Harian' : 'Mingguan'}
+            </span>
+          ` : ''}
         </div>
       </div>
       <div class="agenda-actions-group">
         <button class="btn-action-round complete" title="${item.itemType === 'task' ? 'Tandai Selesai' : 'Event Selesai'}">
           <i class="fa-solid fa-check"></i>
         </button>
-        ${item.itemType === 'event' ? `
-          <button class="btn-action-round skip" title="Lewati Event">
-            <i class="fa-solid fa-xmark"></i>
+        ${(item.itemType === 'event' || isRepeated) ? `
+          <button class="btn-action-round skip" title="Lewati Hari Ini">
+            <i class="fa-solid fa-forward-step"></i>
           </button>
         ` : ''}
+        <button class="btn-action-round remove-repeated" title="${isRepeated ? 'Hapus Tugas/Event Berulang Ini' : 'Hapus Agenda Ini'}">
+          <i class="fa-regular fa-trash-can"></i>
+        </button>
       </div>
     `;
 
     // Complete action
     row.querySelector('.complete').addEventListener('click', async () => {
       if (item.itemType === 'task') {
-        if (confirm("Tandai tugas ini selesai?")) {
-          await updateDoc(doc(tasksCollection, item.id), { status: 'completed' });
+        if (isRepeated) {
+          if (confirm(`Tandai tugas berulang "${item.name}" selesai untuk hari ini? (Akan muncul kembali di jadwal berikutnya)`)) {
+            await updateDoc(doc(tasksCollection, item.id), { lastActionDate: today });
+          }
+        } else {
+          if (confirm("Tandai tugas ini selesai?")) {
+            await updateDoc(doc(tasksCollection, item.id), { status: 'completed' });
+          }
         }
       } else {
         await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
       }
     });
 
-    // Skip action for event
+    // Skip action (for event or recurring task)
     const skipBtn = row.querySelector('.skip');
     if (skipBtn) {
       skipBtn.addEventListener('click', async () => {
-        await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
+        const col = item.itemType === 'task' ? tasksCollection : eventsCollection;
+        await updateDoc(doc(col, item.id), { lastActionDate: today });
+      });
+    }
+
+    // Permanently remove repeated / agenda item
+    const removeBtn = row.querySelector('.remove-repeated');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', async () => {
+        const promptMsg = isRepeated
+          ? `Hapus "${item.name}" (berulang ${item.repeatType}) secara permanen agar tidak muncul lagi?`
+          : `Hapus agenda "${item.name}" secara permanen?`;
+
+        if (confirm(promptMsg)) {
+          const col = item.itemType === 'task' ? tasksCollection : eventsCollection;
+          await deleteDoc(doc(col, item.id));
+        }
       });
     }
 
@@ -678,7 +818,6 @@ function renderCalendar() {
   const daysInMonth = new Date(y, m + 1, 0).getDate();
   const todayStr = getLocalTodayDate();
 
-  // Leading empty cells
   for (let i = 0; i < firstDay; i++) {
     const empty = document.createElement('div');
     empty.className = 'calendar-day-cell other-month';
@@ -705,8 +844,8 @@ function renderCalendar() {
       dotsWrap.appendChild(dot);
     });
 
-    // Matching tasks
-    allTasks.filter(t => t.deadline === dateStr && t.status !== 'completed').forEach(() => {
+    // Matching tasks (including recurring)
+    allTasks.filter(t => checkTaskDate(t, dateStr) && t.status !== 'completed').forEach(() => {
       const dot = document.createElement('div');
       dot.className = 'calendar-dot task';
       dotsWrap.appendChild(dot);
@@ -715,16 +854,6 @@ function renderCalendar() {
     cell.addEventListener('click', () => showCalendarDetail(dateStr));
     els.calendarGrid.appendChild(cell);
   }
-}
-
-function checkEventDate(event, dateStr) {
-  if (!event.date) return false;
-  if (event.repeatType === 'once' && event.date === dateStr) return true;
-  if (event.repeatType === 'daily') return true;
-  if (event.repeatType === 'weekly' && new Date(event.date).getDay() === new Date(dateStr).getDay()) {
-    return new Date(event.date) <= new Date(dateStr);
-  }
-  return false;
 }
 
 function showCalendarDetail(dateStr) {
@@ -739,13 +868,17 @@ function showCalendarDetail(dateStr) {
   }
 
   // Render Tasks on date
-  const tasksOnDate = allTasks.filter(t => t.deadline === dateStr);
+  const tasksOnDate = allTasks.filter(t => checkTaskDate(t, dateStr));
   els.detailTaskList.innerHTML = tasksOnDate.length ? '' : '<p style="font-size: 0.8rem; color: var(--text-tertiary);">Tidak ada tugas</p>';
   tasksOnDate.forEach(t => {
+    const isRepeated = (t.repeatType && t.repeatType !== 'once');
     const item = document.createElement('div');
     item.className = 'detail-item-bubble';
     item.innerHTML = `
-      <span style="font-weight: 500;">${escapeHtml(t.name)}</span>
+      <div>
+        <span style="font-weight: 500;">${escapeHtml(t.name)}</span>
+        ${isRepeated ? `<span class="task-repeat-badge" style="margin-left: 6px; font-size: 0.65rem;"><i class="fa-solid fa-arrows-rotate"></i> ${t.repeatType}</span>` : ''}
+      </div>
       <button class="btn-pill-secondary" style="padding: 3px 10px; font-size: 0.74rem;" onclick="document.dispatchEvent(new CustomEvent('edit-task', {detail: '${t.id}'}))">
         Edit
       </button>
@@ -757,12 +890,14 @@ function showCalendarDetail(dateStr) {
   const eventsOnDate = allEvents.filter(e => checkEventDate(e, dateStr));
   els.detailEventList.innerHTML = eventsOnDate.length ? '' : '<p style="font-size: 0.8rem; color: var(--text-tertiary);">Tidak ada event</p>';
   eventsOnDate.forEach(e => {
+    const isRepeated = (e.repeatType && e.repeatType !== 'once');
     const item = document.createElement('div');
     item.className = 'detail-item-bubble';
     item.innerHTML = `
       <div>
         <span style="font-weight: 600;">${escapeHtml(e.name)}</span>
         <span style="font-size: 0.76rem; color: var(--text-secondary); margin-left: 6px;">${e.time || ''}</span>
+        ${isRepeated ? `<span class="task-repeat-badge" style="margin-left: 6px; font-size: 0.65rem;"><i class="fa-solid fa-arrows-rotate"></i> ${e.repeatType}</span>` : ''}
       </div>
       <button class="btn-pill-secondary" style="padding: 3px 10px; font-size: 0.74rem;" onclick="document.dispatchEvent(new CustomEvent('edit-event', {detail: '${e.id}'}))">
         Edit

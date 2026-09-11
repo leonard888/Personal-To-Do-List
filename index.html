@@ -195,10 +195,16 @@
                   <div class="section-title-badge" style="background: var(--apple-blue);"></div>
                   Manajemen Tugas
                 </div>
-                <button id="showTaskModalBtn" class="btn-pill-primary">
-                  <i class="fa-solid fa-plus"></i>
-                  <span>Tugas Baru</span>
-                </button>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button id="cleanDuplicatesBtn" class="btn-pill-secondary" title="Cari & Hapus Tugas Berulang / Duplikat">
+                    <i class="fa-solid fa-broom"></i>
+                    <span>Hapus Duplikat</span>
+                  </button>
+                  <button id="showTaskModalBtn" class="btn-pill-primary">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Tugas Baru</span>
+                  </button>
+                </div>
               </div>
 
               <!-- Stats & Chart Grid -->
@@ -390,13 +396,23 @@
             </div>
           </div>
 
-          <div class="form-field-item">
-            <label class="form-field-label">Status</label>
-            <select id="taskStatus" name="taskStatus" class="apple-select-input">
-              <option value="pending">Pending</option>
-              <option value="in-progress">In Progress</option>
-              <option value="completed">Completed</option>
-            </select>
+          <div class="form-row-2col">
+            <div class="form-field-item">
+              <label class="form-field-label">Status</label>
+              <select id="taskStatus" name="taskStatus" class="apple-select-input">
+                <option value="pending">Pending</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div class="form-field-item">
+              <label class="form-field-label">Pengulangan</label>
+              <select id="taskRepeat" name="taskRepeat" class="apple-select-input">
+                <option value="once">Sekali Saja</option>
+                <option value="daily">Setiap Hari</option>
+                <option value="weekly">Setiap Minggu</option>
+              </select>
+            </div>
           </div>
 
           <div class="form-field-item">
@@ -411,7 +427,10 @@
         </div>
 
         <div class="modal-footer-row">
-          <button type="button" id="deleteTaskBtn" class="btn-modal-delete hidden">Hapus Tugas</button>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" id="deleteTaskBtn" class="btn-modal-delete hidden">Hapus Tugas</button>
+            <button type="button" id="stopTaskRepeatBtn" class="btn-modal-warning hidden" title="Hentikan pengulangan tugas ini">Hapus Pengulangan</button>
+          </div>
           <div class="modal-footer-actions">
             <button type="button" id="closeTaskModalBtn" class="btn-pill-secondary">Batal</button>
             <button type="submit" class="btn-pill-primary">Simpan</button>
