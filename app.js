@@ -157,6 +157,10 @@ function applyTheme(theme, save = true) {
   if (taskStatusChart) {
     updateChartTheme();
   }
+
+  if (document.getElementById('tradingview_ticker') && userId) {
+    initTradingViewTicker();
+  }
 }
 
 // --- Digital Clock & Indonesian Date ---
@@ -190,6 +194,11 @@ function getLocalTodayDate() {
 
 // --- TradingView Init ---
 function initTradingView() {
+  initTradingViewChart();
+  initTradingViewTicker();
+}
+
+function initTradingViewChart() {
   const container = document.getElementById('tradingview_chart');
   if (!container || typeof TradingView === 'undefined') return;
 
@@ -208,6 +217,35 @@ function initTradingView() {
     "container_id": "tradingview_chart",
     "backgroundColor": isLight ? "rgba(255, 255, 255, 0)" : "rgba(14, 15, 20, 0)"
   });
+}
+
+function initTradingViewTicker() {
+  const container = document.getElementById('tradingview_ticker');
+  if (!container) return;
+
+  container.innerHTML = '';
+  const script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
+  script.async = true;
+
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  script.innerHTML = JSON.stringify({
+    symbols: [
+      { proName: "IDX:COMPOSITE", title: "IHSG" },
+      { proName: "IDX:BBCA", title: "BBCA" },
+      { proName: "IDX:BBRI", title: "BBRI" },
+      { proName: "IDX:TLKM", title: "TLKM" },
+      { proName: "IDX:ASII", title: "ASII" }
+    ],
+    showSymbolLogo: true,
+    colorTheme: isLight ? "light" : "dark",
+    isTransparent: true,
+    displayMode: "adaptive",
+    locale: "id"
+  });
+
+  container.appendChild(script);
 }
 
 // --- Firebase Init & Auth ---
