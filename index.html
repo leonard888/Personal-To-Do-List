@@ -1,1607 +1,509 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Dashboard - Fluid Glass</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --glass-bg: rgba(17, 25, 40, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --accent-color: #6366f1; /* Indigo-500 */
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Dashboard & Workspace</title>
 
-        body {
-            font-family: 'Outfit', sans-serif;
-            margin: 0;
-            overflow: hidden;
-            background-color: #0f172a;
-            color: var(--text-primary);
-        }
+  <!-- Google & Product Sans Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.cdnfonts.com">
+  <link href="https://fonts.cdnfonts.com/css/google-sans" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/product-sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        /* --- FLUID BACKGROUND ANIMATION --- */
-        .fluid-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -2;
-            overflow: hidden;
-            background: #0f172a;
-        }
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        /* Grid Scan Effect */
-        .grid-scan {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-            background-size: 50px 50px;
-            background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
-        }
+  <!-- Chart.js & TradingView -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 
-        .grid-scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, transparent, rgba(99, 102, 241, 0.1) 50%, transparent);
-            animation: scanDown 4s linear infinite;
-            z-index: 0;
-        }
+  <!-- Early Theme Detection Script (Prevents FOUC) -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('leonard-portfolio-theme');
+      if (savedTheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
 
-        @keyframes scanDown {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-
-        /* Light Rays Effect */
-        .light-rays {
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            z-index: -2;
-            background: conic-gradient(
-                from 0deg at 50% 50%,
-                rgba(99, 102, 241, 0.05) 0deg,
-                transparent 20deg,
-                rgba(192, 132, 252, 0.05) 40deg,
-                transparent 60deg,
-                rgba(99, 102, 241, 0.05) 120deg,
-                transparent 160deg,
-                rgba(192, 132, 252, 0.05) 200deg,
-                transparent 240deg,
-                rgba(99, 102, 241, 0.05) 280deg,
-                transparent 320deg,
-                rgba(99, 102, 241, 0.05) 360deg
-            );
-            animation: rotateRays 20s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes rotateRays {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Orbs for non-login pages */
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.6;
-            animation: float 20s infinite ease-in-out alternate;
-        }
-
-        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #4f46e5; animation-duration: 25s; }
-        .orb-2 { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: #c026d3; animation-duration: 30s; animation-direction: alternate-reverse; }
-        .orb-3 { top: 30%; left: 40%; width: 30vw; height: 30vw; background: #06b6d4; animation-duration: 35s; }
-
-        @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(50px, 50px) scale(1.1); }
-        }
-
-        /* --- GLASS SURFACE --- */
-        .glass-surface {
-            position: relative;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .glass-surface::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.05),
-                transparent
-            );
-            transition: 0.5s;
-            pointer-events: none;
-            animation: shimmer 8s infinite linear;
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            20% { left: 100%; }
-            100% { left: 100%; }
-        }
-
-        /* --- TEXT ANIMATIONS --- */
-        .animate-gradient-text {
-            background: linear-gradient(to right, #818cf8, #c084fc, #22d3ee, #818cf8);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientMove 5s linear infinite;
-            display: inline-block;
-        }
-        
-        @keyframes gradientMove {
-            to { background-position: 200% center; }
-        }
-
-        /* --- FLUID CLOCK --- */
-        .clock-container {
-            display: inline-flex;
-            align-items: center;
-            font-family: 'Outfit', monospace;
-            font-weight: 800;
-            font-size: 2.5rem;
-            line-height: 1;
-        }
-        
-        /* --- GLASS COMPONENTS (General) --- */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 1rem;
-            padding: 1.25rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden; 
-        }
-
-        /* Magic Hover Effect */
-        .magic-hover {
-            position: relative;
-        }
-        .magic-hover::before {
-            content: "";
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            top: 0;
-            left: 0;
-            border-radius: inherit;
-            background: radial-gradient(
-                800px circle at var(--mouse-x) var(--mouse-y), 
-                rgba(255, 255, 255, 0.06), 
-                transparent 40%
-            );
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
-            z-index: 2;
-        }
-        .magic-hover:hover::before { opacity: 1; }
-
-
-        .glass-input {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            transition: all 0.2s;
-        }
-        .glass-input:focus {
-            background: rgba(0, 0, 0, 0.4);
-            border-color: var(--accent-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-        }
-        
-        select.glass-input option {
-            background-color: #1f2937;
-            color: white;
-        }
-
-        .glass-button {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(168, 85, 247, 0.8));
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            font-weight: 500;
-            transition: all 0.3s;
-            backdrop-filter: blur(4px);
-            cursor: pointer; 
-            position: relative; 
-            z-index: 30; 
-        }
-        .glass-button:hover {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 1), rgba(168, 85, 247, 1));
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
-            transform: scale(1.02);
-        }
-
-        .glass-button-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-            cursor: pointer;
-        }
-        .glass-button-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* --- SCROLLBAR --- */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* --- LOADING SPINNER --- */
-        .loader {
-            border-top-color: var(--accent-color);
-            -webkit-animation: spin 1s linear infinite;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* --- MODAL ANIMATION --- */
-        dialog {
-            background: transparent;
-        }
-        dialog::backdrop {
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-        }
-        dialog[open] {
-            animation: zoomIn 0.3s ease-out forwards;
-        }
-        .modal-content {
-            background: rgba(17, 25, 40, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(20px);
-        }
-        @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* --- CALENDAR STYLES --- */
-        #calendarGrid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-            background-color: transparent;
-            border: none;
-        }
-        .calendar-day-header {
-            background: transparent;
-            color: var(--text-secondary);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            text-align: center;
-            padding-bottom: 8px;
-        }
-        .calendar-day {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 0.75rem;
-            color: var(--text-primary);
-            min-height: 80px;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 4px;
-            cursor: pointer;
-        }
-        .calendar-day:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-        .calendar-day.other-month {
-            opacity: 0.3;
-            background: transparent;
-            border: none;
-            cursor: default;
-        }
-        .calendar-day.today {
-            border: 1px solid var(--accent-color);
-            background: rgba(99, 102, 241, 0.1);
-        }
-        .calendar-day.today .day-number {
-            background: var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-color);
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-        .event-dot-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 3px;
-            justify-content: center;
-            margin-top: 4px;
-        }
-        .event-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            box-shadow: 0 0 5px currentColor;
-        }
-        .event-dot-task { background-color: #eab308; }
-        .event-dot-event { background-color: #8b5cf6; }
-
-        /* --- SIDEBAR --- */
-        .sidebar-link {
-            transition: all 0.3s;
-            border-radius: 0.75rem;
-            color: var(--text-secondary);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer; 
-            background: transparent;
-            border: 1px solid transparent; 
-        }
-        .sidebar-link:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-        }
-        .sidebar-link.active {
-            background: rgba(99, 102, 241, 0.15);
-            color: #818cf8;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-        }
-        .sidebar-link.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: #818cf8;
-            box-shadow: 0 0 10px #818cf8;
-        }
-
-        /* --- CHAT BUBBLES --- */
-        .chat-bubble {
-            border-radius: 1rem;
-            padding: 1rem;
-            max-width: 80%;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .chat-bubble.user {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-            border-bottom-right-radius: 0.25rem;
-        }
-        .chat-bubble.model {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-            border-bottom-left-radius: 0.25rem;
-        }
-    </style>
+  <!-- Apple Seamless Design Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="h-full overflow-hidden text-sm md:text-base">
 
-    <!-- Global Loading Overlay -->
-    <div id="loadingOverlay" class="absolute inset-0 z-50 flex flex-col items-center justify-center glass-panel">
-        <div class="loader ease-linear rounded-full border-4 border-t-4 h-12 w-12 mb-4"></div>
-        <p class="text-lg font-medium tracking-wider animate-pulse">MEMUAT DASHBOARD...</p>
+<body>
+
+  <!-- ============ INTERACTIVE CURSOR GRID / DOT FIELD CANVAS ============ -->
+  <canvas id="cursor-grid-canvas" class="cursor-grid-canvas" aria-hidden="true"></canvas>
+
+  <!-- ============ GLOBAL LOADING OVERLAY ============ -->
+  <div id="loadingOverlay">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Memuat Dashboard...</div>
+  </div>
+
+  <!-- ============ LOGIN SCREEN (APPLE KEYNOTE STYLE) ============ -->
+  <div id="loginScreen" class="hidden">
+    <div class="login-card">
+      <div class="login-icon-badge">
+        <i class="fa-solid fa-layer-group"></i>
+      </div>
+      <h1 class="login-title">Welcome Back</h1>
+      <p class="login-subtitle">Personal Dashboard & Productivity Workspace</p>
+
+      <button id="loginWithGoogleBtn" class="btn-google-login">
+        <svg viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.15C3.27 21.36 7.33 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.94 0 12s.46 3.84 1.26 5.42l4.02-3.15z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.27 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+        </svg>
+        <span>Masuk dengan Google</span>
+      </button>
+
+      <p id="loginError" class="login-error-msg hidden"></p>
     </div>
+  </div>
 
-    <!-- Login Screen with Grid Scan & Light Rays -->
-    <div id="loginScreen" class="hidden h-full flex items-center justify-center p-4 z-40 relative overflow-hidden bg-[#0f172a]">
-        <!-- Background Effects -->
-        <div class="grid-scan">
-            <div class="grid-scan-line"></div>
+  <!-- ============ MAIN APPLICATION ============ -->
+  <div id="mainApp" class="hidden">
+
+    <!-- Top Frosted Navbar -->
+    <header class="top-navbar">
+      <div class="navbar-brand-section">
+        <div class="brand-badge">
+          <i class="fa-solid fa-cube"></i>
         </div>
-        <div class="light-rays"></div>
+        <div class="brand-name">Dash<span>Board</span></div>
+      </div>
 
-        <!-- Standard Glass Card (Resized & Clickable) -->
-        <div class="glass-card p-16 rounded-[2.5rem] w-full max-w-2xl text-center relative z-10 border border-white/10 shadow-2xl bg-opacity-40">
-            <div class="w-32 h-32 mx-auto mb-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl shadow-indigo-500/30 transform transition-transform hover:scale-110">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-16 h-16">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
-                </svg>
-            </div>
-            
-            <div class="mb-10 inline-block w-full">
-                    <h1 class="text-5xl md:text-6xl font-extrabold text-white animate-gradient-text tracking-tight">Welcome Back</h1>
-            </div>
+      <!-- Center Clock Pill -->
+      <div class="navbar-clock-pill">
+        <span id="clockTimeDisplay" class="navbar-clock-time">00:00:00</span>
+        <span id="clockDateDisplay" class="navbar-clock-date">---</span>
+      </div>
 
-            <p class="text-gray-300 mb-12 text-2xl font-light">Personal Dashboard Fluid UI</p>
-            
-            <button id="loginWithGoogleBtn" class="glass-button w-full py-6 px-8 rounded-2xl flex items-center justify-center gap-4 text-xl transition-all hover:scale-105 active:scale-95 shadow-xl cursor-pointer relative z-50">
-                <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
-                </svg>
-                <span class="font-bold tracking-wide">Login dengan Google</span>
-            </button>
-            <p id="loginError" class="text-red-400 text-sm mt-6 hidden bg-red-500/10 p-3 rounded-xl border border-red-500/20"></p>
-        </div>
-    </div>
+      <!-- Right Controls -->
+      <div class="navbar-right-controls">
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" class="theme-toggle-btn" title="Ganti Tema" aria-label="Ganti Tema">
+          <i class="fa-solid fa-sun icon-sun"></i>
+          <i class="fa-solid fa-moon icon-moon"></i>
+        </button>
 
-    <!-- Main Application -->
-    <div id="mainApp" class="hidden h-full">
-        <!-- Fluid Background only for Dashboard -->
-        <div class="fluid-background">
-            <div class="orb orb-1"></div>
-            <div class="orb orb-2"></div>
-            <div class="orb orb-3"></div>
+        <!-- User Profile Pill -->
+        <div class="user-profile-pill">
+          <img id="userAvatar" src="" alt="Avatar" class="user-avatar-img">
+          <span id="userName" class="user-name-text">User</span>
         </div>
 
-        <div class="flex h-full w-full">
-            <!-- Sidebar Navigation -->
-            <nav class="w-20 md:w-72 glass-panel border-r-0 flex flex-col z-20">
-                <div class="p-6 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18h18V3H3.75zM9 9h6m-6 4h6m-6 4h6" />
-                        </svg>
-                    </div>
-                    <span class="hidden md:block text-xl font-bold tracking-wide text-white">Dash<span class="text-indigo-400">Board</span></span>
+        <!-- Logout Button -->
+        <button id="logoutBtn" class="btn-signout" title="Sign Out">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span style="display: inline-block;">Keluar</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- App Body: Sidebar Dock + Viewport -->
+    <div class="app-body-wrapper">
+
+      <!-- Sidebar Dock -->
+      <aside class="sidebar-dock">
+        <div class="sidebar-label">Workspace</div>
+        <button class="sidebar-tab-btn active" data-tab="dashboard">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Overview</span>
+        </button>
+        <button class="sidebar-tab-btn" data-tab="wishlist">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span>Wishlist</span>
+        </button>
+        <button class="sidebar-tab-btn" data-tab="gemini">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>AI Assistant</span>
+        </button>
+
+        <div class="sidebar-footer">
+          <a href="https://gemini.google.com" target="_blank" class="btn-external-link">
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Gemini Web</span>
+            </span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content Viewport -->
+      <main class="main-viewport">
+        <div class="content-container">
+
+          <!-- ================= TAB 1: OVERVIEW ================= -->
+          <div id="dashboard" class="tab-content-panel animate-fade-in" style="display: flex; flex-direction: column; gap: 36px;">
+
+            <!-- TradingView Section -->
+            <section class="tradingview-outer-wrapper">
+              <div class="tradingview-chart-box">
+                <div id="tradingview_chart" style="height: 100%; width: 100%;"></div>
+              </div>
+              <div class="tradingview-ticker-box">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                    {
+                      "symbols": [
+                        { "proName": "IDX:COMPOSITE", "title": "IHSG" },
+                        { "proName": "IDX:BBCA", "title": "BBCA" },
+                        { "proName": "IDX:BBRI", "title": "BBRI" },
+                        { "proName": "IDX:TLKM", "title": "TLKM" },
+                        { "proName": "IDX:ASII", "title": "ASII" }
+                      ],
+                      "showSymbolLogo": true,
+                      "colorTheme": "dark",
+                      "isTransparent": true,
+                      "displayMode": "adaptive",
+                      "locale": "id"
+                    }
+                  </script>
+                </div>
+              </div>
+            </section>
+
+            <!-- Agenda Hari Ini -->
+            <section>
+              <div class="section-header-row">
+                <div class="section-title">
+                  <div class="section-title-badge" style="background: var(--accent-gold);"></div>
+                  Agenda Hari Ini
+                </div>
+              </div>
+              <div id="upcomingAgendaList" class="agenda-list">
+                <div class="agenda-empty-card">
+                  <i class="fa-solid fa-mug-hot" style="margin-right: 6px; color: var(--apple-blue);"></i>
+                  Tidak ada agenda untuk hari ini. Waktunya santai atau fokus berkarya!
+                </div>
+              </div>
+            </section>
+
+            <!-- Manajemen Tugas (To-Do) -->
+            <section>
+              <div class="section-header-row">
+                <div class="section-title">
+                  <div class="section-title-badge" style="background: var(--apple-blue);"></div>
+                  Manajemen Tugas
+                </div>
+                <button id="showTaskModalBtn" class="btn-pill-primary">
+                  <i class="fa-solid fa-plus"></i>
+                  <span>Tugas Baru</span>
+                </button>
+              </div>
+
+              <!-- Stats & Chart Grid -->
+              <div class="stats-and-chart-grid">
+                <!-- Stats Filter Chips -->
+                <div class="stats-filter-chips">
+                  <div class="stat-chip-card active-filter" data-filter="all">
+                    <div class="stat-chip-label">Total</div>
+                    <div id="totalTasksCount" class="stat-chip-value">0</div>
+                  </div>
+                  <div class="stat-chip-card pending" data-filter="pending">
+                    <div class="stat-chip-label">Pending</div>
+                    <div id="pendingTasksCount" class="stat-chip-value">0</div>
+                  </div>
+                  <div class="stat-chip-card progress" data-filter="in-progress">
+                    <div class="stat-chip-label">Proses</div>
+                    <div id="inProgressTasksCount" class="stat-chip-value">0</div>
+                  </div>
+                  <div class="stat-chip-card urgent" data-filter="deadline">
+                    <div class="stat-chip-label">Urgent</div>
+                    <div id="deadlineTasksCount" class="stat-chip-value">0</div>
+                  </div>
+                  <div class="stat-chip-card completed full-span" data-filter="completed">
+                    <div class="stat-chip-label">Selesai</div>
+                    <div id="completedTasksCount" class="stat-chip-value">0</div>
+                  </div>
                 </div>
 
-                <div class="px-4 py-2">
-                    <p class="hidden md:block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-2">Menu</p>
-                    <ul class="space-y-1">
-                        <li>
-                            <button data-tab="dashboard" class="sidebar-link active w-full flex items-center p-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v3.75m0-3.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                <span class="hidden md:block ml-3 font-medium">Overview</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button data-tab="wishlist" class="sidebar-link w-full flex items-center p-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.772M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
-                                <span class="hidden md:block ml-3 font-medium">Wishlist</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button data-tab="gemini" class="sidebar-link w-full flex items-center p-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.457-2.457L14.25 6l1.036-.259a3.375 3.375 0 002.457-2.457L18 2.25l.259 1.035a3.375 3.375 0 002.457 2.457L21.75 6l-1.036.259a3.375 3.375 0 00-2.457 2.457z" />
-                                </svg>
-                                <span class="hidden md:block ml-3 font-medium">AI Assistant</span>
-                            </button>
-                        </li>
-                    </ul>
+                <!-- Doughnut Chart Preview -->
+                <div class="chart-preview-card">
+                  <div class="chart-wrapper-inner">
+                    <canvas id="taskStatusChart"></canvas>
+                  </div>
                 </div>
+              </div>
 
-                <div class="mt-auto p-4 border-t border-white/10">
-                    <a href="https://gemini.google.com" target="_blank" class="glass-button-secondary w-full flex items-center justify-center md:justify-start p-3 rounded-xl mb-4 text-sm transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                        </svg>
-                        <span class="hidden md:block ml-2">Open Gemini Web</span>
-                    </a>
-                    
-                    <div class="flex items-center gap-3 p-2 rounded-xl bg-white/5">
-                        <img id="userAvatar" src="" class="w-10 h-10 rounded-full border-2 border-indigo-500/50">
-                        <div class="hidden md:block overflow-hidden">
-                            <p id="userName" class="text-sm font-bold text-white truncate">User</p>
-                            <p class="text-xs text-gray-400">Online</p>
-                        </div>
-                    </div>
-                    <button id="logoutBtn" class="mt-2 w-full flex items-center justify-center p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors text-xs uppercase font-bold tracking-wide">
-                        <span class="hidden md:block">Sign Out</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 md:hidden"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg>
+              <!-- Tasks List -->
+              <div id="taskListContainer" class="task-items-container">
+                <div class="agenda-empty-card">Belum ada tugas di sini.</div>
+              </div>
+            </section>
+
+            <!-- Kalender Section -->
+            <section>
+              <div class="section-header-row">
+                <div class="section-title">
+                  <div class="section-title-badge" style="background: var(--accent-purple);"></div>
+                  Kalender
+                </div>
+                <div class="calendar-nav-bar">
+                  <button id="prevMonthBtn" class="btn-icon-action" title="Bulan Sebelumnya">
+                    <i class="fa-solid fa-chevron-left"></i>
+                  </button>
+                  <div id="calendarMonthDisplay" class="calendar-month-label">---</div>
+                  <button id="nextMonthBtn" class="btn-icon-action" title="Bulan Berikutnya">
+                    <i class="fa-solid fa-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="apple-card calendar-outer-card">
+                <div class="calendar-day-headers-row">
+                  <div class="calendar-day-header-cell">Min</div>
+                  <div class="calendar-day-header-cell">Sen</div>
+                  <div class="calendar-day-header-cell">Sel</div>
+                  <div class="calendar-day-header-cell">Rab</div>
+                  <div class="calendar-day-header-cell">Kam</div>
+                  <div class="calendar-day-header-cell">Jum</div>
+                  <div class="calendar-day-header-cell">Sab</div>
+                </div>
+                <div id="calendarDaysGrid" class="calendar-days-grid"></div>
+              </div>
+
+              <!-- Calendar Detail Panel -->
+              <div id="calendarDetailPanel" class="calendar-detail-panel hidden">
+                <div class="calendar-detail-header">
+                  <h4 class="calendar-detail-title">Detail: <span id="calendarDetailDateTitle"></span></h4>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <button id="detailAddTaskBtn" class="btn-pill-secondary" style="padding: 5px 12px; font-size: 0.78rem;">
+                      <i class="fa-solid fa-plus"></i> Task
                     </button>
+                    <button id="detailAddEventBtn" class="btn-pill-secondary" style="padding: 5px 12px; font-size: 0.78rem;">
+                      <i class="fa-solid fa-plus"></i> Event
+                    </button>
+                    <button id="closeDetailViewBtn" class="btn-icon-action" title="Tutup Detail">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
                 </div>
-            </nav>
-
-            <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto relative">
-                <div class="p-6 md:p-10 max-w-7xl mx-auto space-y-8">
-                    
-                    <!-- Header Area -->
-                    <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
-                        <div>
-                            <!-- Glass Surface for Dashboard Title -->
-                            <div class="glass-surface mb-2 magic-hover">
-                                <h2 class="text-5xl font-extrabold text-white animate-gradient-text mb-1">Dashboard</h2>
-                            </div>
-                            <p class="text-lg text-gray-300">Selamat datang kembali di workspace Anda.</p>
-                        </div>
-                        <div class="text-right">
-                            <!-- CLOCK WITH GLASS SURFACE (SIMPLE TEXT) -->
-                            <div class="glass-surface p-4 mb-1 inline-block magic-hover">
-                                <div id="clockContainer" class="text-4xl font-bold font-mono text-white tracking-wider">
-                                    00:00:00
-                                </div>
-                            </div>
-                            <div id="dateEl" class="text-sm text-gray-400 uppercase tracking-widest font-medium mt-1">---</div>
-                        </div>
-                    </div>
-
-                    <!-- DASHBOARD TAB -->
-                    <div id="dashboard" class="tab-content space-y-10 animate-fade-in">
-                        
-                        <!-- Market Section (TradingView) -->
-                        <section>
-                            <div class="glass-card p-0 overflow-hidden h-[400px] relative group magic-hover">
-                                <div class="absolute inset-0 bg-gradient-to-t from-[#111928] to-transparent z-10 pointer-events-none"></div>
-                                <div class="tradingview-widget-container h-full w-full">
-                                    <div id="tradingview_chart" class="h-full w-full"></div>
-                                </div>
-                            </div>
-                            <!-- Ticker Tape Below -->
-                            <div class="mt-4 glass-card p-0 overflow-hidden magic-hover">
-                                <div class="tradingview-widget-container">
-                                    <div class="tradingview-widget-container__widget"></div>
-                                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-                                    { "symbols": [{ "proName": "IDX:COMPOSITE", "title": "IHSG" }, { "proName": "IDX:BBCA", "title": "BBCA" }, { "proName": "IDX:BBRI", "title": "BBRI" }, { "proName": "IDX:TLKM", "title": "TLKM" }, { "proName": "IDX:ASII", "title": "ASII" }], "showSymbolLogo": true, "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "id" }
-                                    </script>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- Upcoming Events & Tasks Section (WIDER LIST) -->
-                        <section>
-                            <div class="flex justify-between items-center mb-6">
-                                <div class="glass-surface magic-hover">
-                                    <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
-                                        <span class="w-2 h-8 bg-indigo-500 rounded-full block shadow-lg shadow-indigo-500/50"></span>
-                                        Agenda Hari Ini
-                                    </h3>
-                                </div>
-                            </div>
-                            <div id="upcomingEventsList" class="flex flex-col gap-3">
-                                <!-- Items will be injected here -->
-                                <div id="noUpcomingEvents" class="glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700 magic-hover w-full">
-                                    Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- To-Do List Section -->
-                        <section>
-                            <div class="flex justify-between items-center mb-6">
-                                <div class="glass-surface magic-hover">
-                                    <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
-                                        <span class="w-2 h-8 bg-cyan-500 rounded-full block shadow-lg shadow-cyan-500/50"></span>
-                                        Manajemen Tugas
-                                    </h3>
-                                </div>
-                                <button id="showTaskModal" class="glass-button py-2 px-4 rounded-lg flex items-center gap-2 text-sm magic-hover">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
-                                    Tugas Baru
-                                </button>
-                            </div>
-
-                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                <!-- Stats Cards -->
-                                <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                    <div id="filterAll" class="glass-card cursor-pointer hover:bg-white/5 group text-center magic-hover">
-                                        <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Total</p>
-                                        <p id="totalTasks" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
-                                    </div>
-                                    <div id="filterPending" class="glass-card cursor-pointer hover:bg-yellow-500/10 group text-center border-l-4 border-yellow-500 magic-hover">
-                                        <p class="text-xs text-yellow-500 uppercase font-bold tracking-wider">Pending</p>
-                                        <p id="pendingTasks" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
-                                    </div>
-                                    <div id="filterInProgress" class="glass-card cursor-pointer hover:bg-blue-500/10 group text-center border-l-4 border-blue-500 magic-hover">
-                                        <p class="text-xs text-blue-400 uppercase font-bold tracking-wider">Proses</p>
-                                        <p id="inProgressTasks" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
-                                    </div>
-                                    <div id="filterDeadline" class="glass-card cursor-pointer hover:bg-red-500/10 group text-center border-l-4 border-red-500 magic-hover">
-                                        <p class="text-xs text-red-400 uppercase font-bold tracking-wider">Urgent</p>
-                                        <p id="deadlineWarning" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
-                                    </div>
-                                     <div id="filterCompleted" class="glass-card cursor-pointer hover:bg-green-500/10 group text-center border-l-4 border-green-500 col-span-2 sm:col-span-4 magic-hover">
-                                        <p class="text-xs text-green-400 uppercase font-bold tracking-wider">Selesai</p>
-                                        <p id="completedTasks" class="text-3xl font-bold text-white mt-1 group-hover:scale-110 transition-transform">0</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- Chart with Parallax Effect -->
-                                <div class="glass-card flex items-center justify-center relative h-48 magic-hover parallax-container" id="chartContainer3D">
-                                    <div class="parallax-card flex items-center justify-center">
-                                         <div class="parallax-bg-glow"></div>
-                                         <div class="parallax-content w-full h-full flex items-center justify-center">
-                                             <canvas id="taskStatusChart"></canvas>
-                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Task Items -->
-                            <div id="taskList" class="space-y-3 mt-6">
-                                <div id="noTasks" class="text-center py-10 glass-card">
-                                    <p class="text-gray-400">Belum ada tugas di sini.</p>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- Calendar Section -->
-                        <section>
-                            <div class="flex justify-between items-center mb-6">
-                                <div class="glass-surface magic-hover">
-                                    <h3 class="text-3xl font-bold text-white flex items-center gap-3 animate-gradient-text">
-                                        <span class="w-2 h-8 bg-pink-500 rounded-full block shadow-lg shadow-pink-500/50"></span>
-                                        Kalender
-                                    </h3>
-                                </div>
-                                <div class="flex items-center gap-2 bg-white/5 rounded-lg p-1 magic-hover">
-                                    <button id="prevMonth" class="p-2 hover:bg-white/10 rounded-md text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-                                    <span id="currentMonthYear" class="w-32 text-center font-bold text-white"></span>
-                                    <button id="nextMonth" class="p-2 hover:bg-white/10 rounded-md text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
-                                </div>
-                            </div>
-                            
-                            <div class="glass-card p-0 overflow-hidden magic-hover">
-                                <div class="grid grid-cols-7 bg-white/5 border-b border-white/10">
-                                    <div class="calendar-day-header">Min</div>
-                                    <div class="calendar-day-header">Sen</div>
-                                    <div class="calendar-day-header">Sel</div>
-                                    <div class="calendar-day-header">Rab</div>
-                                    <div class="calendar-day-header">Kam</div>
-                                    <div class="calendar-day-header">Jum</div>
-                                    <div class="calendar-day-header">Sab</div>
-                                </div>
-                                <div id="calendarGrid"></div>
-                            </div>
-                            
-                            <!-- Calendar Detail -->
-                            <div id="calendarDetailSection" class="mt-4 hidden glass-card border-l-4 border-purple-500 magic-hover">
-                                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
-                                    <h4 class="text-lg font-bold text-white">Detail: <span id="detailDateTitle" class="text-purple-400"></span></h4>
-                                    <div class="flex gap-2">
-                                        <button id="detailAddTaskBtn" class="glass-button-secondary py-1 px-3 rounded text-xs flex items-center gap-1">+ Task</button>
-                                        <button id="detailAddEventBtn" class="glass-button-secondary py-1 px-3 rounded text-xs flex items-center gap-1">+ Event</button>
-                                        <button id="closeDetailView" class="text-gray-400 hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-                                    </div>
-                                </div>
-                                <div class="grid md:grid-cols-2 gap-4">
-                                    <div>
-                                        <h5 class="text-sm font-bold text-gray-400 mb-2 uppercase">Tasks</h5>
-                                        <div id="detailTaskList" class="space-y-2"></div>
-                                    </div>
-                                    <div>
-                                        <h5 class="text-sm font-bold text-gray-400 mb-2 uppercase">Events</h5>
-                                        <div id="detailEventList" class="space-y-2"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                    </div>
-
-                    <!-- WISHLIST TAB -->
-                    <div id="wishlist" class="tab-content hidden space-y-8 animate-fade-in">
-                        <div class="flex justify-between items-center glass-card bg-gradient-to-r from-indigo-900/50 to-purple-900/50 magic-hover">
-                            <div>
-                                <!-- Glass Surface for Wishlist Title -->
-                                <div class="glass-surface mb-1">
-                                    <h2 class="text-4xl font-bold text-white animate-gradient-text">Wishlist</h2>
-                                </div>
-                                <p class="text-gray-300 text-sm mt-1">Total Estimasi: <span id="wishlistTotal" class="font-mono text-lg font-bold text-green-400">Rp 0</span></p>
-                            </div>
-                            <button id="showWishlistModal" class="glass-button py-2 px-6 rounded-lg flex items-center gap-2 shadow-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
-                                Item Baru
-                            </button>
-                        </div>
-                        <div id="wishlistGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <!-- Items injected here -->
-                            <div id="noWishlistItems" class="col-span-full text-center py-20">
-                                <p class="text-gray-500 text-lg">Wishlist masih kosong.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- GEMINI TAB -->
-                    <div id="gemini" class="tab-content hidden flex flex-col h-[calc(100vh-8rem)]">
-                        <div class="glass-card flex-1 flex flex-col p-0 overflow-hidden magic-hover">
-                            <div class="p-4 border-b border-white/10 bg-white/5 flex justify-between items-center">
-                                <!-- Glass Surface for Gemini Title -->
-                                <div class="glass-surface">
-                                    <h2 class="text-3xl font-bold text-white flex items-center gap-2 animate-gradient-text">
-                                        <span class="text-3xl">✨</span> Gemini AI
-                                    </h2>
-                                </div>
-                                <span class="text-xs text-gray-400 bg-white/5 px-2 py-1 rounded">Model: Flash 2.5</span>
-                            </div>
-                            
-                            <div id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
-                                <div class="chat-bubble model">
-                                    Halo! Saya asisten AI pribadi Anda. Ada yang bisa saya bantu terkait tugas, jadwal, atau ide belanja hari ini?
-                                </div>
-                            </div>
-
-                            <div id="geminiLoading" class="hidden px-4 py-2">
-                                <div class="flex items-center gap-2 text-indigo-400 text-sm animate-pulse">
-                                    <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
-                                    <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                                    <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                                    Sedang berpikir...
-                                </div>
-                            </div>
-
-                            <div class="p-4 bg-white/5 border-t border-white/10">
-                                <form id="geminiForm" class="flex gap-2">
-                                    <input type="text" id="geminiInput" placeholder="Tanya sesuatu..." class="glass-input w-full rounded-xl px-4 py-3 text-white" autocomplete="off">
-                                    <button type="submit" class="glass-button px-4 rounded-xl hover:scale-105">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
+                <div class="calendar-detail-grid">
+                  <div>
+                    <div class="detail-column-title">Tugas</div>
+                    <div id="detailTasksList"></div>
+                  </div>
+                  <div>
+                    <div class="detail-column-title">Event</div>
+                    <div id="detailEventsList"></div>
+                  </div>
                 </div>
-            </main>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- ================= TAB 2: WISHLIST ================= -->
+          <div id="wishlist" class="tab-content-panel hidden animate-fade-in" style="display: flex; flex-direction: column; gap: 28px;">
+            <div class="wishlist-summary-hero">
+              <div class="wishlist-total-box">
+                <div class="wishlist-total-label">Total Estimasi Belanja</div>
+                <div id="wishlistTotalAmount" class="wishlist-total-amount">Rp 0</div>
+              </div>
+              <button id="showWishlistModalBtn" class="btn-pill-primary">
+                <i class="fa-solid fa-plus"></i>
+                <span>Item Baru</span>
+              </button>
+            </div>
+
+            <div id="wishlistItemsGrid" class="wishlist-items-grid">
+              <div class="agenda-empty-card" style="grid-column: 1 / -1;">Wishlist kosong.</div>
+            </div>
+          </div>
+
+          <!-- ================= TAB 3: GEMINI AI ASSISTANT ================= -->
+          <div id="gemini" class="tab-content-panel hidden animate-fade-in">
+            <div class="gemini-chat-container">
+              <div class="gemini-chat-header">
+                <div class="gemini-header-title">
+                  <i class="fa-solid fa-wand-magic-sparkles gemini-sparkle-icon"></i>
+                  <span>Gemini AI Assistant</span>
+                </div>
+                <div class="gemini-model-badge">Model: Flash 2.5</div>
+              </div>
+
+              <div id="geminiChatScroll" class="gemini-messages-scroll">
+                <div class="chat-bubble model">
+                  Halo! Saya asisten AI pribadi Anda. Ada yang bisa saya bantu terkait tugas, jadwal, atau analisis hari ini?
+                </div>
+              </div>
+
+              <div id="geminiLoadingIndicator" class="gemini-loading-indicator hidden">
+                <div class="gemini-typing-dots">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <span>Gemini sedang berpikir...</span>
+              </div>
+
+              <div class="gemini-input-bar-wrap">
+                <form id="geminiPromptForm" class="gemini-input-form">
+                  <input type="text" id="geminiPromptInput" class="gemini-text-input" placeholder="Ketik pesan atau tanyakan apapun..." autocomplete="off">
+                  <button type="submit" class="btn-gemini-send" title="Kirim">
+                    <i class="fa-solid fa-paper-plane"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
         </div>
+      </main>
     </div>
+  </div>
 
-    <!-- MODALS -->
-    <dialog id="taskModal" class="modal-content rounded-2xl w-full max-w-md text-white">
-        <form id="taskForm" class="p-6 space-y-4" data-task-id="">
-            <h3 id="taskModalTitle" class="text-2xl font-bold mb-4">Tugas Baru</h3>
-            <div id="taskError" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm"></div>
-            <div class="space-y-1">
-                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Tugas</label>
-                <input type="text" id="taskName" name="taskName" class="glass-input w-full rounded-lg px-3 py-2">
+  <!-- ================= DIALOG MODALS ================= -->
+
+  <!-- Task Modal -->
+  <dialog id="taskModal">
+    <div class="apple-modal-card">
+      <form id="taskForm" data-task-id="">
+        <div class="modal-header-row">
+          <h3 id="taskModalTitle" class="modal-title-text">Tugas Baru</h3>
+        </div>
+
+        <div class="form-group-wrap">
+          <div class="form-field-item">
+            <label class="form-field-label">Nama Tugas</label>
+            <input type="text" id="taskName" name="taskName" class="apple-text-input" required placeholder="Contoh: Menyelesaikan laporan bulanan">
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-field-item">
+              <label class="form-field-label">Tenggat Waktu</label>
+              <input type="date" id="taskDeadline" name="taskDeadline" class="apple-text-input">
             </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-1">
-                    <label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label>
-                    <input type="date" id="taskDeadline" name="taskDeadline" class="glass-input w-full rounded-lg px-3 py-2">
-                </div>
-                <div class="space-y-1">
-                    <label class="text-xs text-gray-400 uppercase font-bold ml-1">Jam</label>
-                    <input type="time" id="taskTime" name="taskTime" class="glass-input w-full rounded-lg px-3 py-2">
-                </div>
+            <div class="form-field-item">
+              <label class="form-field-label">Jam</label>
+              <input type="time" id="taskTime" name="taskTime" class="apple-text-input">
             </div>
-            <div class="space-y-1">
-                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Status</label>
-                <select id="taskStatus" name="taskStatus" class="glass-input w-full rounded-lg px-3 py-2">
-                    <option value="pending" class="bg-gray-900">Pending</option>
-                    <option value="in-progress" class="bg-gray-900">In Progress</option>
-                    <option value="completed" class="bg-gray-900">Completed</option>
-                </select>
+          </div>
+
+          <div class="form-field-item">
+            <label class="form-field-label">Status</label>
+            <select id="taskStatus" name="taskStatus" class="apple-select-input">
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+
+          <div class="form-field-item">
+            <label class="form-field-label">Catatan</label>
+            <textarea id="taskNotes" name="taskNotes" rows="3" class="apple-textarea-input" placeholder="Detail atau instruksi tugas..."></textarea>
+          </div>
+
+          <div class="form-field-item">
+            <label class="form-field-label">Link Google Drive</label>
+            <input type="url" id="taskDriveLink" name="taskDriveLink" class="apple-text-input" placeholder="https://drive.google.com/...">
+          </div>
+        </div>
+
+        <div class="modal-footer-row">
+          <button type="button" id="deleteTaskBtn" class="btn-modal-delete hidden">Hapus Tugas</button>
+          <div class="modal-footer-actions">
+            <button type="button" id="closeTaskModalBtn" class="btn-pill-secondary">Batal</button>
+            <button type="submit" class="btn-pill-primary">Simpan</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Event Modal -->
+  <dialog id="eventModal">
+    <div class="apple-modal-card">
+      <form id="eventForm" data-event-id="">
+        <div class="modal-header-row">
+          <h3 id="eventModalTitle" class="modal-title-text" style="color: var(--accent-purple);">Event Baru</h3>
+        </div>
+
+        <div class="form-group-wrap">
+          <div class="form-field-item">
+            <label class="form-field-label">Nama Event</label>
+            <input type="text" id="eventName" name="eventName" class="apple-text-input" required placeholder="Contoh: Meeting Proyek Mingguan">
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-field-item">
+              <label class="form-field-label">Tanggal</label>
+              <input type="date" id="eventDate" name="eventDate" class="apple-text-input" required>
             </div>
-            <div class="space-y-1">
-                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Catatan</label>
-                <textarea id="taskNotes" name="taskNotes" rows="3" class="glass-input w-full rounded-lg px-3 py-2"></textarea>
+            <div class="form-field-item">
+              <label class="form-field-label">Jam</label>
+              <input type="time" id="eventTime" name="eventTime" class="apple-text-input" required>
             </div>
-            <div class="space-y-1">
-                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Link Drive</label>
-                <input type="url" id="taskDriveLink" name="taskDriveLink" placeholder="https://" class="glass-input w-full rounded-lg px-3 py-2">
-            </div>
-            <div class="flex justify-between pt-4 border-t border-white/10 mt-4">
-                <button type="button" id="deleteTaskBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button>
-                <div class="flex gap-3 ml-auto">
-                    <button type="button" id="closeTaskModal" class="text-gray-400 hover:text-white font-medium text-sm px-4 py-2">Batal</button>
-                    <button type="submit" class="glass-button px-6 py-2 rounded-lg text-sm">Simpan</button>
-                </div>
-            </div>
-        </form>
-    </dialog>
-
-    <!-- Event Modal -->
-    <dialog id="eventModal" class="modal-content rounded-2xl w-full max-w-md text-white">
-        <form id="eventForm" class="p-6 space-y-4" data-event-id="">
-            <h3 id="eventModalTitle" class="text-2xl font-bold mb-4 text-purple-400">Event Baru</h3>
-            <div id="eventError" class="hidden bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg text-sm"></div>
-            <div class="space-y-1">
-                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Event</label>
-                <input type="text" id="eventName" name="eventName" class="glass-input w-full rounded-lg px-3 py-2">
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-1">
-                    <label class="text-xs text-gray-400 uppercase font-bold ml-1">Tanggal</label>
-                    <input type="date" id="eventDate" name="eventDate" class="glass-input w-full rounded-lg px-3 py-2 bg-white/5">
-                </div>
-                <div class="space-y-1">
-                    <label class="text-xs text-gray-400 uppercase font-bold ml-1">Jam</label>
-                    <input type="time" id="eventTime" name="eventTime" class="glass-input w-full rounded-lg px-3 py-2">
-                </div>
-            </div>
-            <div class="space-y-1">
-                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Berulang</label>
-                <select id="eventRepeat" name="eventRepeat" class="glass-input w-full rounded-lg px-3 py-2">
-                    <option value="once" class="bg-gray-900">Sekali Saja</option>
-                    <option value="daily" class="bg-gray-900">Setiap Hari</option>
-                    <option value="weekly" class="bg-gray-900">Setiap Minggu</option>
-                </select>
-            </div>
-            <div class="flex justify-between pt-4 border-t border-white/10 mt-4">
-                <button type="button" id="deleteEventBtn" class="hidden text-red-400 hover:text-red-300 text-sm font-medium px-2">Hapus</button>
-                <div class="flex gap-3 ml-auto">
-                    <button type="button" id="closeEventModalBtn" class="text-gray-400 hover:text-white font-medium text-sm px-4 py-2">Batal</button>
-                    <button type="submit" class="glass-button px-6 py-2 rounded-lg text-sm bg-gradient-to-r from-purple-600 to-pink-600">Simpan</button>
-                </div>
-            </div>
-        </form>
-    </dialog>
-
-    <!-- Wishlist Modal -->
-    <dialog id="wishlistModal" class="modal-content rounded-2xl w-full max-w-md text-white">
-        <form id="wishlistForm" class="p-6 space-y-4">
-            <h3 class="text-2xl font-bold mb-4 text-green-400">Wishlist Item</h3>
-            <div class="space-y-1">
-                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Nama Produk</label>
-                <input type="text" id="productName" name="productName" class="glass-input w-full rounded-lg px-3 py-2">
-            </div>
-            <div class="space-y-1">
-                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Link Toko</label>
-                <input type="url" id="productLink" name="productLink" placeholder="https://" class="glass-input w-full rounded-lg px-3 py-2">
-            </div>
-            <div class="space-y-1">
-                <label class="text-xs text-gray-400 uppercase font-bold ml-1">Harga</label>
-                <input type="number" id="productPrice" name="productPrice" class="glass-input w-full rounded-lg px-3 py-2">
-            </div>
-            <div class="flex justify-end gap-3 pt-4 border-t border-white/10 mt-4">
-                <button type="button" id="closeWishlistModal" class="text-gray-400 hover:text-white font-medium text-sm px-4 py-2">Batal</button>
-                <button type="submit" class="glass-button px-6 py-2 rounded-lg text-sm bg-gradient-to-r from-green-600 to-emerald-600">Simpan</button>
-            </div>
-        </form>
-    </dialog>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-    <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, addDoc, deleteDoc, updateDoc, collection, onSnapshot, serverTimestamp, getDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        
-        // KONFIGURASI LOKAL
-        const firebaseConfig = {
-            apiKey: "AIzaSyCiIZRywKs7nF92z6_FWMzhOAaRe9SOOJE",
-            authDomain: "personal-to-do-list-5d959.firebaseapp.com",
-            projectId: "personal-to-do-list-5d959",
-            storageBucket: "personal-to-do-list-5d959.firebasestorage.app",
-            messagingSenderId: "713295970134",
-            appId: "1:713295970134:web:6650db1a681742dc30a0f7",
-            measurementId: "G-QG3GEXP3HC"
-        };
-        
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        let app, auth, db, userId;
-        let tasksCollection, wishlistCollection, eventsCollection;
-        let tasksUnsubscribe = null, wishlistUnsubscribe = null, eventsUnsubscribe = null;
-        let taskStatusChart = null;
-        let allTasks = [], allEvents = [];
-        let currentFilter = 'active';
-        let currentCalendarDate = new Date();
-        let prevTimeString = ""; 
-
-        const els = {
-            loading: document.getElementById('loadingOverlay'),
-            loginScreen: document.getElementById('loginScreen'),
-            mainApp: document.getElementById('mainApp'),
-            loginBtn: document.getElementById('loginWithGoogleBtn'),
-            loginError: document.getElementById('loginError'),
-            // loginContainer & loginCard no longer needed for JS if not doing 3D on them
-            // chartContainer3D for the 3D effect
-            chartContainer: document.getElementById('chartContainer3D'),
-            logoutBtn: document.getElementById('logoutBtn'),
-            authStatus: document.getElementById('authStatus'),
-            userAvatar: document.getElementById('userAvatar'),
-            userName: document.getElementById('userName'),
-            tabs: document.querySelectorAll('.nav-tab'),
-            tabContents: document.querySelectorAll('.tab-content'),
-            clockContainer: document.getElementById('clockContainer'),
-            date: document.getElementById('dateEl'),
-            
-            taskModal: document.getElementById('taskModal'),
-            showTaskBtn: document.getElementById('showTaskModal'),
-            closeTaskBtn: document.getElementById('closeTaskModal'),
-            taskForm: document.getElementById('taskForm'),
-            taskError: document.getElementById('taskError'),
-            taskList: document.getElementById('taskList'),
-            
-            wishlistModal: document.getElementById('wishlistModal'),
-            showWishlistBtn: document.getElementById('showWishlistModal'),
-            closeWishlistBtn: document.getElementById('closeWishlistModal'),
-            wishlistForm: document.getElementById('wishlistForm'),
-            wishlistGrid: document.getElementById('wishlistGrid'),
-            
-            upcomingList: document.getElementById('upcomingEventsList'),
-            calendarGrid: document.getElementById('calendarGrid'),
-            monthYear: document.getElementById('currentMonthYear'),
-            prevMonth: document.getElementById('prevMonth'),
-            nextMonth: document.getElementById('nextMonth'),
-            eventModal: document.getElementById('eventModal'),
-            eventForm: document.getElementById('eventForm'),
-            closeEventBtn: document.getElementById('closeEventModalBtn'),
-            deleteEventBtn: document.getElementById('deleteEventBtn'),
-            
-            detailSection: document.getElementById('calendarDetailSection'),
-            detailTitle: document.getElementById('detailDateTitle'),
-            detailTaskList: document.getElementById('detailTaskList'),
-            detailEventList: document.getElementById('detailEventList'),
-            closeDetailBtn: document.getElementById('closeDetailView'),
-            detailAddTaskBtn: document.getElementById('detailAddTaskBtn'),
-            detailAddEventBtn: document.getElementById('detailAddEventBtn'),
-
-            geminiForm: document.getElementById('geminiForm'),
-            geminiInput: document.getElementById('geminiInput'),
-            chatContainer: document.getElementById('chatContainer'),
-            geminiLoading: document.getElementById('geminiLoading'),
-
-            // Filters
-            filterAll: document.getElementById('filterAll'),
-            filterPending: document.getElementById('filterPending'),
-            filterInProgress: document.getElementById('filterInProgress'),
-            filterCompleted: document.getElementById('filterCompleted'),
-            filterDeadline: document.getElementById('filterDeadline'),
-            
-            // Sidebar buttons
-            sidebarDashboard: document.querySelector('[data-tab="dashboard"]'),
-            sidebarWishlist: document.querySelector('[data-tab="wishlist"]'),
-            sidebarGemini: document.querySelector('[data-tab="gemini"]')
-        };
-
-        // Magic Hover Logic
-        function initMagicHover() {
-            const cards = document.querySelectorAll('.magic-hover');
-            cards.forEach(card => {
-                card.onmousemove = e => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    card.style.setProperty('--mouse-x', `${x}px`);
-                    card.style.setProperty('--mouse-y', `${y}px`);
-                }
-            });
-        }
-        
-        // Chart 3D Logic
-        function initChart3D() {
-             const container = document.getElementById('chartContainer3D');
-             if(!container) return;
-             const card = container.querySelector('.parallax-card');
-             if(!card) return;
-
-             container.addEventListener('mousemove', (e) => {
-                const rect = container.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-
-                const rotateX = ((y - centerY) / centerY) * -10; 
-                const rotateY = ((x - centerX) / centerX) * 10;
-
-                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            });
-
-            container.addEventListener('mouseleave', () => {
-                card.style.transform = `rotateX(0deg) rotateY(0deg)`;
-            });
-        }
-
-        function initChart() {
-            new TradingView.widget({
-                "width": "100%", "height": "100%", "symbol": "IDX:COMPOSITE", "interval": "D",
-                "timezone": "Asia/Jakarta", "theme": "dark", "style": "1", "locale": "id",
-                "enable_publishing": false, "allow_symbol_change": true, "container_id": "tradingview_chart",
-                "backgroundColor": "rgba(17, 25, 40, 0)"
-            });
-        }
-        initChart();
-
-        async function init() {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            
-            // initLogin3D(); // REMOVED
-
-            els.loginBtn.addEventListener('click', async () => {
-                try {
-                    await signInWithPopup(auth, new GoogleAuthProvider());
-                } catch (e) {
-                    els.loginError.textContent = e.message;
-                    els.loginError.classList.remove('hidden');
-                }
-            });
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    userId = user.uid;
-                    els.loginScreen.classList.add('hidden');
-                    els.mainApp.classList.remove('hidden');
-                    els.loading.style.display = 'none';
-                    els.userAvatar.src = user.photoURL;
-                    els.userName.textContent = user.displayName;
-                    startApp();
-                } else {
-                    userId = null;
-                    els.loginScreen.classList.remove('hidden');
-                    els.mainApp.classList.add('hidden');
-                    els.loading.style.display = 'none';
-                }
-            });
-        }
-
-        // Helper for consistent date string
-        function getLocalTodayDate() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        function startApp() {
-            const path = `/artifacts/${appId}/users/${userId}`;
-            tasksCollection = collection(db, `${path}/tasks`);
-            wishlistCollection = collection(db, `${path}/wishlist`);
-            eventsCollection = collection(db, `${path}/events`);
-
-            els.logoutBtn.addEventListener('click', () => signOut(auth));
-            
-            const handleTabClick = (targetId) => {
-                 [els.sidebarDashboard, els.sidebarWishlist, els.sidebarGemini].forEach(el => el.classList.remove('active'));
-                 if(targetId === 'dashboard') els.sidebarDashboard.classList.add('active');
-                 if(targetId === 'wishlist') els.sidebarWishlist.classList.add('active');
-                 if(targetId === 'gemini') els.sidebarGemini.classList.add('active');
-                 els.tabContents.forEach(c => c.classList.toggle('hidden', c.id !== targetId));
-            };
-
-            els.sidebarDashboard.addEventListener('click', () => handleTabClick('dashboard'));
-            els.sidebarWishlist.addEventListener('click', () => handleTabClick('wishlist'));
-            els.sidebarGemini.addEventListener('click', () => handleTabClick('gemini'));
-
-            setupModal(els.taskModal, els.showTaskBtn, els.closeTaskBtn);
-            setupModal(els.wishlistModal, els.showWishlistBtn, els.closeWishlistBtn);
-            setupModal(els.eventModal, null, els.closeEventBtn); 
-
-            els.taskForm.addEventListener('submit', handleTaskSubmit);
-            els.wishlistForm.addEventListener('submit', handleWishlistSubmit);
-            els.eventForm.addEventListener('submit', handleEventSubmit);
-            els.geminiForm.addEventListener('submit', handleGeminiSubmit);
-
-            els.prevMonth.addEventListener('click', () => {
-                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
-                renderCalendar();
-            });
-            els.nextMonth.addEventListener('click', () => {
-                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
-                renderCalendar();
-            });
-
-            els.closeDetailBtn.addEventListener('click', () => els.detailSection.classList.add('hidden'));
-            els.detailAddTaskBtn.addEventListener('click', () => openTaskModal(null, els.detailTitle.dataset.date));
-            els.detailAddEventBtn.addEventListener('click', () => openEventModal(els.detailTitle.dataset.date));
-            
-            document.getElementById('deleteTaskBtn').addEventListener('click', handleDeleteTask);
-            els.deleteEventBtn.addEventListener('click', handleDeleteEvent);
-
-            setupFilterListeners();
-
-            tasksUnsubscribe = onSnapshot(query(tasksCollection), s => {
-                allTasks = s.docs.map(d => ({id: d.id, ...d.data()}));
-                renderTasks();
-                renderCalendar();
-                renderUpcoming();
-                updateStats();
-            });
-            
-            wishlistUnsubscribe = onSnapshot(query(wishlistCollection), s => {
-                renderWishlist(s.docs.map(d => ({id: d.id, ...d.data()})));
-            });
-
-            eventsUnsubscribe = onSnapshot(query(eventsCollection), s => {
-                allEvents = s.docs.map(d => ({id: d.id, ...d.data()}));
-                renderCalendar();
-                renderUpcoming();
-            });
-            
-            // Simple Clock Update (No complex animation logic needed)
-            const updateSimpleClock = () => {
-                const now = new Date();
-                const timeStr = now.toLocaleTimeString('id-ID', { hour12: false });
-                els.clockContainer.innerText = timeStr;
-                els.date.innerText = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            };
-            
-            setInterval(updateSimpleClock, 1000);
-            updateSimpleClock(); 
-
-            renderCalendar();
-            updateStats();
-            initMagicHover();
-            initChart3D(); 
-        }
-
-
-        function setupModal(modal, openBtn, closeBtn) {
-            if(openBtn) openBtn.addEventListener('click', () => {
-                if(modal.id === 'taskModal') openTaskModal();
-                else modal.showModal();
-            });
-            if(closeBtn) closeBtn.addEventListener('click', () => modal.close());
-            modal.addEventListener('click', e => { if(e.target === modal) modal.close(); });
-        }
-
-        function setupFilterListeners() {
-            const setFilter = (filter) => {
-                currentFilter = filter;
-                [els.filterAll, els.filterPending, els.filterInProgress, els.filterCompleted, els.filterDeadline].forEach(el => el.classList.remove('active-filter'));
-                if(filter === 'all') els.filterAll.classList.add('active-filter');
-                else if(filter === 'pending') els.filterPending.classList.add('active-filter');
-                else if(filter === 'in-progress') els.filterInProgress.classList.add('active-filter');
-                else if(filter === 'completed') els.filterCompleted.classList.add('active-filter');
-                else if(filter === 'deadline') els.filterDeadline.classList.add('active-filter');
-                renderTasks();
-            }
-            els.filterAll.addEventListener('click', () => setFilter('all'));
-            els.filterPending.addEventListener('click', () => setFilter('pending'));
-            els.filterInProgress.addEventListener('click', () => setFilter('in-progress'));
-            els.filterCompleted.addEventListener('click', () => setFilter('completed'));
-            els.filterDeadline.addEventListener('click', () => setFilter('deadline'));
-        }
-
-        // --- TASKS ---
-        async function handleTaskSubmit(e) {
-            e.preventDefault();
-            const fd = new FormData(e.target);
-            const id = e.target.dataset.taskId;
-            const data = {
-                name: fd.get('taskName'),
-                notes: fd.get('taskNotes'),
-                driveLink: fd.get('taskDriveLink'),
-                status: fd.get('taskStatus'),
-                deadline: fd.get('taskDeadline') || null,
-                time: fd.get('taskTime') || '00:00',
-                createdAt: serverTimestamp()
-            };
-
-            if(id) {
-                await updateDoc(doc(tasksCollection, id), data);
-            } else {
-                await addDoc(tasksCollection, data);
-            }
-            els.taskModal.close();
-        }
-
-        function openTaskModal(id = null, date = null) {
-            els.taskForm.reset();
-            els.taskForm.dataset.taskId = id || '';
-            document.getElementById('deleteTaskBtn').classList.add('hidden');
-            
-            if(date) document.getElementById('taskDeadline').value = date;
-
-            if(id) {
-                const task = allTasks.find(t => t.id === id);
-                if(task) {
-                    document.getElementById('taskName').value = task.name;
-                    document.getElementById('taskNotes').value = task.notes || '';
-                    document.getElementById('taskDriveLink').value = task.driveLink || '';
-                    document.getElementById('taskStatus').value = task.status;
-                    document.getElementById('taskDeadline').value = task.deadline || '';
-                    document.getElementById('taskTime').value = task.time || '';
-                    document.getElementById('deleteTaskBtn').classList.remove('hidden');
-                }
-            }
-            els.taskModal.showModal();
-        }
-
-        async function handleDeleteTask() {
-            const id = els.taskForm.dataset.taskId;
-            if(confirm("Hapus tugas?")) { await deleteDoc(doc(tasksCollection, id)); els.taskModal.close(); }
-        }
-
-        function renderTasks() {
-            els.taskList.innerHTML = '';
-            const now = new Date().getTime();
-            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-
-            const filtered = allTasks.filter(t => {
-                if (currentFilter === 'all') return true;
-                if (currentFilter === 'active') return t.status === 'pending' || t.status === 'in-progress';
-                if (currentFilter === 'deadline') {
-                   if (t.deadline && t.status !== 'completed') {
-                       const d = new Date(t.deadline + 'T00:00:00').getTime();
-                       return d <= (now + twoDaysInMs);
-                   }
-                   return false;
-                }
-                return t.status === currentFilter;
-            }).sort((a,b) => (a.deadline || '9999') > (b.deadline || '9999') ? 1 : -1);
-
-            if(filtered.length === 0) {
-                let msg = "Tidak ada tugas aktif.";
-                if (currentFilter === 'all') msg = "Belum ada tugas.";
-                else if (currentFilter === 'completed') msg = "Belum ada tugas selesai.";
-                els.taskList.innerHTML = `<div class="text-center py-8 text-gray-500 glass-card">${msg}</div>`;
-                return;
-            }
-
-            filtered.forEach(t => {
-                const div = document.createElement('div');
-                div.className = `glass-card p-4 flex flex-col gap-2 border-l-4 magic-hover ${t.status === 'completed' ? 'border-green-500 bg-green-500/5' : t.status === 'in-progress' ? 'border-blue-500' : 'border-yellow-500'}`;
-                div.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div class="flex-1 mr-4">
-                            <h4 class="font-bold text-lg ${t.status === 'completed' ? 'line-through text-gray-500' : 'text-white'}">${t.name}</h4>
-                            <p class="text-xs text-gray-400 flex items-center gap-1 mt-1">
-                                📅 ${t.deadline || 'No Date'} ⏰ ${t.time || '--:--'}
-                            </p>
-                        </div>
-                        <div class="flex gap-2 items-center">
-                            <select class="glass-input text-xs py-1 px-2 rounded border-none" onchange="document.dispatchEvent(new CustomEvent('change-status', {detail: {id: '${t.id}', val: this.value}}))">
-                                <option value="pending" ${t.status === 'pending' ? 'selected' : ''}>Pending</option>
-                                <option value="in-progress" ${t.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
-                                <option value="completed" ${t.status === 'completed' ? 'selected' : ''}>Completed</option>
-                            </select>
-                            <button class="text-xs bg-white/10 hover:bg-white/20 px-2 py-1 rounded text-gray-300" onclick="document.dispatchEvent(new CustomEvent('edit-task', {detail: '${t.id}'}))"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
-                            <button class="text-xs bg-red-500/20 text-red-400 hover:bg-red-500/40 px-2 py-1 rounded" onclick="document.dispatchEvent(new CustomEvent('delete-quick', {detail: '${t.id}'}))"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
-                        </div>
-                    </div>
-                    ${t.notes ? `<p class="text-sm text-gray-400 bg-black/20 p-2 rounded mt-1">${t.notes}</p>` : ''}
-                `;
-                els.taskList.appendChild(div);
-            });
-            initMagicHover();
-        }
-
-        document.addEventListener('edit-task', e => openTaskModal(e.detail));
-        document.addEventListener('change-status', e => updateDoc(doc(tasksCollection, e.detail.id), {status: e.detail.val}));
-        document.addEventListener('delete-quick', async e => { if(confirm("Hapus?")) await deleteDoc(doc(tasksCollection, e.detail)); });
-
-        function updateStats() {
-            const total = allTasks.length;
-            const pending = allTasks.filter(t => t.status === 'pending').length;
-            const progress = allTasks.filter(t => t.status === 'in-progress').length;
-            const completed = allTasks.filter(t => t.status === 'completed').length;
-            document.getElementById('totalTasks').innerText = total;
-            document.getElementById('pendingTasks').innerText = pending;
-            document.getElementById('inProgressTasks').innerText = progress;
-            document.getElementById('completedTasks').innerText = completed;
-            const now = new Date().getTime();
-            document.getElementById('deadlineWarning').innerText = allTasks.filter(t => {
-                if(t.deadline && t.status !== 'completed') return new Date(t.deadline + 'T00:00:00').getTime() <= (now + 172800000);
-                return false;
-            }).length;
-            
-            const ctx = document.getElementById('taskStatusChart');
-            if(!ctx) return; 
-            if(taskStatusChart) taskStatusChart.destroy();
-            taskStatusChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Pending', 'Progress', 'Done'],
-                    datasets: [{ data: [pending, progress, completed], backgroundColor: ['#eab308', '#3b82f6', '#22c55e'], borderWidth: 0, hoverOffset: 10 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: 'white' } } }, cutout: '75%' }
-            });
-            initChart3D();
-        }
-
-        // --- CALENDAR ---
-        function renderCalendar() {
-            els.calendarGrid.innerHTML = '';
-            const y = currentCalendarDate.getFullYear();
-            const m = currentCalendarDate.getMonth();
-            els.monthYear.textContent = currentCalendarDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-            const firstDay = new Date(y, m, 1).getDay();
-            const daysInMonth = new Date(y, m + 1, 0).getDate();
-
-            for(let i=0; i<firstDay; i++) els.calendarGrid.innerHTML += `<div></div>`;
-
-            for(let d=1; d<=daysInMonth; d++) {
-                const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                const div = document.createElement('div');
-                div.className = `calendar-day ${dateStr === new Date().toISOString().split('T')[0] ? 'today' : ''}`;
-                div.innerHTML = `<span class="day-number text-xs mb-1">${d}</span><div class="event-dot-container"></div>`;
-                
-                allEvents.filter(e => checkEventDate(e, dateStr)).forEach(e => {
-                    div.querySelector('.event-dot-container').innerHTML += `<div class="event-dot event-dot-event" title="Event: ${e.name}"></div>`;
-                });
-                allTasks.filter(t => t.deadline === dateStr && t.status !== 'completed').forEach(t => {
-                    div.querySelector('.event-dot-container').innerHTML += `<div class="event-dot event-dot-task" title="Task: ${t.name}"></div>`;
-                });
-                div.addEventListener('click', () => showDetail(dateStr));
-                els.calendarGrid.appendChild(div);
-            }
-        }
-
-        function checkEventDate(event, dateStr) {
-            if(event.repeatType === 'once' && event.date === dateStr) return true;
-            if(event.repeatType === 'daily') return true;
-            if(event.repeatType === 'weekly' && new Date(event.date).getDay() === new Date(dateStr).getDay()) return new Date(event.date) <= new Date(dateStr);
-            return false;
-        }
-
-        function showDetail(dateStr) {
-            els.detailSection.classList.remove('hidden');
-            els.detailTitle.textContent = new Date(dateStr).toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long'});
-            els.detailTitle.dataset.date = dateStr;
-            
-            const tasks = allTasks.filter(t => t.deadline === dateStr);
-            els.detailTaskList.innerHTML = tasks.length ? '' : '<p class="text-xs text-gray-500">Kosong</p>';
-            tasks.forEach(t => {
-                els.detailTaskList.innerHTML += `<div class="flex justify-between bg-white/5 p-2 rounded text-sm items-center"><span class="text-white">${t.name}</span><button class="text-indigo-400 hover:text-white" onclick="document.dispatchEvent(new CustomEvent('edit-task', {detail: '${t.id}'}))">Edit</button></div>`;
-            });
-
-            const events = allEvents.filter(e => checkEventDate(e, dateStr));
-            els.detailEventList.innerHTML = events.length ? '' : '<p class="text-xs text-gray-500">Kosong</p>';
-            events.forEach(e => {
-                els.detailEventList.innerHTML += `<div class="flex justify-between bg-white/5 p-2 rounded text-sm items-center"><div><span class="text-white font-bold">${e.name}</span> <span class="text-xs text-gray-400">${e.time}</span></div><button class="text-purple-400 hover:text-white" onclick="document.dispatchEvent(new CustomEvent('edit-event', {detail: '${e.id}'}))">Edit</button></div>`;
-            });
-        }
-        
-        document.addEventListener('edit-event', e => openEventModal(null, e.detail));
-
-        function openEventModal(date, id) {
-            els.eventForm.reset();
-            els.eventForm.dataset.eventId = id || '';
-            els.deleteEventBtn.classList.add('hidden');
-            if(date) document.getElementById('eventDate').value = date;
-            if(id) {
-                const e = allEvents.find(ev => ev.id === id);
-                if(e) {
-                    document.getElementById('eventName').value = e.name;
-                    document.getElementById('eventDate').value = e.date;
-                    document.getElementById('eventTime').value = e.time;
-                    document.getElementById('eventRepeat').value = e.repeatType;
-                    els.deleteEventBtn.classList.remove('hidden');
-                }
-            }
-            els.eventModal.showModal();
-        }
-
-        async function handleEventSubmit(e) {
-            e.preventDefault();
-            const fd = new FormData(e.target);
-            const id = e.target.dataset.eventId;
-            const data = {
-                name: fd.get('eventName'),
-                date: fd.get('eventDate'),
-                time: fd.get('eventTime'),
-                repeatType: fd.get('eventRepeat'),
-                lastActionDate: null
-            };
-            if(id) await updateDoc(doc(eventsCollection, id), data);
-            else await addDoc(eventsCollection, data);
-            els.eventModal.close();
-        }
-
-        async function handleDeleteEvent() {
-             const id = els.eventForm.dataset.eventId;
-             if(confirm("Hapus Event?")) { await deleteDoc(doc(eventsCollection, id)); els.eventModal.close(); }
-        }
-
-        function renderUpcoming() {
-            const today = getLocalTodayDate();
-            const combined = [
-                ...allTasks.filter(t => t.deadline === today && t.status !== 'completed').map(t => ({...t, type: 'task'})),
-                ...allEvents.filter(e => {
-                    if (e.lastActionDate === today) return false; // HIDE IF DONE TODAY
-                    return checkEventDate(e, today);
-                }).map(e => ({...e, type: 'event'}))
-            ].sort((a,b) => a.time.localeCompare(b.time));
-
-            els.upcomingList.innerHTML = '';
-            if(combined.length === 0) {
-                els.upcomingList.innerHTML = `<div class="col-span-full glass-card text-center py-8 text-gray-500 italic border-dashed border-2 border-gray-700 magic-hover w-full">Tidak ada agenda untuk hari ini. Waktunya bersantai! ☕</div>`;
-                return;
-            }
-            
-            combined.forEach(item => {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'flex items-center gap-3 w-full group'; 
-
-                const contentDiv = document.createElement('div');
-                contentDiv.className = `glass-card flex-1 p-4 border-l-4 magic-hover transition-transform group-hover:translate-x-1 ${item.type === 'task' ? 'border-yellow-500' : 'border-purple-500'}`;
-                contentDiv.innerHTML = `
-                    <div>
-                        <p class="font-bold text-white text-lg">${item.name}</p>
-                        <p class="text-sm text-gray-300 flex items-center gap-2">
-                            <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            ${item.time} <span class="opacity-30">|</span> <span class="uppercase tracking-wider text-xs font-semibold opacity-70">${item.type}</span>
-                        </p>
-                    </div>
-                `;
-                
-                contentDiv.onmousemove = e => {
-                    const rect = contentDiv.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    contentDiv.style.setProperty('--mouse-x', `${x}px`);
-                    contentDiv.style.setProperty('--mouse-y', `${y}px`);
-                };
-
-                const btnContainer = document.createElement('div');
-                btnContainer.className = 'flex gap-2 shrink-0';
-
-                if (item.type === 'task') {
-                    const doneBtn = document.createElement('button');
-                    doneBtn.className = 'glass-button p-3 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all shadow-lg border border-green-500/20';
-                    doneBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-                    doneBtn.title = "Tandai Selesai";
-                    doneBtn.onclick = async () => {
-                         if(confirm('Tandai tugas ini selesai?')) {
-                            await updateDoc(doc(tasksCollection, item.id), {status: 'completed'});
-                         }
-                    };
-                    btnContainer.appendChild(doneBtn);
-                } else {
-                    const doneBtn = document.createElement('button');
-                    doneBtn.className = 'glass-button p-3 rounded-xl text-green-300 hover:text-white hover:bg-green-500/30 transition-all shadow-lg border border-green-500/20';
-                    doneBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-                    doneBtn.title = "Event Selesai";
-                    doneBtn.onclick = async () => {
-                         const today = getLocalTodayDate();
-                         await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
-                    };
-                    btnContainer.appendChild(doneBtn);
-
-                    const skipBtn = document.createElement('button');
-                    skipBtn.className = 'glass-button p-3 rounded-xl text-red-300 hover:text-white hover:bg-red-500/30 transition-all shadow-lg border border-red-500/20';
-                    skipBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
-                    skipBtn.title = "Lewati Event";
-                    skipBtn.onclick = async () => {
-                         const today = getLocalTodayDate();
-                         await updateDoc(doc(eventsCollection, item.id), { lastActionDate: today });
-                    };
-                    btnContainer.appendChild(skipBtn);
-                }
-
-                rowDiv.appendChild(contentDiv);
-                rowDiv.appendChild(btnContainer);
-                els.upcomingList.appendChild(rowDiv);
-            });
-            initMagicHover();
-        }
-
-        // --- WISHLIST ---
-        async function handleWishlistSubmit(e) {
-            e.preventDefault();
-            const fd = new FormData(e.target);
-            await addDoc(wishlistCollection, {
-                name: fd.get('productName'),
-                link: fd.get('productLink'),
-                price: Number(fd.get('productPrice')),
-                createdAt: serverTimestamp()
-            });
-            els.wishlistModal.close();
-            els.wishlistForm.reset();
-        }
-
-        function renderWishlist(items) {
-            els.wishlistGrid.innerHTML = '';
-            let total = 0;
-            items.forEach(i => {
-                total += i.price;
-                const div = document.createElement('div');
-                div.className = 'glass-card flex flex-col justify-between h-full magic-hover';
-                div.innerHTML = `
-                    <div>
-                        <h3 class="font-bold text-lg text-white mb-1">${i.name}</h3>
-                        <p class="text-2xl font-bold text-green-400 mb-4">Rp ${new Intl.NumberFormat('id-ID').format(i.price)}</p>
-                    </div>
-                    <div class="flex gap-2 mt-auto">
-                        <a href="${i.link}" target="_blank" class="glass-button text-center flex-1 py-2 rounded text-sm">Beli</a>
-                        <button class="bg-red-500/20 text-red-400 hover:bg-red-500/40 px-3 rounded" onclick="document.dispatchEvent(new CustomEvent('delete-wishlist', {detail: '${i.id}'}))">🗑️</button>
-                    </div>
-                `;
-                els.wishlistGrid.appendChild(div);
-            });
-            document.getElementById('wishlistTotal').innerText = `Rp ${new Intl.NumberFormat('id-ID').format(total)}`;
-            
-            if(items.length === 0) {
-                els.wishlistGrid.innerHTML = `<p class="col-span-full text-center text-gray-500">Wishlist kosong.</p>`;
-            }
-            initMagicHover();
-        }
-        
-        document.addEventListener('delete-wishlist', async e => {
-            if(confirm("Hapus item?")) await deleteDoc(doc(wishlistCollection, e.detail));
-        });
-
-        // --- GEMINI ---
-        async function handleGeminiSubmit(e) {
-            e.preventDefault();
-            const text = els.geminiInput.value.trim();
-            if(!text) return;
-
-            appendChat('user', text);
-            els.geminiInput.value = '';
-            els.geminiLoading.classList.remove('hidden');
-
-            try {
-                const apiKey = "AIzaSyBdvL65RALEcZ1vxHsQb8d1A3GJnJc_QlI"; 
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ contents: [{ parts: [{ text }] }] })
-                });
-                
-                const data = await response.json();
-                const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, saya tidak mengerti.";
-                appendChat('model', reply);
-            } catch(err) {
-                appendChat('model', "Error: " + err.message, true);
-            } finally {
-                els.geminiLoading.classList.add('hidden');
-            }
-        }
-
-        function appendChat(role, text, isError=false) {
-            const div = document.createElement('div');
-            div.className = `chat-bubble ${role} ${isError ? 'bg-red-500/20 border-red-500' : ''} self-${role === 'user' ? 'end' : 'start'}`;
-            div.innerHTML = role === 'user' ? text : marked(text); 
-            els.chatContainer.appendChild(div);
-            els.chatContainer.scrollTop = els.chatContainer.scrollHeight;
-        }
-
-        function marked(text) {
-            return text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\n/g, '<br>');
-        }
-
-        init();
-    </script>
+          </div>
+
+          <div class="form-field-item">
+            <label class="form-field-label">Pengulangan</label>
+            <select id="eventRepeat" name="eventRepeat" class="apple-select-input">
+              <option value="once">Sekali Saja</option>
+              <option value="daily">Setiap Hari</option>
+              <option value="weekly">Setiap Minggu</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer-row">
+          <button type="button" id="deleteEventBtn" class="btn-modal-delete hidden">Hapus Event</button>
+          <div class="modal-footer-actions">
+            <button type="button" id="closeEventModalBtn" class="btn-pill-secondary">Batal</button>
+            <button type="submit" class="btn-pill-primary" style="background: var(--accent-purple); border-color: var(--accent-purple); color: #ffffff;">Simpan</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Wishlist Modal -->
+  <dialog id="wishlistModal">
+    <div class="apple-modal-card">
+      <form id="wishlistForm">
+        <div class="modal-header-row">
+          <h3 class="modal-title-text" style="color: var(--accent-emerald);">Wishlist Item</h3>
+        </div>
+
+        <div class="form-group-wrap">
+          <div class="form-field-item">
+            <label class="form-field-label">Nama Produk</label>
+            <input type="text" id="productName" name="productName" class="apple-text-input" required placeholder="Contoh: Keychron K2 Pro Mechanical Keyboard">
+          </div>
+
+          <div class="form-field-item">
+            <label class="form-field-label">Link Toko</label>
+            <input type="url" id="productLink" name="productLink" class="apple-text-input" placeholder="https://tokopedia.com/...">
+          </div>
+
+          <div class="form-field-item">
+            <label class="form-field-label">Harga (Rupiah)</label>
+            <input type="number" id="productPrice" name="productPrice" class="apple-text-input" required placeholder="1500000" min="0">
+          </div>
+        </div>
+
+        <div class="modal-footer-row">
+          <div class="modal-footer-actions">
+            <button type="button" id="closeWishlistModalBtn" class="btn-pill-secondary">Batal</button>
+            <button type="submit" class="btn-pill-primary" style="background: var(--accent-emerald); border-color: var(--accent-emerald); color: #ffffff;">Simpan</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Scripts -->
+  <script src="canvas.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
